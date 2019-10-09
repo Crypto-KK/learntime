@@ -8,13 +8,13 @@ verify_ssl = true
 [packages]
 django-environ = "*"
 django = "==2.2.6"
-django-allauth = "*"
 django-redis = "*"
 django-crispy-forms = "==1.7.2"
 sorl-thumbnail = "*"
 django-debug-toolbar = "==2.0"
 django-extensions = "==2.2.1"
 mysqlclient = "==1.4.2.post1"
+argon2-cffi = "==19.1.0"
 
 [requires]
 python_version = "3.7"
