@@ -7,32 +7,50 @@
     <div class="col-lg-6 bg-white">
       <div class="form d-flex align-items-center">
         <div class="content">
-          <form class="form-validate">
+          <form class="form-validate" action="{% url 'users:register' %}" method="post">
             <div class="form-group">
-              <input id="register-username" type="text" name="registerUsername" required data-msg="请输入您的用户名" class="input-material">
+              <input id="register-username" type="text" name="username" required data-msg="请输入您的用户名" class="input-material">
               <label for="register-username" class="label-material">用户名</label>
             </div>
             <div class="form-group">
-              <input id="register-name" type="text" name="registerName" required data-msg="请输入您的姓名" class="input-material">
+              <input id="register-name" type="text" name="name" required data-msg="请输入您的姓名" class="input-material">
               <label for="register-name" class="label-material">姓名</label>
             </div>
             <div class="form-group">
-              <input id="register-email" type="email" name="registerEmail" required data-msg="请输入邮箱地址" class="input-material">
+              <input id="register-email" type="email" name="email" required data-msg="请输入邮箱地址" class="input-material">
               <label for="register-email" class="label-material">邮箱      </label>
             </div>
             <div class="form-group">
-              <input id="register-password" type="password" name="registerPassword" required data-msg="请输入密码" class="input-material">
+              <input id="register-password" type="password" name="password" required data-msg="请输入密码" class="input-material">
               <label for="register-password" class="label-material">密码        </label>
             </div>
             <div class="form-group terms-conditions">
-              <input id="register-agree" name="registerAgree" type="checkbox" required value="1" data-msg="Your agreement is required" class="checkbox-template">
-              <label for="register-agree">同意协议</label>
+{#              <input id="register-agree" name="registerAgree" type="checkbox" required value="1" data-msg="您必须同意协议" class="checkbox-template">#}
+                <input id="register-school" name="identity" type="radio" required value="2" data-msg="" class="checkbox-template">
+              <label for="register-school">校级</label>
+                              <input id="register-school" name="identity" type="radio" required value="3" data-msg="" class="checkbox-template">
+              <label for="register-school">学院级</label>
+                              <input id="register-student" name="identity" type="radio" required value="4" data-msg="" class="checkbox-template" checked>
+              <label for="register-student">干部级</label>
+
             </div>
+              {% csrf_token %}
+
+              {#            <div class="form-group terms-conditions">#}
+{#              <input id="register-agree" name="registerAgree" type="checkbox" required value="1" data-msg="您必须同意协议" class="checkbox-template">#}
+{#              <label for="register-agree">同意协议</label>#}
+{#            </div>#}
             <div class="form-group">
-              <button id="regidter" type="submit" name="registerSubmit" class="btn btn-primary">注册</button>
+              <button id="register" type="submit" name="registerSubmit" class="btn btn-primary">注册</button>
+                              <div class="is-invalid invalid-feedback" style="display: block; font-size: 18px;">{{ error }}</div>
             </div>
-          </form><small>已经有账号了? </small><a href="login.html" class="signup">登录</a>
+          </form><small>已经有账号了? </small><a href="{% url 'users:login' %}" class="signup">登录</a>
         </div>
       </div>
     </div>
+{% endblock %}
+
+{% block js %}
+
+
 {% endblock %}
