@@ -1,8 +1,10 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth import authenticate, login, logout
+from django.views.generic import ListView
 
 from learntime.users.forms import LoginForm, RegisterForm
 
@@ -38,7 +40,6 @@ def logout_view(request):
 
 def register_view(request):
     """注册"""
-    next = request.GET.get('next', '')
     if request.method == "GET":
         form = RegisterForm()
         return render(request, 'users/register.html', {'form': form})
@@ -46,23 +47,22 @@ def register_view(request):
         form = RegisterForm(request.POST)
 
         if form.is_valid():
-            print(form.cleaned_data)
-            return JsonResponse({"error": "ok"})
+            user = User(
+                username=form.cleaned_data['username'],
+                email = form.cleaned_data['email'],
+                name = form.cleaned_data['name'],
+                identity = form.cleaned_data['identity'],
+            )
+            user.set_password(form.cleaned_data['password'])
+            user.register()
+            return render(request, 'users/register_success.html')
 
-        else:
-            for err in form.errors:
-                if err == "username":  # 用户名重复
-                    return render(request, 'users/register.html', {
-                        "form": form,
-                        "error": "用户名重复,请重新输入"
-                    })
-                if err == "email":  # 邮箱重复
-                    return render(request, 'users/register.html', {
-                        "form": form,
-                        "error": "邮箱重复,请重新输入"
-                    })
-                if err == "identity":
-                    return render(request, 'users/register.html', {
-                        "form": form,
-                        "error": "请选择级"
-                    })
+        return render(request, 'users/register.html', {'form': form})
+
+
+class AdminList(LoginRequiredMixin, ListView):
+    template_name = "users/admin_list.html"
+    context_object_name = "admins"
+
+    def get_queryset(self):
+        return User.objects.filter(is_active=False)

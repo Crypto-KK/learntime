@@ -2,16 +2,18 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models import CharField, IntegerField
 from django.urls import reverse
 from django.utils.functional import cached_property
+from django.db import models
 
 from learntime.users.enums import UserEnum
+from learntime.utils.models import CreatedUpdatedMixin
 
 
 class User(AbstractUser):
     IDENTITY = (
         (1, 'root'), #最高权限
-        (2, 'school'), #校级
-        (3, 'academy'), #院级
-        (4, 'student'), #干部级
+        (2, '校级'), #校级
+        (3, '学院级'), #院级
+        (4, '干部级'), #干部级
     )
 
     name = CharField(verbose_name="姓名", max_length=20)
@@ -54,4 +56,14 @@ class User(AbstractUser):
     def switch_level_to_student(self):
         """切换到干部级管理员"""
         self.identity = UserEnum.STUDENT.value
+        self.save()
+
+    def register(self):
+        """用户注册，后台需要审核"""
+        self.is_active = False
+        self.save()
+
+    def register_success(self):
+        """用户通过审核，注册成功"""
+        self.is_active = True
         self.save()
