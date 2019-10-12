@@ -102,14 +102,16 @@
               <p>信院2017级辅导员</p>
             </div>
           </div>
-          <!-- Sidebar Navidation Menus--><span class="heading">菜单</span>
+          <!-- Sidebar Navidation Menus-->
+          <span class="heading">菜单</span>
           <ul class="list-unstyled">
-                    <li class="active"><a href="index.html"> <i class="icon-home"></i>首页 </a></li>
-                    <li><a href="{% url 'users:admins' %}"> <i class="icon-grid"></i>管理员 </a></li>
-                    <li><a href="#"> <i class="icon-grid"></i>发布活动 </a></li>
-                    <li><a href="#"> <i class="fa fa-bar-chart"></i>学生管理 </a></li>
-                    <li><a href="#"> <i class="icon-padnote"></i>学时统计 </a></li>
-                    <li><a href="#"> <i class="icon-padnote"></i>设置 </a></li>
+            <li class="active index"><a href="{% url 'index' %}"> <i class="icon-home"></i>首页 </a></li>
+            <li class="admin-apply"><a href="{% url 'users:admin_apply' %}"> <i class="icon-grid"></i>注册审核 </a></li>
+            <li class="admin-list"><a href="{% url 'users:admins' %}"> <i class="icon-grid"></i>管理员 </a></li>
+            <li><a href="#"> <i class="icon-grid"></i>发布活动 </a></li>
+            <li><a href="#"> <i class="fa fa-bar-chart"></i>学生管理 </a></li>
+            <li><a href="#"> <i class="icon-padnote"></i>学时统计 </a></li>
+            <li><a href="#"> <i class="icon-padnote"></i>设置 </a></li>
           </ul>
         </nav>
         <div class="content-inner">

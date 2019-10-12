@@ -60,9 +60,17 @@ def register_view(request):
         return render(request, 'users/register.html', {'form': form})
 
 
-class AdminList(LoginRequiredMixin, ListView):
-    template_name = "users/admin_list.html"
+class AdminApplyList(LoginRequiredMixin, ListView):
+    template_name = "users/admin_apply.html"
     context_object_name = "admins"
+    paginate_by = 20
 
     def get_queryset(self):
         return User.objects.filter(is_active=False)
+
+
+class AdminList(AdminApplyList):
+    template_name = "users/admin_list.html"
+
+    def get_queryset(self):
+        return User.objects.filter(is_active=True)

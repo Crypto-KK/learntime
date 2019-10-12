@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
 {% block title %}
-    管理员管理
+    注册审核
 {% endblock %}
 {% block header_name %}
-    管理员管理
+    注册审核
 {% endblock %}
 {% block body %}
       <!-- Breadcrumb-->
     <div class="breadcrumb-holder container-fluid">
     <ul class="breadcrumb">
       <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
-      <li class="breadcrumb-item active">管理员管理</li>
+      <li class="breadcrumb-item active">注册审核</li>
     </ul>
     </div>
     <section class="tables">
@@ -29,7 +29,6 @@
                         <th>姓名</th>
                         <th>邮箱</th>
                         <th>级别</th>
-
                         <th>操作</th>
 
                       </tr>
@@ -41,10 +40,8 @@
                           <td>{{ admin.name }}</td>
                           <td>{{ admin.email }}</td>
                           <td>{{ admin.get_identity_display }}</td>
-
-                          <td><button class="btn btn-success">查看</button>
-                              <button class="btn btn-warning">编辑</button>
-                              <button class="btn btn-danger">删除</button>
+                          <td><button class="btn btn-success">通过</button>
+                          <button class="btn btn-danger">不通过</button>
                           </td>
                           </tr>
                       {% endfor %}
@@ -64,4 +61,3 @@
 
     {% include 'pagination.html' %}
 {% endblock %}
-
