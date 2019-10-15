@@ -98,16 +98,22 @@
           <div class="sidebar-header d-flex align-items-center">
             <div class="avatar"><img src="{% static 'img/avatar-1.jpg' %}" alt="..." class="img-fluid rounded-circle"></div>
             <div class="title">
-              <h1 class="h4">郑开勋</h1>
-              <p>信院2017级辅导员</p>
+              <h1 class="h4">{{ request.user.name }}</h1>
+              <p><a href="#">修改资料</a></p>
             </div>
           </div>
           <!-- Sidebar Navidation Menus-->
-          <span class="heading">菜单</span>
+          <span class="heading">系统管理</span>
           <ul class="list-unstyled">
             <li class="active index"><a href="{% url 'index' %}"> <i class="icon-home"></i>首页 </a></li>
             <li class="admin-apply"><a href="{% url 'users:admin_apply' %}"> <i class="icon-grid"></i>注册审核 </a></li>
             <li class="admin-list"><a href="{% url 'users:admins' %}"> <i class="icon-grid"></i>管理员 </a></li>
+            <li class="admin-list"><a href="#"> <i class="icon-grid"></i>权限管理 </a></li>
+            <li class="admin-list"><a href="#"> <i class="icon-grid"></i>活动审批 </a></li>
+
+          </ul><span class="heading">活动管理</span>
+          <ul>
+
             <li><a href="#"> <i class="icon-grid"></i>发布活动 </a></li>
             <li><a href="#"> <i class="fa fa-bar-chart"></i>学生管理 </a></li>
             <li><a href="#"> <i class="icon-padnote"></i>学时统计 </a></li>

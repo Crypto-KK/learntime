@@ -1,7 +1,8 @@
 from django.urls import path
 
 from learntime.users.views import (
-    login_view, logout_view, register_view, AdminApplyList, AdminList)
+    login_view, logout_view, register_view, AdminApplyList, AdminList,
+    AdminDetail)
 
 app_name = "users"
 urlpatterns = [
@@ -11,5 +12,6 @@ urlpatterns = [
 
     path('admin_apply/', view=AdminApplyList.as_view(), name='admin_apply'),
     path('admins/', view=AdminList.as_view(), name='admins'),
+    path('admin-detail/<int:pk>/', view=AdminDetail.as_view(), name='admin_detail'),
 
 ]

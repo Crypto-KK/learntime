@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}
+    管理员管理
+{% endblock %}
+{% block header_name %}
+    管理员管理
+{% endblock %}
+{% block body %}
+      <!-- Breadcrumb-->
+    <div class="breadcrumb-holder container-fluid">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'users:admins' %}">管理员管理</a></li>
+      <li class="breadcrumb-item active">管理员详情</li>
+    </ul>
+    </div>
+
+  <br>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">用户{{ admin.username }}的详细信息</h4>
+              <p class="card-text">姓名：{% if admin.name %}{{ admin.name }}{% else %}暂无{% endif %}</p>
+              <p class="card-text">邮箱：{{ admin.email }}</p>
+              <p class="card-text">权限：{{ admin.get_identity_display }}</p>
+              <p class="card-text">所属学院：{% if admin.academy %}{{ admin.academy }}{% else %}暂无{% endif %}</p>
+              <p class="card-text">所属年级：{% if admin.grade %}{{ admin.grade }}{% else %}暂无{% endif %}</p>
+              <p class="card-text">所属班级：{% if admin.klass %}{{ admin.klass }}{% else %}暂无{% endif %}</p>
+              <p class="card-text">注册时间：{{ admin.date_joined }}</p>
+              <p class="card-text"><a href="{% url 'users:admins' %}" class="btn btn-primary">返回</a></p>
+
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+{% endblock %}
+

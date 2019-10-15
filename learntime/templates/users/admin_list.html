@@ -42,7 +42,7 @@
                           <td>{{ admin.email }}</td>
                           <td>{{ admin.get_identity_display }}</td>
 
-                          <td><button class="btn btn-success">查看</button>
+                          <td><a href="{% url 'users:admin_detail' admin.pk %}" class="btn btn-success">查看</a>
                               <button class="btn btn-warning">编辑</button>
                               <button class="btn btn-danger">删除</button>
                           </td>

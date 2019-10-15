@@ -1,10 +1,10 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth import authenticate, login, logout
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 from learntime.users.forms import LoginForm, RegisterForm
 
@@ -71,6 +71,15 @@ class AdminApplyList(LoginRequiredMixin, ListView):
 
 class AdminList(AdminApplyList):
     template_name = "users/admin_list.html"
-
+    permission_required = ("add_user", "change_user", "delete_user", "view_user")
     def get_queryset(self):
         return User.objects.filter(is_active=True)
+
+
+class AdminDetail(PermissionRequiredMixin, DetailView):
+    """管理员详情页"""
+    permission_required = ("view_user")
+    context_object_name = 'admin'
+    template_name = "users/admin_detail.html"
+    model = User
+
