@@ -67,3 +67,7 @@ class User(AbstractUser):
         """用户通过审核，注册成功"""
         self.is_active = True
         self.save()
+
+    class Meta:
+        verbose_name = "管理员"
+        verbose_name_plural = verbose_name

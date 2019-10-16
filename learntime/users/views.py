@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
@@ -60,10 +61,18 @@ def register_view(request):
         return render(request, 'users/register.html', {'form': form})
 
 
-class AdminApplyList(LoginRequiredMixin, ListView):
+class AdminApplyList(PermissionRequiredMixin, ListView):
     template_name = "users/admin_apply.html"
     context_object_name = "admins"
     paginate_by = 20
+    permission_required = ("add_user", "change_user", "delete_user", "view_user")
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=None, **kwargs)
+        groups = Group.objects.all().prefetch_related("permissions")
+        context['groups'] = groups
+        return context
+
 
     def get_queryset(self):
         return User.objects.filter(is_active=False)
@@ -71,15 +80,17 @@ class AdminApplyList(LoginRequiredMixin, ListView):
 
 class AdminList(AdminApplyList):
     template_name = "users/admin_list.html"
-    permission_required = ("add_user", "change_user", "delete_user", "view_user")
+
     def get_queryset(self):
         return User.objects.filter(is_active=True)
 
 
 class AdminDetail(PermissionRequiredMixin, DetailView):
     """管理员详情页"""
+
     permission_required = ("view_user")
     context_object_name = 'admin'
     template_name = "users/admin_detail.html"
     model = User
+
 

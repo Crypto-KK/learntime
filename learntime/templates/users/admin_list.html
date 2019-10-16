@@ -28,7 +28,8 @@
                         <th>用户名</th>
                         <th>姓名</th>
                         <th>邮箱</th>
-                        <th>级别</th>
+                        <th>上次登录</th>
+                        <th>组</th>
 
                         <th>操作</th>
 
@@ -40,7 +41,13 @@
                           <td>{{ admin.username }}</td>
                           <td>{{ admin.name }}</td>
                           <td>{{ admin.email }}</td>
-                          <td>{{ admin.get_identity_display }}</td>
+                          <td>{{ admin.last_login }}</td>
+                          <td>
+                            {% for group in admin.groups.all %}
+                              {{ group.name }}
+                            {% endfor %}
+
+                          </td>
 
                           <td><a href="{% url 'users:admin_detail' admin.pk %}" class="btn btn-success">查看</a>
                               <button class="btn btn-warning">编辑</button>

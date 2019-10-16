@@ -40,7 +40,7 @@
                           <td>{{ admin.name }}</td>
                           <td>{{ admin.email }}</td>
                           <td>{{ admin.get_identity_display }}</td>
-                          <td><button class="btn btn-success">通过</button>
+                          <td><button class="btn btn-success" data-toggle="modal" data-target="#Modal">通过</button>
                           <button class="btn btn-danger">不通过</button>
                           </td>
                           </tr>
@@ -59,5 +59,60 @@
       </div>
     </section>
 
+  <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">请分配一个组</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label">组名：</label>
+            <select class="custom-select" id="group-select">
+              {% for group in groups %}
+                <option value="{{ group.id }}" >{{group.name}}</option>
+
+              {% endfor %}
+            </select>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="confirm-group">确认分配</button>
+      </div>
+    </div>
+  </div>
+</div>
+
     {% include 'pagination.html' %}
+{% endblock %}
+
+{% block js %}
+  <script>
+    $(function () {
+        $('#confirm-group').click(function () {
+            $.ajax({
+                url: "/users/apply_comfirm/",
+                cache: false,
+                data: {
+                    id: $('#group-select').val()
+                },
+                success: res => {
+                    alert(res)
+                },
+                fail: err => {
+                    alert(err)
+                }
+            })
+        })
+    })
+
+
+  </script>
 {% endblock %}

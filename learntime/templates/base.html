@@ -103,14 +103,15 @@
             </div>
           </div>
           <!-- Sidebar Navidation Menus-->
+          {% if perms.main.add_user %}
           <span class="heading">系统管理</span>
           <ul class="list-unstyled">
             <li class="active index"><a href="{% url 'index' %}"> <i class="icon-home"></i>首页 </a></li>
             <li class="admin-apply"><a href="{% url 'users:admin_apply' %}"> <i class="icon-grid"></i>注册审核 </a></li>
             <li class="admin-list"><a href="{% url 'users:admins' %}"> <i class="icon-grid"></i>管理员 </a></li>
-            <li class="admin-list"><a href="#"> <i class="icon-grid"></i>权限管理 </a></li>
+            <li class="admin-list"><a href="/permission/auth/group/"> <i class="icon-grid"></i>权限管理 </a></li>
             <li class="admin-list"><a href="#"> <i class="icon-grid"></i>活动审批 </a></li>
-
+          {% endif %}
           </ul><span class="heading">活动管理</span>
           <ul>
 
