@@ -25,7 +25,7 @@
               <h4 class="card-title">用户{{ admin.username }}的详细信息</h4>
               <p class="card-text">姓名：{% if admin.name %}{{ admin.name }}{% else %}暂无{% endif %}</p>
               <p class="card-text">邮箱：{{ admin.email }}</p>
-              <p class="card-text">权限：{{ admin.get_identity_display }}</p>
+              <p class="card-text">权限：{% for group in admin.groups.all %}{{ group }}{% endfor %}</p>
               <p class="card-text">所属学院：{% if admin.academy %}{{ admin.academy }}{% else %}暂无{% endif %}</p>
               <p class="card-text">所属年级：{% if admin.grade %}{{ admin.grade }}{% else %}暂无{% endif %}</p>
               <p class="card-text">所属班级：{% if admin.klass %}{{ admin.klass }}{% else %}暂无{% endif %}</p>

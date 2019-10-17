@@ -23,3 +23,10 @@ class RegisterForm(forms.ModelForm):
     class Meta:
         fields = ['username', 'name', 'email', 'password', 'identity']
         model = User
+
+
+class UserForm(forms.ModelForm):
+
+    class Meta:
+        fields = ['name', "email"]
+        model = User

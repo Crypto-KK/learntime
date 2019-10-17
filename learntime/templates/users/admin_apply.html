@@ -40,7 +40,7 @@
                           <td>{{ admin.name }}</td>
                           <td>{{ admin.email }}</td>
                           <td>{{ admin.get_identity_display }}</td>
-                          <td><button class="btn btn-success" data-toggle="modal" data-target="#Modal">通过</button>
+                          <td><button class="btn btn-success" data-toggle="modal" data-target="#Modal" data-username="{{ admin.username }}" id="confirm">通过</button>
                           <button class="btn btn-danger">不通过</button>
                           </td>
                           </tr>
@@ -96,15 +96,28 @@
 {% block js %}
   <script>
     $(function () {
+        var username = "";
+        $('#confirm').click(function () {
+            username = $(this).attr("data-username")
+        });
+
         $('#confirm-group').click(function () {
             $.ajax({
                 url: "/users/apply_comfirm/",
                 cache: false,
+                type: "post",
+                contentType: "application/json",
                 data: {
-                    id: $('#group-select').val()
+                    id: $('#group-select').val(),
+                    username: username
                 },
                 success: res => {
-                    alert(res)
+                    if (res.err === 0) {
+                        window.location.reload()
+
+                    } else {
+                        alert("未知错误")
+                    }
                 },
                 fail: err => {
                     alert(err)

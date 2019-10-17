@@ -1,13 +1,17 @@
+from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth import authenticate, login, logout
-from django.views.generic import ListView, DetailView
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import ListView, DetailView, UpdateView
 
-from learntime.users.forms import LoginForm, RegisterForm
+from learntime.users.forms import LoginForm, RegisterForm, UserForm
+from learntime.utils.helpers import AuthorRequiredMixin
 
 User = get_user_model()
 
@@ -93,4 +97,37 @@ class AdminDetail(PermissionRequiredMixin, DetailView):
     template_name = "users/admin_detail.html"
     model = User
 
+class AdminUpdateView(LoginRequiredMixin, AuthorRequiredMixin, UpdateView):
+    """用户修改资料"""
+    model = User
+    context_object_name = "user"
+    message = "资料修改成功"
+    template_name = "users/change_profile.html"
+    form_class = UserForm
+
+    def get_success_url(self):
+        messages.success(self.request, self.message)
+        return reverse("index")
+
+
+@permission_required("add_user")
+@csrf_exempt
+def apply_comfirm(request):
+    """批准用户申请"""
+    try:
+        data = request.body.decode("utf-8").split("&")
+        id = data[0].split("=")[1]
+        username = data[1].split("=")[1]
+
+        group = Group.objects.get(pk=id) #获取组
+        user = User.objects.get(username=username)
+        user.groups.add(group) #用户加入组
+        user.is_active = True #激活用户
+        user.save()
+
+    except Exception:
+        return JsonResponse({"err": 1})
+
+    else:
+        return JsonResponse({"err": 0})
 
