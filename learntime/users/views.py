@@ -10,8 +10,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView, UpdateView
 
+from learntime.users.enums import UserEnum
 from learntime.users.forms import LoginForm, RegisterForm, UserForm
-from learntime.utils.helpers import AuthorRequiredMixin
+from learntime.utils.helpers import AuthorRequiredMixin, GroupRequiredMixin
 
 User = get_user_model()
 
@@ -65,11 +66,11 @@ def register_view(request):
         return render(request, 'users/register.html', {'form': form})
 
 
-class AdminApplyList(PermissionRequiredMixin, ListView):
+class AdminApplyList(GroupRequiredMixin, ListView):
     template_name = "users/admin_apply.html"
     context_object_name = "admins"
     paginate_by = 20
-    permission_required = ("add_user", "change_user", "delete_user", "view_user")
+    group_required = (UserEnum.ROOT.value, UserEnum.SCHOOL.value)
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=None, **kwargs)
@@ -77,16 +78,24 @@ class AdminApplyList(PermissionRequiredMixin, ListView):
         context['groups'] = groups
         return context
 
-
     def get_queryset(self):
         return User.objects.filter(is_active=False)
 
 
-class AdminList(AdminApplyList):
+class AdminList(GroupRequiredMixin, ListView):
     template_name = "users/admin_list.html"
+    context_object_name = "admins"
+    paginate_by = 20
+    group_required = (UserEnum.ROOT.value, UserEnum.SCHOOL.value, UserEnum.ACADEMY.value)
 
     def get_queryset(self):
-        return User.objects.filter(is_active=True)
+        group_name = self.request.user.groups.all()[0].name
+        if group_name == UserEnum.ROOT.value or group_name == UserEnum.SCHOOL.value:
+            return User.objects.filter(is_active=True)
+        elif group_name == UserEnum.ACADEMY.value:
+            return User.objects.filter(groups__name=UserEnum.ACADEMY.value)
+        else:
+            return User.objects.none()
 
 
 class AdminDetail(PermissionRequiredMixin, DetailView):
