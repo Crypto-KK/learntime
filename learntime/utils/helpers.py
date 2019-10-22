@@ -5,6 +5,8 @@ from django.core.exceptions import PermissionDenied, ImproperlyConfigured
 from django.http import HttpResponseBadRequest
 from django.views.generic.base import View
 
+from learntime.users.enums import UserEnum
+
 
 def ajax_required(func):
     '''
@@ -65,3 +67,20 @@ class GroupRequiredMixin(AccessMixin):
         if not self.has_permission():
             return self.handle_no_permission()
         return super().dispatch(request, *args, **kwargs)
+
+
+class RootRequiredMixin(GroupRequiredMixin):
+    group_required = (UserEnum.ROOT.value, UserEnum.SCHOOL.value, UserEnum.ACADEMY.value,
+                      UserEnum.STUDENT.value,)
+
+
+class SchoolRequiredMixin(GroupRequiredMixin):
+    group_required = (UserEnum.SCHOOL.value, UserEnum.ACADEMY.value, UserEnum.STUDENT.value,)
+
+
+class AcademyRequiredMixin(GroupRequiredMixin):
+    group_required = (UserEnum.ACADEMY.value, UserEnum.STUDENT.value,)
+
+
+class StudentRequiredMixin(GroupRequiredMixin):
+    group_required = (UserEnum.STUDENT.value, )

@@ -13,6 +13,7 @@
       <li class="breadcrumb-item active">管理员管理</li>
     </ul>
     </div>
+
     <section class="tables">
       <div class="container-fluid">
         <div class="row">
@@ -38,6 +39,7 @@
                       </tr>
                     </thead>
                     <tbody>
+                    {% with group_name=request.user.groups.all.0.name %}
                       {% for admin in admins %}
                           <tr>
                           <td>{{ admin.name }}</td>
@@ -54,14 +56,16 @@
 
                           </td>
 
-                          <td><a href="{% url 'users:admin_detail' admin.pk %}" class="btn btn-success">查看</a>
-                              <button class="btn btn-danger">删除</button>
+                          <td>
+
+                            {% if group_name == "超级管理员" or group_name == "校级" %}
+                              <a href="{% url 'users:admin_detail' admin.pk %}" class="btn btn-success">查看</a>
+                              <a href="{% url 'users:admin_delete' admin.pk %}" class="btn btn-danger">删除</a>
+                            {% endif %}
                           </td>
                           </tr>
                       {% endfor %}
-
-
-
+                    {% endwith %}
                     </tbody>
                   </table>
                 </div>

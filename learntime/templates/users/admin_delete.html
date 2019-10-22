@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}删除管理员{% endblock %}
+
+{% block body %}
+  <br>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+
+        <h1>确定要删除管理员 {{ admin.name }} 吗？</h1>
+        <form method="post" action="{% url 'users:admin_delete' admin.pk %}">
+            {% csrf_token %}
+            <button class="btn-lg btn-danger" type="submit">删除</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+
+{% endblock %}

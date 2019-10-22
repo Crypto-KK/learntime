@@ -100,6 +100,7 @@
             <div class="avatar"><img src="{% static 'img/avatar-1.jpg' %}" alt="..." class="img-fluid rounded-circle"></div>
             <div class="title">
               <h1 class="h4">{{ request.user.name }}</h1>
+              <p>{{ request.user.groups.all.0.name }}</p>
               <p><a href="{% url 'users:update_profile' request.user.pk %}">修改资料</a></p>
             </div>
           </div>
@@ -117,9 +118,9 @@
             {% if group_name == "超级管理员" or group_name == "校级" or group_name == "院级" %}
               <li class="admin-list"><a href="{% url 'users:admins' %}"> <i class="icon-grid"></i>管理员 </a></li>
             {% endif %}
-            {% if perms.main.add_user %}
-              <li class="admin-list"><a href="/permission/auth/group/"> <i class="icon-grid"></i>权限分配 </a></li>
-            {% endif %}
+{#            {% if perms.main.add_user %}#}
+{#              <li class="admin-list"><a href="/permission/auth/group/"> <i class="icon-grid"></i>权限分配 </a></li>#}
+{#            {% endif %}#}
             {% if group_name == "超级管理员" or group_name == "校级" or group_name == "院级" %}
               <li class="admin-list"><a href="#"> <i class="icon-grid"></i>活动审批 </a></li>
             {% endif %}
@@ -127,6 +128,7 @@
           <ul>
 
             <li><a href="#"> <i class="icon-grid"></i>发布活动 </a></li>
+
             <li><a href="#"> <i class="fa fa-bar-chart"></i>学生管理 </a></li>
             <li><a href="#"> <i class="icon-padnote"></i>学时统计 </a></li>
             <li><a href="#"> <i class="icon-padnote"></i>设置 </a></li>
