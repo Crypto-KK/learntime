@@ -2,9 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models import CharField, IntegerField
 from django.urls import reverse
 from django.utils.functional import cached_property
-from django.db import models
 
-from learntime.users.enums import UserEnum
 from learntime.utils.models import CreatedUpdatedMixin
 
 
@@ -20,7 +18,9 @@ class User(AbstractUser):
     academy = CharField(verbose_name='学院', max_length=20, null=True, blank=True)
     grade = CharField(verbose_name='年级', max_length=20, null=True, blank=True)
     klass = CharField(verbose_name='班级', max_length=20, null=True, blank=True)
-    identity = IntegerField(verbose_name='身份', choices=IDENTITY, default=1)
+    identity = IntegerField(verbose_name='请求的身份', choices=IDENTITY, default=1)
+
+    role = IntegerField(verbose_name="分配的身份", choices=IDENTITY, default=4)
 
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"username": self.username})
@@ -31,13 +31,12 @@ class User(AbstractUser):
         return self.name
 
     @cached_property
-    def get_identity(self):
-        """获取用户身份"""
-        return self.identity
+    def get_role(self):
+        """获取用户角色"""
+        return self.role
 
     def __str__(self):
         return self.username
-
 
     def register(self):
         """用户注册，后台需要审核"""

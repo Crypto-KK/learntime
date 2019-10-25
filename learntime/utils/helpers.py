@@ -5,7 +5,7 @@ from django.core.exceptions import PermissionDenied, ImproperlyConfigured
 from django.http import HttpResponseBadRequest
 from django.views.generic.base import View
 
-from learntime.users.enums import UserEnum
+from learntime.users.enums import RoleEnum
 
 
 def ajax_required(func):
@@ -33,54 +33,50 @@ class AuthorRequiredMixin(View):
         return super(AuthorRequiredMixin, self).dispatch(request, *args, **kwargs)
 
 
-class GroupRequiredMixin(AccessMixin):
-    """验证用户是否在该组中"""
-    group_required = None
+class RoleRequiredMixin(View):
+    """角色权限控制"""
+    role_required = ()
 
-    def get_group_required(self):
+    def get_role_required(self):
         """
         重写该方法必须返回一个可迭代对象
         """
-        if self.group_required is None:
+        if self.role_required is None:
             raise ImproperlyConfigured(
-                '{0} is missing the group_required attribute. Define {0}.group_required, or override '
-                '{0}.get_group_required().'.format(self.__class__.__name__)
+                '{0} is missing the role_required attribute. Define {0}.role_required, or override '
+                '{0}.role_required().'.format(self.__class__.__name__)
             )
-        if isinstance(self.group_required, str):
-            groups = (self.group_required,)
+        if isinstance(self.role_required, str):
+            roles = (self.role_required,)
         else:
-            groups = self.group_required
-        return groups
+            roles = self.role_required
+        return roles
+
 
     def has_permission(self):
-        """
-        查询用户是否在该组中
-        """
-        groups = self.get_group_required()
-        current_user_group_name = self.request.user.groups.all().prefetch_related("permissions")[0].name
-        if current_user_group_name in groups:
+
+        roles = self.get_role_required()
+        if self.request.user.role in roles:
             return True
-        else:
-            return False
+        return False
 
     def dispatch(self, request, *args, **kwargs):
         if not self.has_permission():
-            return self.handle_no_permission()
+            raise PermissionDenied("没有权限")
         return super().dispatch(request, *args, **kwargs)
 
 
-class RootRequiredMixin(GroupRequiredMixin):
-    group_required = (UserEnum.ROOT.value, UserEnum.SCHOOL.value, UserEnum.ACADEMY.value,
-                      UserEnum.STUDENT.value,)
+class RootRequiredMixin(RoleRequiredMixin):
+    role_required = (RoleEnum.ROOT.value, )
 
 
-class SchoolRequiredMixin(GroupRequiredMixin):
-    group_required = (UserEnum.SCHOOL.value, UserEnum.ACADEMY.value, UserEnum.STUDENT.value,)
+class SchoolRequiredMixin(RoleRequiredMixin):
+    role_required = (RoleEnum.SCHOOL.value, )
 
 
-class AcademyRequiredMixin(GroupRequiredMixin):
-    group_required = (UserEnum.ACADEMY.value, UserEnum.STUDENT.value,)
+class AcademyRequiredMixin(RoleRequiredMixin):
+    role_required = (RoleEnum.ACADEMY.value, )
 
 
-class StudentRequiredMixin(GroupRequiredMixin):
-    group_required = (UserEnum.STUDENT.value, )
+class StudentRequiredMixin(RoleRequiredMixin):
+    role_required = (RoleEnum.STUDENT.value,)

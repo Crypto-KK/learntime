@@ -1,7 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
@@ -12,9 +11,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView
 from django.views.generic.base import View
 
-from learntime.users.enums import UserEnum
+from learntime.users.enums import RoleEnum
 from learntime.users.forms import LoginForm, RegisterForm, UserForm
-from learntime.utils.helpers import AuthorRequiredMixin, GroupRequiredMixin
+from learntime.utils.helpers import AuthorRequiredMixin, RoleRequiredMixin
 
 User = get_user_model() # 惰性获取User对象
 
@@ -73,7 +72,7 @@ def register_view(request):
         return render(request, 'users/register.html', {'form': form})
 
 
-class AdminApplyList(GroupRequiredMixin, ListView):
+class AdminApplyList(RoleRequiredMixin, ListView):
     """等待审核的用户列表
 
     需要ROOT、校级的权限
@@ -81,7 +80,7 @@ class AdminApplyList(GroupRequiredMixin, ListView):
     template_name = "users/admin_apply.html"
     context_object_name = "admins"
     paginate_by = 20
-    group_required = (UserEnum.ROOT.value, UserEnum.SCHOOL.value)
+    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=None, **kwargs)
@@ -94,7 +93,7 @@ class AdminApplyList(GroupRequiredMixin, ListView):
         return User.objects.filter(is_active=False)
 
 
-class AdminList(GroupRequiredMixin, ListView):
+class AdminList(RoleRequiredMixin, ListView):
     """管理员列表页
 
     需要ROOT、校级、学院级的权限
@@ -102,26 +101,26 @@ class AdminList(GroupRequiredMixin, ListView):
     template_name = "users/admin_list.html"
     context_object_name = "admins"
     paginate_by = 20
-    group_required = (UserEnum.ROOT.value, UserEnum.SCHOOL.value, UserEnum.ACADEMY.value)
+    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value)
 
     def get_queryset(self):
         """按照不同权限查看不同的管理员"""
-        group_name = self.request.user.groups.all()[0].name
-        if group_name == UserEnum.ROOT.value or group_name == UserEnum.SCHOOL.value:
+        role = self.request.user.role
+        if role == RoleEnum.ROOT.value or role == RoleEnum.SCHOOL.value:
             return User.objects.filter(is_active=True)
-        elif group_name == UserEnum.ACADEMY.value:
+        elif role == RoleEnum.ACADEMY.value:
             return User.objects.filter(
-                groups__name=UserEnum.ACADEMY.value, is_active=True)
+                role=RoleEnum.ACADEMY.value, is_active=True)
         else:
             return User.objects.none()
 
 
-class AdminDetail(GroupRequiredMixin, DetailView):
+class AdminDetail(RoleRequiredMixin, DetailView):
     """管理员详情页
 
     需要ROOT、校级的权限
     """
-    group_required = (UserEnum.ROOT.value, UserEnum.SCHOOL.value)
+    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
     context_object_name = 'admin'
     template_name = "users/admin_detail.html"
     model = User
@@ -143,12 +142,12 @@ class AdminUpdateView(LoginRequiredMixin, AuthorRequiredMixin, UpdateView):
         return reverse("index")
 
 
-class AdminDeleteView(GroupRequiredMixin, DeleteView):
+class AdminDeleteView(RoleRequiredMixin, DeleteView):
     """删除管理员
 
     此操作需要ROOT或校级的权限
     """
-    group_required = (UserEnum.ROOT.value, UserEnum.SCHOOL.value, )
+    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, )
     model = User
     template_name = "users/admin_delete.html"
     context_object_name = "admin"
@@ -158,22 +157,21 @@ class AdminDeleteView(GroupRequiredMixin, DeleteView):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class ApplyConfirmView(GroupRequiredMixin, View):
+class ApplyConfirmView(RoleRequiredMixin, View):
     """批准用户注册为管理员
 
     需要ROOT、校级、的权限
     """
-    group_required = (UserEnum.ROOT.value, UserEnum.SCHOOL.value, )
+    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, )
 
     def post(self, request):
         try:
             data = request.body.decode("utf-8").split("&")
-            id = data[0].split("=")[1]
+            role_id = data[0].split("=")[1]
             username = data[1].split("=")[1]
 
-            group = Group.objects.get(pk=id)  # 获取组
             user = User.objects.get(username=username)
-            user.groups.add(group)  # 用户加入组
+            user.role = role_id  # 增加用户权限
             user.is_active = True  # 激活用户
             user.save()
 

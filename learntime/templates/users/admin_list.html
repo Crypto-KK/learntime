@@ -32,14 +32,14 @@
                         <th>年级</th>
                         <th>班级</th>
                         <th>上次登录</th>
-                        <th>组</th>
+                        <th>权限</th>
 
                         <th>操作</th>
 
                       </tr>
                     </thead>
                     <tbody>
-                    {% with group_name=request.user.groups.all.0.name %}
+                    {% with role=request.user.role %}
                       {% for admin in admins %}
                           <tr>
                           <td>{{ admin.name }}</td>
@@ -50,15 +50,13 @@
 
                           <td>{{ admin.last_login }}</td>
                           <td>
-                            {% for group in admin.groups.all %}
-                              {{ group.name }}
-                            {% endfor %}
+                            {{ admin.get_role_display }}
 
                           </td>
 
                           <td>
 
-                            {% if group_name == "超级管理员" or group_name == "校级" %}
+                            {% if role == 1 or role == 2 %}
                               <a href="{% url 'users:admin_detail' admin.pk %}" class="btn btn-success">查看</a>
                               <a href="{% url 'users:admin_delete' admin.pk %}" class="btn btn-danger">删除</a>
                             {% endif %}
