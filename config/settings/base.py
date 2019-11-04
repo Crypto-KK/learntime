@@ -71,6 +71,9 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "learntime.users.apps.UsersConfig",
+    "learntime.student.apps.StudentConfig",
+    "learntime.activity.apps.ActivityConfig",
+    "learntime.operation.apps.OperationConfig"
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

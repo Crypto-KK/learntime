@@ -16,6 +16,7 @@ urlpatterns = [
     path('testregister', TemplateView.as_view(template_name='users/register.html'), name='reg'),
 
     path("users/", include("learntime.users.urls", namespace="users")),
+    path("students/", include("learntime.student.urls", namespace="students")),
     path("permission/", admin.site.urls)
 
 
