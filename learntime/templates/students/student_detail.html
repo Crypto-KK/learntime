@@ -28,17 +28,18 @@
               <p class="card-text">学院：{{ student.academy }}</p>
               <p class="card-text">年级：{{ student.grade }}</p>
               <p class="card-text">班级：{{ student.clazz }}</p>
-              <p class="card-text">其他信息：{{ student.info }}</p>
               <p class="card-text">总学时：{{ student.credit }}</p>
               <p class="card-text">创新创业学时：{{ student.cxcy_credit }}</p>
               <p class="card-text">思想道德学时：{{ student.sxdd_credit }}</p>
               <p class="card-text">法律学时：{{ student.fl_credit }}</p>
               <p class="card-text">文体学时：{{ student.wt_credit }}</p>
               <p class="card-text">心理学时：{{ student.xl_credit }}</p>
-
+              <a class="btn btn-primary" href="{% url 'students:students' %}">返回</a>
             </div>
           </div>
       </div>
+
+
     </div>
   </div>
 

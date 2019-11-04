@@ -16,27 +16,61 @@
 
     <section class="tables">
       <div class="container-fluid">
+
         <div class="row">
-        </div>
-        <div class="row">
+           <!-- Inline Form-->
           <div class="col-lg-12">
-{##}
-{#            <button class="btn btn-info btn-sm">导入</button>#}
-{#            <button class="btn btn-secondary btn-sm">导出</button>#}
-
-
             <div class="card">
+              <div class="card-header d-flex align-items-center">
+                <h3 class="h4">筛选框</h3>
+              </div>
               <div class="card-body">
-                  <div class="btn-group">
+                <div class="row">
+                  <div class="col-lg-4">
+                    <form class="form-inline">
+                  <div class="form-group">
+                    <label for="inlineFormInput" class="sr-only">搜索学号或姓名</label>
+                    <input id="inlineFormInput" name="uid" type="text" placeholder="搜索学号" class="mr-3 form-control">
+                  </div>
+                  <div class="form-group">
+                    <button type="submit" class="btn btn-primary">搜索</button>
+                  </div>
+
+                </form>
+                  </div>
+                  <div class="col-lg-5">
+                    <span>筛选：</span>
+                    <div class="btn-group">
                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       筛选学院
                     </button>
                     <div class="dropdown-menu">
-                      <a class="dropdown-item" href="#">Action</a>
-                      <a class="dropdown-item" href="#">Another action</a>
-                      <a class="dropdown-item" href="#">Something else here</a>
+                      {% for academy in academy_list %}
+                        <a class="dropdown-item" href="#">{{ academy }}</a>
+                      {% endfor %}
                     </div>
                   </div>
+                  </div>
+                  <div class="col-lg-3">
+
+
+                      <button class="btn btn-info">导入数据</button>
+                      <button class="btn btn-secondary">导出数据</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-12">
+{##}
+
+
+
+            <div class="card">
+
+              <div class="card-body">
+
                   <a href="{% url 'students:student_create' %}" class="btn btn-outline-success pull-right">添加学生</a>
 
                 <div class="table-responsive">
@@ -49,6 +83,12 @@
                         <th>年级</th>
                         <th>班级</th>
                         <th>总学时</th>
+                        <th>文体</th>
+                        <th>法律</th>
+                        <th>心理</th>
+                        <th>创新创业</th>
+                        <th>思想道德</th>
+
                         <th>操作</th>
 
                       </tr>
@@ -63,13 +103,19 @@
                           <td>{{ student.grade }}</td>
                           <td>{{ student.clazz }}</td>
                           <td style="color: blue">{{ student.credit }}</td>
+                          <td style="color: blue">{{ student.wt_credit }}</td>
+                          <td style="color: blue">{{ student.fl_credit }}</td>
+                          <td style="color: blue">{{ student.xl_credit }}</td>
+                          <td style="color: blue">{{ student.cxcy_credit }}</td>
+                          <td style="color: blue">{{ student.sxdd_credit }}</td>
+
 
                           <td>
 
                             {% if role == 1 or role == 2 %}
-                              <a href="{% url 'students:student_detail' student.pk %}" class="btn btn-success">查看</a>
-                              <a href="{% url 'students:student_update' student.pk %}" class="btn btn-warning">编辑</a>
-                              <a href="{% url 'students:student_delete' student.pk %}" class="btn btn-danger">删除</a>
+                              <a href="{% url 'students:student_detail' student.pk %}" class="btn btn-success btn-sm">查看</a>
+                              <a href="{% url 'students:student_update' student.pk %}" class="btn btn-warning btn-sm">编辑</a>
+                              <a href="{% url 'students:student_delete' student.pk %}" class="btn btn-danger btn-sm ">删除</a>
                             {% endif %}
                           </td>
                           </tr>
