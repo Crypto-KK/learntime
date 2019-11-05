@@ -1,6 +1,6 @@
 from functools import wraps
 
-from django.contrib.auth.mixins import AccessMixin
+from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
 from django.core.exceptions import PermissionDenied, ImproperlyConfigured
 from django.http import HttpResponseBadRequest
 from django.views.generic.base import View
@@ -61,6 +61,8 @@ class RoleRequiredMixin(View):
         return False
 
     def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
         if not self.has_permission():
             raise PermissionDenied("没有权限")
         return super().dispatch(request, *args, **kwargs)

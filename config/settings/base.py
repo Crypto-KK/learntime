@@ -67,14 +67,15 @@ THIRD_PARTY_APPS = [
     # "allauth.account",
     # "allauth.socialaccount",
     "sorl.thumbnail",
+    "learntime.DjangoUeditor"
 ]
 
 LOCAL_APPS = [
     "learntime.users.apps.UsersConfig",
     "learntime.student.apps.StudentConfig",
     "learntime.activity.apps.ActivityConfig",
-    "learntime.operation.apps.OperationConfig"
-    # Your stuff: custom apps go here
+    "learntime.operation.apps.OperationConfig",
+
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

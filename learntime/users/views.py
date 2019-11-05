@@ -17,6 +17,7 @@ from learntime.utils.helpers import AuthorRequiredMixin, RoleRequiredMixin
 
 User = get_user_model() # 惰性获取User对象
 
+
 def login_view(request):
     """登录视图
 

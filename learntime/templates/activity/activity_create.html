@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+    发布活动
+{% endblock %}
+{% block header_name %}
+    发布活动
+{% endblock %}
+{% block body %}
+      <!-- Breadcrumb-->
+    <div class="breadcrumb-holder container-fluid">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'activities:activities' %}">活动管理</a></li>
+      <li class="breadcrumb-item active">发布活动</li>
+    </ul>
+    </div>
+
+  <br>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <form id="activity_form" action="{% url 'activities:activity_create' %}" method="post">
+          {% csrf_token %}
+          {{ form.media }}
+          {{ form|crispy }}
+        </form>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary" id="button-activity">发布活动</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block js %}
+  <script>
+    $(function () {
+        $('#button-activity').click(function () {
+            $('#activity_form').submit();
+            {#alert("发布活动成功！")#}
+        })
+    })
+  </script>
+{% endblock %}

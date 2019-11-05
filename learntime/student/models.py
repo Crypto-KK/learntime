@@ -20,7 +20,7 @@ class Student(CreatedUpdatedMixin, models.Model):
     cxcy_credit = models.FloatField(default=0, verbose_name="创新创业学时")
     sxdd_credit = models.FloatField(default=0, verbose_name="思想道德学时")
     fl_credit = models.FloatField(default=0, verbose_name="法律学时")
-    wt_credit = models.FloatField(default=0, verbose_name="问题学时")
+    wt_credit = models.FloatField(default=0, verbose_name="文体学时")
     xl_credit = models.FloatField(default=0, verbose_name="心理学时")
 
     class Meta:
