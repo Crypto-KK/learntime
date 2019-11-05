@@ -21,6 +21,7 @@ $(function () {
     }
   });
 
+  //$('#bulk-delete-btn').css("display", "none");
   $('#checkAll').click(function () {
       $("input[name='student-checkbox']").prop("checked", this.checked);
 
@@ -90,7 +91,7 @@ $(function () {
       $('#select-btn').text("年级");
       $('#inlineFormInput').attr({
           "placeholder": "搜索年级",
-          "name": "academy"
+          "name": "grade"
       });
   });
   $('#select-clazz').click(function () {
@@ -120,9 +121,18 @@ $(function () {
   }
 
   $('.page-link').each(function () {
+      // 分页时携带参数
       var oldHref = $(this).attr("href");
       newHref = oldHref + "&" + concatQuery;
       $(this).attr("href", newHref);
   });
+
+
+  $('#reset-select').click(function () {
+      window.location.href = "/students/"
+  });
+
+
+
 
 });

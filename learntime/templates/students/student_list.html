@@ -43,28 +43,20 @@
 
                     </div>
                   </div>
-                      <div class="form-group">
+                      <div class="btn-group">
+                        <div class="form-group">
                         <label for="inlineFormInput" class="sr-only">搜索学号或姓名</label>
                         <input id="inlineFormInput" name="uid" type="text" placeholder="搜索学号" class="mr-3 form-control">
                       </div>
-                      <div class="form-group">
+                      <div class="btn-group">
                         <button type="submit" class="btn btn-primary">搜索</button>
-                        <button type="submit" class="btn btn-info">重置</button>
+                        <button type="button" class="btn btn-info" id="reset-select">重置</button>
                       </div>
+                      </div>
+
                     </form>
                   </div>
                   <div class="col-lg-4">
-                    <span>筛选：</span>
-                    <div class="btn-group">
-                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      筛选学院
-                    </button>
-                    <div class="dropdown-menu">
-                      {% for academy in academy_list %}
-                        <a class="dropdown-item" href="#">{{ academy }}</a>
-                      {% endfor %}
-                    </div>
-                  </div>
                   </div>
                   <div class="col-lg-3">
 
@@ -87,7 +79,7 @@
                                 {{ form.as_p }}
 
                                 <p class="help-block">按照(学号,姓名,学院,年级,班级,总学时,文体学时,法律学时,心理学时,创新创业学时,思想道德学时)排列</p>
-                                <input type="submit" class="btn btn-primary" value="上传excel文件"/>
+                                <input type="submit" class="btn btn-primary" value="导入"/>
                                 <button type="button" class="btn btn-default pull-right" data-dismiss="modal">取消</button>
 
                               </form>
@@ -110,6 +102,18 @@
             <div class="card">
               <div class="card-header">
                 &nbsp;&nbsp;&nbsp;<input type="checkbox" id="checkAll" name='CheckAll'>
+                <div class="btn-group">
+                    &nbsp;&nbsp;
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      筛选学院
+                    </button>
+                    <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'students:students' %}">全部</a>
+                      {% for academy in academy_list %}
+                        <a class="dropdown-item" href="?academy={{ academy }}" id="auto-select-academy">{{ academy }}</a>
+                      {% endfor %}
+                    </div>
+                  </div>
                 &nbsp;<a href="#" class="btn btn-danger" id="bulk-delete-btn">删除所选学生</a>
                 <a href="{% url 'students:student_create' %}" class="btn btn-outline-success pull-right">添加学生</a>
               </div>
