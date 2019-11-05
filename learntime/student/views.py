@@ -1,10 +1,11 @@
 from django.conf import settings
 from django.db.models import Count
-from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.http import JsonResponse, HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views.generic.base import View
+
+from io import StringIO, BytesIO
 
 from learntime.student.forms import StudentForm, StudentExcelForm
 from learntime.student.models import Student, StudentFile
@@ -95,41 +96,79 @@ class StudentExcelImportView(RoleRequiredMixin, View):
     role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
 
     def post(self, request):
-        form = StudentExcelForm(request.POST, request.FILES)
-        if form.is_valid():
-            excel_file = form.cleaned_data['excel_file']
-            file_obj = StudentFile.objects.create(excel_file=excel_file)
+        form = StudentExcelForm(request.POST, request.FILES) # 获取提交后的表单
+        if form.is_valid(): # 表单校验通过
+            excel_file = form.cleaned_data['excel_file'] # 获取excel文件字段
+            file_obj = StudentFile.objects.create(excel_file=excel_file) # 获取数据库记录
 
             import xlrd
-            excel_file_name = settings.MEDIA_ROOT + "/" + str(file_obj.excel_file)
+            excel_file_name = settings.MEDIA_ROOT + "/" + str(file_obj.excel_file) # 生成文件路径
             try:
-                workbook = xlrd.open_workbook(
-                    excel_file_name
-                )
-                table = workbook.sheets()[0]
-                nrows = table.nrows
-                for _ in range(1, nrows):
-                    row = table.row_values(_)
+                workbook = xlrd.open_workbook(excel_file_name) # 使用xlrd打开excel文件
+                table = workbook.sheets()[0] # 获取第一个工作薄
+                nrows = table.nrows # 获取总行数
+                for _ in range(1, nrows): # 从第二行开始导入数据
+                    row = table.row_values(_) # 获取一条记录
                     student = Student.objects.create(
-                        uid=row[0],
-                        name=row[1],
-                        academy=row[2],
-                        grade=row[3],
-                        clazz=row[4],
-                        credit=row[5],
-                        wt_credit=row[6],
-                        fl_credit=row[7],
-                        xl_credit=row[8],
-                        cxcy_credit=row[9],
-                        sxdd_credit=row[10]
-                    )
-                    student.save()
-            except Exception as e:
-                return JsonResponse({"status": "fail", "reason": "导入错误！"})
+                        uid=row[0], name=row[1], academy=row[2],
+                        grade=row[3], clazz=row[4], credit=row[5],
+                        wt_credit=row[6], fl_credit=row[7], xl_credit=row[8],
+                        cxcy_credit=row[9], sxdd_credit=row[10]
+                    ) # 创建一个学生实例
+                    student.save() # 保存
 
-            return redirect(reverse("students:students"))
+            except Exception as e: # 文件内容有误
+                return JsonResponse({"status": "fail", "reason": "导入失败！"})
 
-        else:
-            print(form.errors)
+            return JsonResponse({"status": "ok"})
 
+        else: # 文件格式错误
             return JsonResponse({"status": "fail", "reason": "必须为xls或xlsx格式！"})
+
+
+class StudentExcelExportView(RoleRequiredMixin, View):
+    """学生excel导出视图"""
+    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
+
+    def get(self, request):
+        import xlwt
+
+        workbook = xlwt.Workbook(encoding="utf-8") # 创建workbook实例
+        sheet = workbook.add_sheet("sheet1") # 创建工作薄1
+
+        # 写标题栏
+        sheet.write(0, 0, '学号')
+        sheet.write(0, 1, '姓名')
+        sheet.write(0, 2, '学院')
+        sheet.write(0, 3, '年级')
+        sheet.write(0, 4, '班级')
+        sheet.write(0, 5, '总学时')
+        sheet.write(0, 6, '文体学时')
+        sheet.write(0, 7, '法律学时')
+        sheet.write(0, 8, '心理学时')
+        sheet.write(0, 9, '创新创业学时')
+        sheet.write(0, 10, '思想道德学时')
+
+        # 写数据
+        row = 1
+        for student in Student.objects.all(): # 单条写入学生数据
+            sheet.write(row, 0, student.uid)
+            sheet.write(row, 1, student.name)
+            sheet.write(row, 2, student.academy)
+            sheet.write(row, 3, student.grade)
+            sheet.write(row, 4, student.clazz)
+            sheet.write(row, 5, student.credit)
+            sheet.write(row, 6, student.wt_credit)
+            sheet.write(row, 7, student.fl_credit)
+            sheet.write(row, 8, student.xl_credit)
+            sheet.write(row, 9, student.cxcy_credit)
+            sheet.write(row, 10, student.sxdd_credit)
+            row += 1
+
+        sio = BytesIO() # StringIO报错，使用BytesIO
+        workbook.save(sio)
+        sio.seek(0) # 定位到开始
+        response = HttpResponse(sio.getvalue(), content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment;filename=students.xls'
+        response.write(sio.getvalue())
+        return response

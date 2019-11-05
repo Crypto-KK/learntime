@@ -85,7 +85,7 @@
                                 {% csrf_token %}
                                 {{ form.as_p }}
 
-                                <p class="help-block">按照(学号,姓名,学院,年级,班级,总学时,文体学时,法律学时,心理学时,创新创业学时,思想道德学时)格式编排</p>
+                                <p class="help-block">按照(学号,姓名,学院,年级,班级,总学时,文体学时,法律学时,心理学时,创新创业学时,思想道德学时)排列</p>
                                 <input type="submit" class="btn btn-primary" value="上传excel文件"/>
                                 <button type="button" class="btn btn-default pull-right" data-dismiss="modal">取消</button>
 
@@ -96,7 +96,9 @@
                       </div>
 
 
-                      <button class="btn btn-secondary">导出数据</button>
+                      <a class="btn btn-secondary" href="{% url 'students:student_export' %}">
+                        <i class="fa fa-download">导出</i>
+                      </a>
                   </div>
                 </div>
 
@@ -104,7 +106,7 @@
             </div>
           </div>
           <div class="col-lg-12">
-{##}
+  {##}
 
 
 
@@ -181,14 +183,14 @@
   <script src="{% static 'js/jquery-form.js' %}"></script>
   <script>
     $(function () {
-        $('#student-import-form').ajaxForm(function (data) {
-            if (data.status === "fail") {
-                alert(data.reason)
-            } else {
-                alert("导入学生数据成功！");
-                window.location.reload()
-            }
-        })
+      $('#student-import-form').ajaxForm(function (data) {
+        if (data.status === "fail") {
+            alert(data.reason)
+        } else {
+            alert("导入学生数据成功！");
+            window.location.reload()
+        }
+      })
     })
   </script>
 {% endblock %}
