@@ -21,3 +21,4 @@ class StudentExcelForm(forms.ModelForm):
             raise forms.ValidationError("后缀必须为xls或xlsx!")
         return excel_file
 
+

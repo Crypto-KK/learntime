@@ -97,7 +97,7 @@
 
 
                       <a class="btn btn-secondary" href="{% url 'students:student_export' %}">
-                        <i class="fa fa-download">导出</i>
+                        <i class="fa fa-download">下载数据</i>
                       </a>
                   </div>
                 </div>
@@ -106,20 +106,20 @@
             </div>
           </div>
           <div class="col-lg-12">
-  {##}
-
-
-
             <div class="card">
-
+              <div class="card-header">
+                &nbsp;&nbsp;&nbsp;<input type="checkbox" id="checkAll" name='CheckAll'>
+                &nbsp;<a href="#" class="btn btn-danger" id="bulk-delete-btn">删除所选学生</a>
+                <a href="{% url 'students:student_create' %}" class="btn btn-outline-success pull-right">添加学生</a>
+              </div>
               <div class="card-body">
 
-                  <a href="{% url 'students:student_create' %}" class="btn btn-outline-success pull-right">添加学生</a>
 
                 <div class="table-responsive">
                   <table class="table table-striped table-hover table-bordered">
                     <thead>
                       <tr>
+                        <th>选择</th>
                         <th>学号</th>
                         <th>姓名</th>
                         <th>学院</th>
@@ -139,7 +139,8 @@
                     <tbody>
                     {% with role=request.user.role %}
                       {% for student in students %}
-                          <tr>
+                          <tr data-uid="{{ student.uid }}">
+                          <td><input type="checkbox" name="student-checkbox" value="{{ student.uid }}"></td>
                           <td style="font-weight: bold">{{ student.uid }}</td>
                           <td>{{ student.name }}</td>
                           <td>{{ student.academy }}</td>
@@ -151,12 +152,9 @@
                           <td style="color: blue">{{ student.xl_credit }}</td>
                           <td style="color: blue">{{ student.cxcy_credit }}</td>
                           <td style="color: blue">{{ student.sxdd_credit }}</td>
-
-
                           <td>
-
                             {% if role == 1 or role == 2 %}
-                              <a href="{% url 'students:student_detail' student.pk %}" class="btn btn-success btn-sm">查看</a>
+{#                              <a href="{% url 'students:student_detail' student.pk %}" class="btn btn-success btn-sm">查看</a>#}
                               <a href="{% url 'students:student_update' student.pk %}" class="btn btn-warning btn-sm">编辑</a>
                               <a href="{% url 'students:student_delete' student.pk %}" class="btn btn-danger btn-sm ">删除</a>
                             {% endif %}
@@ -181,17 +179,6 @@
 
 {% block js %}
   <script src="{% static 'js/jquery-form.js' %}"></script>
-  <script>
-    $(function () {
-      $('#student-import-form').ajaxForm(function (data) {
-        if (data.status === "fail") {
-            alert(data.reason)
-        } else {
-            alert("导入学生数据成功！");
-            window.location.reload()
-        }
-      })
-    })
-  </script>
+  <script src="{% static 'js/student.js' %}"></script>
 {% endblock %}
 

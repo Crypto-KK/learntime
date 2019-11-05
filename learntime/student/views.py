@@ -2,6 +2,8 @@ from django.conf import settings
 from django.db.models import Count
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views.generic.base import View
 
@@ -172,3 +174,18 @@ class StudentExcelExportView(RoleRequiredMixin, View):
         response['Content-Disposition'] = 'attachment;filename=students.xls'
         response.write(sio.getvalue())
         return response
+
+
+@method_decorator(csrf_exempt, "dispatch")
+class StudentBulkDeleteView(RoleRequiredMixin, View):
+    """学生excel导出视图"""
+    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
+
+    def post(self, request):
+        try:
+            student_list = request.POST['student_list'].split('-')
+            for uid in student_list:
+                student = Student.objects.get(pk=uid).delete()
+            return JsonResponse({"status": "ok"})
+        except Exception as e:
+            return JsonResponse({"status": "fail"})
