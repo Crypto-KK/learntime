@@ -1,10 +1,13 @@
+from django.conf import settings
 from django.db.models import Count
+from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic.base import View
 
-from learntime.student.forms import StudentForm
-from learntime.student.models import Student
+from learntime.student.forms import StudentForm, StudentExcelForm
+from learntime.student.models import Student, StudentFile
 from learntime.users.enums import RoleEnum
 from learntime.utils.helpers import RoleRequiredMixin
 
@@ -27,6 +30,7 @@ class StudentList(RoleRequiredMixin, ListView):
         for academy_dict in academy_list:
             academy_name_list.append(academy_dict['academy'])
         context['academy_list'] = list(set(academy_name_list))
+        context['form'] = StudentExcelForm()
         return context
 
     def get_queryset(self):
@@ -84,3 +88,48 @@ class StudentDelete(RoleRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse("students:students")
+
+
+class StudentExcelImportView(RoleRequiredMixin, View):
+    """学生excel导入视图"""
+    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
+
+    def post(self, request):
+        form = StudentExcelForm(request.POST, request.FILES)
+        if form.is_valid():
+            excel_file = form.cleaned_data['excel_file']
+            file_obj = StudentFile.objects.create(excel_file=excel_file)
+
+            import xlrd
+            excel_file_name = settings.MEDIA_ROOT + "/" + str(file_obj.excel_file)
+            try:
+                workbook = xlrd.open_workbook(
+                    excel_file_name
+                )
+                table = workbook.sheets()[0]
+                nrows = table.nrows
+                for _ in range(1, nrows):
+                    row = table.row_values(_)
+                    student = Student.objects.create(
+                        uid=row[0],
+                        name=row[1],
+                        academy=row[2],
+                        grade=row[3],
+                        clazz=row[4],
+                        credit=row[5],
+                        wt_credit=row[6],
+                        fl_credit=row[7],
+                        xl_credit=row[8],
+                        cxcy_credit=row[9],
+                        sxdd_credit=row[10]
+                    )
+                    student.save()
+            except Exception as e:
+                return JsonResponse({"status": "fail", "reason": "导入错误！"})
+
+            return redirect(reverse("students:students"))
+
+        else:
+            print(form.errors)
+
+            return JsonResponse({"status": "fail", "reason": "必须为xls或xlsx格式！"})

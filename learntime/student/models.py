@@ -31,3 +31,14 @@ class Student(CreatedUpdatedMixin, models.Model):
 
     def __str__(self):
         return self.uid
+
+
+class StudentFile(models.Model):
+    excel_file = models.FileField(upload_to="student/%Y/%m/%d/", verbose_name="学生文件")
+
+    class Meta:
+        verbose_name = "学生excel文件"
+        verbose_name_plural = verbose_name
+        db_table = "student_file"
+
+
