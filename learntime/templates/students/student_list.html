@@ -27,19 +27,19 @@
               </div>
               <div class="card-body">
                 <div class="row">
-                  <div class="col-lg-4">
+                  <div class="col-lg-5">
                     <form class="form-inline">
                       <div class="btn-group">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" id="select-btn" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       学号
                     </button>
                     <div class="dropdown-menu">
 
-                      <a class="dropdown-item" href="#">学号</a>
-                      <a class="dropdown-item" href="#">姓名</a>
-                      <a class="dropdown-item" href="#">学院</a>
-                      <a class="dropdown-item" href="#">年级</a>
-                      <a class="dropdown-item" href="#">班级</a>
+                      <a class="dropdown-item" href="#" id="select-uid">学号</a>
+                      <a class="dropdown-item" href="#" id="select-name">姓名</a>
+                      <a class="dropdown-item" href="#" id="select-academy">学院</a>
+                      <a class="dropdown-item" href="#" id="select-grade">年级</a>
+                      <a class="dropdown-item" href="#" id="select-clazz">班级</a>
 
                     </div>
                   </div>
@@ -49,10 +49,11 @@
                       </div>
                       <div class="form-group">
                         <button type="submit" class="btn btn-primary">搜索</button>
+                        <button type="submit" class="btn btn-info">重置</button>
                       </div>
                     </form>
                   </div>
-                  <div class="col-lg-5">
+                  <div class="col-lg-4">
                     <span>筛选：</span>
                     <div class="btn-group">
                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

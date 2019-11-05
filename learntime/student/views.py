@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views.generic.base import View
 
-from io import StringIO, BytesIO
+from io import BytesIO
 
 from learntime.student.forms import StudentForm, StudentExcelForm
 from learntime.student.models import Student, StudentFile
@@ -22,7 +22,7 @@ class StudentList(RoleRequiredMixin, ListView):
     """
     role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value)
     template_name = "students/student_list.html"
-    paginate_by = 10
+    paginate_by = 1
     context_object_name = "students"
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -40,8 +40,16 @@ class StudentList(RoleRequiredMixin, ListView):
         """按照不同权限查看不同的学生"""
         role = self.request.user.role
         if role == RoleEnum.ROOT.value or role == RoleEnum.SCHOOL.value:
-            if self.request.GET.get('uid', None) is not None:
+            if self.request.GET.get('uid') is not None:
                 return Student.objects.filter(uid=self.request.GET['uid'])
+            if self.request.GET.get('name') is not None:
+                return Student.objects.filter(name=self.request.GET['name'])
+            if self.request.GET.get('academy') is not None:
+                return Student.objects.filter(academy__contains=self.request.GET['academy'])
+            if self.request.GET.get('grade') is not None:
+                return Student.objects.filter(grade__contains=self.request.GET['grade'])
+            if self.request.GET.get('clazz') is not None:
+                return Student.objects.filter(clazz__contains=self.request.GET['clazz'])
             return Student.objects.all()
         elif role == RoleEnum.ACADEMY.value:
             return Student.objects.filter(academy=self.request.user.academy)

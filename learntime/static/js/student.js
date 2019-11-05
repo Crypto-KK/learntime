@@ -1,4 +1,17 @@
 $(function () {
+
+  function getQueryVariable(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+        }
+        return false;
+    }
+
+
   $('#student-import-form').ajaxForm(function (data) {
     if (data.status === "fail") {
         alert(data.reason)
@@ -47,5 +60,69 @@ $(function () {
               }
           })
       }
-  })
-})
+  });
+
+
+  $('#select-uid').click(function () {
+      $('#select-btn').text("学号");
+      $('#inlineFormInput').attr({
+          "placeholder": "搜索学号",
+          "name": "uid"
+      });
+  });
+
+  $('#select-name').click(function () {
+      $('#select-btn').text("姓名");
+      $('#inlineFormInput').attr({
+          "placeholder": "搜索姓名",
+          "name": "name"
+      });
+  });
+
+  $('#select-academy').click(function () {
+      $('#select-btn').text("学院");
+      $('#inlineFormInput').attr({
+          "placeholder": "搜索学院",
+          "name": "academy"
+      });
+  });
+  $('#select-grade').click(function () {
+      $('#select-btn').text("年级");
+      $('#inlineFormInput').attr({
+          "placeholder": "搜索年级",
+          "name": "academy"
+      });
+  });
+  $('#select-clazz').click(function () {
+      $('#select-btn').text("班级");
+      $('#inlineFormInput').attr({
+          "placeholder": "搜索班级",
+          "name": "clazz"
+      });
+  });
+
+  var concatQuery = "";
+  var uid = getQueryVariable("uid");
+  var name = getQueryVariable("name");
+  var grade = getQueryVariable("grade");
+  var clazz = getQueryVariable("clazz");
+  var academy = getQueryVariable("academy");
+  if (uid) {
+      concatQuery = "uid=" + uid;
+  } else if (name) {
+      concatQuery = "name=" + name;
+  } else if (grade) {
+      concatQuery = "grade=" + grade;
+  } else if (clazz) {
+      concatQuery = "clazz=" + clazz;
+  } else if (academy) {
+      concatQuery = "academy=" + academy;
+  }
+
+  $('.page-link').each(function () {
+      var oldHref = $(this).attr("href");
+      newHref = oldHref + "&" + concatQuery;
+      $(this).attr("href", newHref);
+  });
+
+});
