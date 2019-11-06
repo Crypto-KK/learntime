@@ -26,7 +26,7 @@
                 <div class="btn-group">
                     &nbsp;&nbsp;
                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      筛选学院
+                      筛选活动
                     </button>
                     <div class="dropdown-menu">
                     <a class="dropdown-item" href="{% url 'students:students' %}">全部</a>
@@ -35,7 +35,7 @@
                       {% endfor %}
                     </div>
                   </div>
-                &nbsp;<a href="#" class="btn btn-danger" id="bulk-delete-btn">删除所选活动</a>
+
                 <a href="{% url 'activities:activity_create' %}" class="btn btn-outline-success pull-right">发布活动</a>
               </div>
               <div class="card-body">
@@ -71,7 +71,7 @@
                           <td>
                             {% if role == 1 or role == 2 %}
 {#                              <a href="{% url 'students:student_detail' student.pk %}" class="btn btn-success btn-sm">查看</a>#}
-                              <a href="#" class="btn btn-warning btn-sm">编辑</a>
+                              <a href="{% url 'activities:activity_update' activity.pk %}" class="btn btn-warning btn-sm">编辑</a>
                             {% endif %}
                           </td>
                           </tr>

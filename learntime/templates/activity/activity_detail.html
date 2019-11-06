@@ -22,19 +22,27 @@
       <div class="offset-md-1 col-md-10 offset-md-1">
           <div class="card">
             <div class="card-body">
-              <h1 class="card-title text-center">{{ activity.name }}</h1>
-              <span>类别：{{ activity.credit_type }}</span>
-              <span>时间：{{ activity.time }}</span><br>
-              <span>参与者学时：{{ activity.score_player }}</span>
-              <span>工作人员学时：{{ activity.score_staff }}</span>
-              <span>观众学时：{{ activity.score_viewer }}</span>
-              <span>策划书：{{ activity.file }}</span>
-              <br>
-              <p>{{ activity.desc | safe }}</p>
+              <div class="text-center">
+                <h1 class="card-title text-center">{{ activity.name }}</h1>
+                  <span class="badge badge-dark">{{ activity.get_credit_type_display }}</span>
+                  <span class="badge badge-primary">参与者学时：{{ activity.score_player }}</span>
+                  <span class="badge badge-success">工作人员学时：{{ activity.score_staff }}</span>
+                  <span class="badge badge-info">观众学时：{{ activity.score_viewer }}</span>
+                <br>
+                  <span>活动时间：{{ activity.time }}</span><br>
 
-              <a class="btn btn-primary" href="{% url 'activities:activities' %}">返回</a>
-            </div>
-          </div>
+                  <p>策划书：{{ activity.file }} <button class="btn btn-primary btn-sm">下载</button> </p>
+                <hr>
+              </div>
+                  <div class="row">
+                    <div class="col-md-8 offset-md-4">
+                       <div class="center-align">{{ activity.desc | safe }}</div>
+                    </div>
+                  </div>
+
+
+                </div>
+              </div>
       </div>
 
 

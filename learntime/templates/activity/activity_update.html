@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+    修改活动
+{% endblock %}
+{% block header_name %}
+    活动管理
+{% endblock %}
+{% block body %}
+      <!-- Breadcrumb-->
+    <div class="breadcrumb-holder container-fluid">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'activities:activities' %}">活动管理</a></li>
+      <li class="breadcrumb-item active">修改活动</li>
+    </ul>
+    </div>
+
+  <br>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <form id="activity_form" action="{% url 'activities:activity_update' activity.pk %}" method="post">
+          {% csrf_token %}
+          {{ form.media }}
+          {{ form|crispy }}
+        </form>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary button-submit">确认修改</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+{% endblock %}
+{% block js %}
+  <script>
+    $(function () {
+        $('.button-submit').click(function () {
+            $('#activity_form').submit();
+            {#alert("更新学生资料成功！")#}
+        })
+    })
+  </script>
+{% endblock %}

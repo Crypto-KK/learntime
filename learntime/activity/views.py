@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
-from django.views.generic import ListView, CreateView, DetailView
+from django.views.generic import ListView, CreateView, DetailView, UpdateView
 
 from learntime.activity.forms import ActivityForm
 from learntime.activity.models import Activity
@@ -52,3 +52,19 @@ class ActivityDetail(LoginRequiredMixin, DetailView):
     model = Activity
     template_name = "activity/activity_detail.html"
     context_object_name = "activity"
+
+
+class ActivityUpdate(RoleRequiredMixin, UpdateView):
+    """修改活动"""
+    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
+    model = Activity
+    form_class = ActivityForm
+    template_name = "activity/activity_update.html"
+    context_object_name = "activity"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("activities:activities")
