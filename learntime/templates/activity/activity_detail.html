@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}
+    活动详情
+{% endblock %}
+{% block header_name %}
+    活动详情
+{% endblock %}
+{% block body %}
+      <!-- Breadcrumb-->
+    <div class="breadcrumb-holder container-fluid">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'activities:activities' %}">活动管理</a></li>
+      <li class="breadcrumb-item active">活动详情</li>
+    </ul>
+    </div>
+
+  <br>
+
+  <div class="container">
+    <div class="row">
+      <div class="offset-md-1 col-md-10 offset-md-1">
+          <div class="card">
+            <div class="card-body">
+              <h1 class="card-title text-center">{{ activity.name }}</h1>
+              <span>类别：{{ activity.credit_type }}</span>
+              <span>时间：{{ activity.time }}</span><br>
+              <span>参与者学时：{{ activity.score_player }}</span>
+              <span>工作人员学时：{{ activity.score_staff }}</span>
+              <span>观众学时：{{ activity.score_viewer }}</span>
+              <span>策划书：{{ activity.file }}</span>
+              <br>
+              <p>{{ activity.desc | safe }}</p>
+
+              <a class="btn btn-primary" href="{% url 'activities:activities' %}">返回</a>
+            </div>
+          </div>
+      </div>
+
+
+    </div>
+  </div>
+
+
+
+
+{% endblock %}
+

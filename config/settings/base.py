@@ -285,5 +285,5 @@ CKEDITOR_CONFIGS = {
         'width': 730,
     },
 }
-CKEDITOR_UPLOAD_PATH = 'activity/'
+CKEDITOR_UPLOAD_PATH = 'activity/images/'
 CKEDITOR_IMAGE_BACKEND = 'pillow'

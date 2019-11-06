@@ -47,10 +47,12 @@
                         <th>活动名称</th>
                         <th>活动时间</th>
                         <th>组织方</th>
+                        <th>发布者</th>
                         <th>参与者学时</th>
                         <th>工作人员学时</th>
                         <th>观众学时</th>
                         <th>是否审核</th>
+                        <th>操作</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -58,9 +60,10 @@
                       {% for activity in activities %}
                           <tr data-uid="{{ activity.uid }}">
                           <td><input type="checkbox" name="activity-checkbox" value="{{ activity.uid }}"></td>
-                          <td style="font-weight: bold">{{ activity.name }}</td>
+                          <td style="font-weight: bold"><a href="{% url 'activities:activity_detail' activity.pk %}">{{ activity.name }}</a></td>
                           <td>{{ activity.time }}</td>
                           <td>{{ activity.sponsor }}</td>
+                          <td>{{ activity.user.name }}</td>
                           <td style="color: blue">{{ activity.score_player }}</td>
                           <td style="color: blue">{{ activity.score_staff }}</td>
                           <td style="color: blue">{{ activity.score_viewer }}</td>

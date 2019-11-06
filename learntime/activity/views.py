@@ -1,5 +1,6 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, DetailView
 
 from learntime.activity.forms import ActivityForm
 from learntime.activity.models import Activity
@@ -44,3 +45,10 @@ class ActivityCreate(RoleRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse("activities:activities")
+
+
+class ActivityDetail(LoginRequiredMixin, DetailView):
+    """活动详情"""
+    model = Activity
+    template_name = "activity/activity_detail.html"
+    context_object_name = "activity"

@@ -31,10 +31,10 @@ class Activity(CreatedUpdatedMixin, models.Model):
     score_staff = models.FloatField(default=0, verbose_name="工作人员学时")
     score_viewer = models.FloatField(default=0, verbose_name="观众学时")
     sponsor = models.CharField(verbose_name="组织方", max_length=255)
-    time = models.DateTimeField(default=datetime.now, verbose_name="活动时间")
+    time = models.CharField(verbose_name="活动时间", max_length=255)
     credit_type = models.CharField(choices=TYPE, max_length=20, verbose_name="学时类别",
                                    default="n")
-    file = models.FileField(upload_to="activity/%Y/%m/%d/", verbose_name="活动策划表",
+    file = models.FileField(upload_to="activity/files/%Y/%m/%d/", verbose_name="活动策划表",
                             null=True, blank=True)
     is_verify = models.BooleanField(verbose_name="是否通过审核", default=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
