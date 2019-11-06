@@ -17,6 +17,8 @@ mysqlclient = "==1.4.2.post1"
 argon2-cffi = "==19.1.0"
 xlrd = "*"
 xlwt = "*"
+django-ckeditor = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.7"

@@ -1,10 +1,11 @@
 import uuid
 from datetime import datetime
 
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.db import models
 
-from learntime.DjangoUeditor.models import UEditorField
+#from learntime.DjangoUeditor.models import UEditorField
 from learntime.utils.models import CreatedUpdatedMixin
 
 
@@ -23,8 +24,9 @@ class Activity(CreatedUpdatedMixin, models.Model):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True,
                            editable=False, verbose_name="活动id")
     name = models.CharField(max_length=255, verbose_name="活动名称")
-    desc = UEditorField(verbose_name='活动内容', imagePath='activity/images/%Y/%m/%d/', width=800, height=350,
-                        filePath='activity/files/%Y/%m/%d/', default='')
+    # desc = UEditorField(verbose_name='活动内容', imagePath='activity/images/%Y/%m/%d/', width=800, height=350,
+    #                     filePath='activity/files/%Y/%m/%d/', default='')
+    desc = RichTextUploadingField(verbose_name="活动描述")
     score_player = models.FloatField(default=0, verbose_name="参与者学时")
     score_staff = models.FloatField(default=0, verbose_name="工作人员学时")
     score_viewer = models.FloatField(default=0, verbose_name="观众学时")

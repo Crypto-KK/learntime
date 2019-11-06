@@ -18,10 +18,10 @@ urlpatterns = [
     path("users/", include("learntime.users.urls", namespace="users")),
     path("students/", include("learntime.student.urls", namespace="students")),
     path("activities/", include("learntime.activity.urls", namespace="activities")),
-    path("permission/", admin.site.urls),
+    #path("permission/", admin.site.urls),
 
     path("ueditor/", include("learntime.DjangoUeditor.urls")),
-
+    path('ckeditor/', include('learntime.utils.ckeditor_urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

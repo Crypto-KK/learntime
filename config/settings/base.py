@@ -22,7 +22,7 @@ DEBUG = env.bool("DJANGO_DEBUG", False)
 # In Windows, this must be set to your system time zone.
 TIME_ZONE = "Asia/Shanghai"
 # https://docs.djangoproject.com/en/dev/ref/settings/#language-code
-LANGUAGE_CODE = "zh-Hans"
+LANGUAGE_CODE = "zh-hans"
 # https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
@@ -67,7 +67,9 @@ THIRD_PARTY_APPS = [
     # "allauth.account",
     # "allauth.socialaccount",
     "sorl.thumbnail",
-    "learntime.DjangoUeditor"
+    "learntime.DjangoUeditor",
+    "ckeditor",
+    "ckeditor_uploader"
 ]
 
 LOCAL_APPS = [
@@ -151,6 +153,7 @@ STATICFILES_FINDERS = [
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#media-root
 MEDIA_ROOT = str(APPS_DIR("media"))
+
 # https://docs.djangoproject.com/en/dev/ref/settings/#media-url
 MEDIA_URL = "/media/"
 
@@ -202,7 +205,7 @@ CSRF_COOKIE_HTTPONLY = False
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
 SECURE_BROWSER_XSS_FILTER = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
-X_FRAME_OPTIONS = "DENY"
+X_FRAME_OPTIONS = "SAMEORIGIN"
 
 # EMAIL
 # ------------------------------------------------------------------------------
@@ -262,3 +265,25 @@ EMAIL_PORT = env('DJANGO_EMAIL_PORT', default=465)
 EMAIL_HOST_USER = env('DJANGO_EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('DJANGO_EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = env('DJANGO_DEFAULT_FROM_EMAIL')
+
+
+# ckeditor配置
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Undo', "Redo"],
+            ['FontSize', ],
+            ['Bold', 'Italic', 'Underline', 'TextColor'],
+            ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+            # ['Link', 'Unlink'],
+            ['Image', 'Table'],
+            ['Preview', 'Source'],
+
+        ],
+        'height': 300,
+        'width': 730,
+    },
+}
+CKEDITOR_UPLOAD_PATH = 'activity/'
+CKEDITOR_IMAGE_BACKEND = 'pillow'
