@@ -67,9 +67,9 @@ THIRD_PARTY_APPS = [
     # "allauth.account",
     # "allauth.socialaccount",
     "sorl.thumbnail",
-    "learntime.DjangoUeditor",
     "ckeditor",
-    "ckeditor_uploader"
+    "ckeditor_uploader",
+    "rest_framework"
 ]
 
 LOCAL_APPS = [

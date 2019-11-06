@@ -1,11 +1,9 @@
 import uuid
-from datetime import datetime
 
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.db import models
 
-#from learntime.DjangoUeditor.models import UEditorField
 from learntime.utils.models import CreatedUpdatedMixin
 
 

@@ -174,5 +174,22 @@ $(document).ready(function () {
     });
 
 
+    $('#index-page').click(function () {
+        $('.left-link').each(function () {
+            $(this).removeClass("active")
+        });
+        $(this).addClass("active")
+    });
+
+    $('#register-page').click(function () {
+        $('.left-link').each(function () {
+            alert("a")
+            $(this).removeClass("active")
+
+        });
+        $(this).addClass("active")
+    })
+
+
 
 });
