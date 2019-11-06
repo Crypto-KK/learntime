@@ -11,11 +11,27 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView
 from django.views.generic.base import View
 
+from learntime.activity.models import Activity
+from learntime.student.models import Student
 from learntime.users.enums import RoleEnum
 from learntime.users.forms import LoginForm, RegisterForm, UserForm
 from learntime.utils.helpers import AuthorRequiredMixin, RoleRequiredMixin
 
 User = get_user_model() # 惰性获取User对象
+
+
+class IndexView(LoginRequiredMixin, View):
+    """首页视图"""
+    def get(self, request):
+        context = {
+            "student_nums": Student.objects.count(),
+            "activity_nums": Activity.objects.count(),
+            "admin_nums": User.objects.filter(is_active=True).count(),
+            "verifying_admin_nums": User.objects.filter(is_active=False).count(),
+            "activities": Activity.objects.all().order_by("-updated_at"),
+        }
+        if request.user.role == RoleEnum.ROOT.value or request.user.role == RoleEnum.SCHOOL.value:
+            return render(request, "front/index.html", context=context)
 
 
 def login_view(request):

@@ -36,6 +36,8 @@ class Activity(CreatedUpdatedMixin, models.Model):
                                    default="n")
     file = models.FileField(upload_to="activity/files/%Y/%m/%d/", verbose_name="活动策划表",
                             null=True, blank=True)
+    is_academy_verify = models.BooleanField(verbose_name="学院是否审核通过", default=False)
+    is_school_verify = models.BooleanField(verbose_name="学校是否审核通过", default=False)
     is_verify = models.BooleanField(verbose_name="是否通过审核", default=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                              verbose_name="发布者", null=True, blank=True)

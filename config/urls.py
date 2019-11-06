@@ -4,13 +4,14 @@ from django.urls import include, path
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from django.views import defaults as default_views
-from django.contrib.auth.decorators import login_required
 
-admin.site.site_title = "学时通权限管理系统"
-admin.site.site_header = "学时通权限管理系统"
+from learntime.users.views import IndexView
+
+# admin.site.site_title = "学时通权限管理系统"
+# admin.site.site_header = "学时通权限管理系统"
 
 urlpatterns = [
-    path("",  login_required(TemplateView.as_view(template_name='front/index.html')), name='index'),
+    path("",  IndexView.as_view(), name='index'),
 
     path('testlogin', TemplateView.as_view(template_name='users/login.html'), name='log'),
     path('testregister', TemplateView.as_view(template_name='users/register.html'), name='reg'),
@@ -20,7 +21,7 @@ urlpatterns = [
     path("activities/", include("learntime.activity.urls", namespace="activities")),
     #path("permission/", admin.site.urls),
 
-    path("ueditor/", include("learntime.DjangoUeditor.urls")),
+    #path("ueditor/", include("learntime.DjangoUeditor.urls")),
     path('ckeditor/', include('learntime.utils.ckeditor_urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

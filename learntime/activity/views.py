@@ -1,6 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
+from django.views.generic.base import View
 
 from learntime.activity.forms import ActivityForm
 from learntime.activity.models import Activity
@@ -68,3 +72,30 @@ class ActivityUpdate(RoleRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse("activities:activities")
+
+
+@method_decorator(csrf_exempt, "dispatch")
+class ActivityVerifyView(RoleRequiredMixin, View):
+    """批准审核接口"""
+    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value)
+
+    def post(self, request):
+        """
+        管理员、校级点击审核通过按钮，is_school_verify/is_verify = True
+        学院点击审核通过按钮，is_academy_verify/is_verify = True
+        """
+        role = int(request.POST['role'])
+        uid = request.POST['uid']
+        try:
+            activity = Activity.objects.get(pk=uid)
+            if role == RoleEnum.ROOT.value or role == RoleEnum.SCHOOL.value:
+                activity.is_verify = True
+                activity.is_school_verify = True
+                activity.save()
+            elif role == RoleEnum.ACADEMY.value:
+                # 学院点击审核通过按钮
+                pass
+        except Exception as e:
+            return JsonResponse({"status": "fail"})
+        else:
+            return JsonResponse({"status": "ok"})
