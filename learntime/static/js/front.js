@@ -173,23 +173,39 @@ $(document).ready(function () {
         return false;
     });
 
+    setMenuHighLight();
+    function setMenuHighLight() {
+        var pathname = window.location.pathname;
+        if (pathname === "/") {
+            removeMenuHighLight();
+            $('.index-page').addClass("active")
+        }
+        if (pathname.indexOf("/admin_apply") > -1) {
+            removeMenuHighLight();
+            $('.register-page').addClass("active")
+        }
 
-    $('#index-page').click(function () {
+        if (pathname.indexOf("/admins") > -1) {
+            removeMenuHighLight();
+            $('.admin-page').addClass("active")
+        }
+        if (pathname === "/activities/") {
+            removeMenuHighLight();
+            $('.activity-page').addClass("active");
+
+        }
+        if (pathname === "/students/") {
+            removeMenuHighLight();
+            $('.student-page').addClass("active")
+        }
+
+    }
+
+    function removeMenuHighLight() {
         $('.left-link').each(function () {
             $(this).removeClass("active")
         });
-        $(this).addClass("active")
-    });
-
-    $('#register-page').click(function () {
-        $('.left-link').each(function () {
-            alert("a")
-            $(this).removeClass("active")
-
-        });
-        $(this).addClass("active")
-    })
-
+    }
 
 
 });

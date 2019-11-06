@@ -86,28 +86,28 @@
           <span class="heading">系统管理</span>
 
           <ul class="list-unstyled">
-            <li class="active left-link"><a href="{% url 'index' %}" id="index-page"> <i class="icon-home"></i>首页 </a></li>
+            <li class="left-link index-page"><a href="{% url 'index' %}"> <i class="icon-home"></i>首页 </a></li>
 
             {% if role == 1 or role == 2 %}
-              <li class="left-link"><a href="{% url 'users:admin_apply' %}" id="register-page"> <i class="fa fa-spinner"></i>注册审核 </a></li>
+              <li class="left-link register-page"><a href="{% url 'users:admin_apply' %}"> <i class="fa fa-spinner"></i>注册审核 </a></li>
             {% endif %}
             {% if role == 1 or role == 2 or role == 3 %}
-              <li class="left-link"><a href="{% url 'users:admins' %}" id="admin-page"> <i class="fa fa-user-circle-o"></i>管理员 </a></li>
+              <li class="left-link admin-page"><a href="{% url 'users:admins' %}"> <i class="fa fa-user-circle-o"></i>管理员 </a></li>
             {% endif %}
 {#            {% if perms.main.add_user %}#}
 {#              <li class="admin-list"><a href="/permission/auth/group/"> <i class="icon-grid"></i>权限分配 </a></li>#}
 {#            {% endif %}#}
             {% if role == 1 or role == 2 or role == 3 %}
-              <li class="left-link"><a href="#" id="activity-verify-page"> <i class="icon-grid"></i>活动审批 </a></li>
+              <li class="left-link activity-verify-page"><a href="#"> <i class="icon-grid"></i>活动审批 </a></li>
             {% endif %}
           </ul><span class="heading">活动管理</span>
           <ul>
 
-            <li><a class="left-link" href="{% url 'activities:activities' %}" id="activity-page"> <i class="fa fa-cubes"></i>活动管理</a></li>
+            <li class="left-link activity-page" ><a href="{% url 'activities:activities' %}"> <i class="fa fa-cubes"></i>活动管理</a></li>
 
-            <li><a class="left-link" href="{% url 'students:students' %}" id="student-page"> <i class="fa fa-user-circle-o"></i>学生管理 </a></li>
-            <li><a class="left-link" href="#"> <i class="fa fa-bar-chart"></i>学时统计 </a></li>
-            <li><a class="left-link" href="#"> <i class="fa fa-cogs"></i>设置 </a></li>
+            <li class="left-link student-page" ><a href="{% url 'students:students' %}"> <i class="fa fa-user-circle-o"></i>学生管理 </a></li>
+            <li class="left-link" ><a href="#"> <i class="fa fa-bar-chart"></i>学时统计 </a></li>
+            <li class="left-link" ><a href="#"> <i class="fa fa-cogs"></i>设置 </a></li>
           </ul>
         {% endwith %}
         </nav>
