@@ -12,6 +12,7 @@ from io import BytesIO
 from learntime.student.forms import StudentForm, StudentExcelForm
 from learntime.student.models import Student, StudentFile
 from learntime.users.enums import RoleEnum
+from learntime.users.models import Academy
 from learntime.utils.helpers import RoleRequiredMixin
 
 
@@ -27,12 +28,8 @@ class StudentList(RoleRequiredMixin, ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=None, **kwargs)
-        academy_name_list = []
-        academy_list = Student.objects.all().values("academy").annotate(
-            count=Count("academy"))
-        for academy_dict in academy_list:
-            academy_name_list.append(academy_dict['academy'])
-        context['academy_list'] = list(set(academy_name_list))
+        academies = Academy.objects.values_list("name")
+        context['academy_list'] = [name[0] for name in academies]
         context['form'] = StudentExcelForm()
         return context
 

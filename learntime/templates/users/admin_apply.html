@@ -29,6 +29,7 @@
                         <th>姓名</th>
                         <th>邮箱</th>
                         <th>级别</th>
+                        <th>学院</th>
                         <th>操作</th>
 
                       </tr>
@@ -40,8 +41,9 @@
                           <td>{{ admin.name }}</td>
                           <td>{{ admin.email }}</td>
                           <td>{{ admin.get_identity_display }}</td>
-                          <td><button class="btn btn-success" data-toggle="modal" data-target="#Modal" data-username="{{ admin.username }}" id="confirm">通过</button>
-                          <button class="btn btn-danger">不通过</button>
+                          <td>{% if admin.academy %}{{ admin.academy }}{% else %}无{% endif %}</td>
+                          <td><button class="btn btn-success btn-sm confirmBtn" data-toggle="modal" data-target="#Modal" data-username="{{ admin.username }}">通过</button>
+                          <button class="btn btn-danger btn-sm">不通过</button>
                           </td>
                           </tr>
                       {% endfor %}
@@ -97,7 +99,7 @@
   <script>
     $(function () {
         var username = "";
-        $('#confirm').click(function () {
+        $('.confirmBtn').click(function () {
             username = $(this).attr("data-username")
         });
 

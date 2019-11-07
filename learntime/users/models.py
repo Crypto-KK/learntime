@@ -16,24 +16,16 @@ class User(AbstractUser):
 
     name = CharField(verbose_name="姓名", max_length=20)
     academy = CharField(verbose_name='学院', max_length=20, null=True, blank=True)
-    grade = CharField(verbose_name='年级', max_length=20, null=True, blank=True)
-    klass = CharField(verbose_name='班级', max_length=20, null=True, blank=True)
+    grade = CharField(verbose_name='年级', max_length=20, null=True, blank=True,
+                      help_text="请按照格式填写，例如(2019级)")
+    klass = CharField(verbose_name='班级', max_length=20, null=True, blank=True,
+                      help_text="填写格式按照 <软件工程1班> 填写")
     identity = IntegerField(verbose_name='请求的身份', choices=IDENTITY, default=1)
 
     role = IntegerField(verbose_name="分配的身份", choices=IDENTITY, default=4)
 
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"username": self.username})
-
-    @cached_property
-    def get_name(self):
-        """获取用户姓名"""
-        return self.name
-
-    @cached_property
-    def get_role(self):
-        """获取用户角色"""
-        return self.role
 
     def __str__(self):
         return self.username

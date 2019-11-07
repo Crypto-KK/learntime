@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django import forms
+from django.forms import fields, widgets
 
 from learntime.users.models import Academy
 
@@ -21,6 +22,8 @@ class RegisterForm(forms.ModelForm):
         if is_exists:
             raise forms.ValidationError("邮箱重复！")
         return email
+
+    academy = forms.CharField()
 
     class Meta:
         fields = ['username', 'name', 'email', 'password', 'identity']

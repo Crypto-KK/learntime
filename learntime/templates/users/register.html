@@ -25,24 +25,37 @@
               <input id="register-password" type="password" name="password" required data-msg="请输入密码" class="input-material">
               <label for="register-password" class="label-material">密码        </label>
             </div>
+            <div class="form-group" id="choose-academy">
+              <label for="inputState">选择所属学院</label>
+              <select id="inputState" class="form-control" name="academy">
+                {% for academy in academies %}
+                  <option value="{{ academy }}">{{ academy }}</option>
+                {% endfor %}
+
+              </select>
+            </div>
             <div class="form-group terms-conditions">
-{#              <input id="register-agree" name="registerAgree" type="checkbox" required value="1" data-msg="您必须同意协议" class="checkbox-template">#}
+              <div class="form-check form-check-inline">
                 <input id="register-school" name="identity" type="radio" required value="2" data-msg="" class="checkbox-template">
-              <label for="register-school">校级</label>
-                              <input id="register-school" name="identity" type="radio" required value="3" data-msg="" class="checkbox-template">
-              <label for="register-school">学院级</label>
-                              <input id="register-student" name="identity" type="radio" required value="4" data-msg="" class="checkbox-template" checked>
-              <label for="register-student">干部级</label>
+                <label for="register-school" class="form-check-label" >校级</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input id="register-academy" name="identity" type="radio" required value="3" data-msg="" class="checkbox-template">
+                <label for="register-academy" class="form-check-label" >学院级</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input id="register-student" name="identity" type="radio" required value="4" data-msg="" class="checkbox-template" checked>
+                <label for="register-student" class="form-check-label" >干部级</label>
+              </div>
 
             </div>
+
+
               {% csrf_token %}
 
-              {#            <div class="form-group terms-conditions">#}
-{#              <input id="register-agree" name="registerAgree" type="checkbox" required value="1" data-msg="您必须同意协议" class="checkbox-template">#}
-{#              <label for="register-agree">同意协议</label>#}
-{#            </div>#}
             <div class="form-group">
-              <button id="register" type="submit" name="registerSubmit" class="btn btn-primary">注册</button>
+                <!-- Button trigger modal -->
+                 <button id="register" type="submit" name="registerSubmit" class="btn btn-primary">注册</button>
                 {% if form.errors %}
                     {% for err in form.errors %}
                         {% ifequal err "username" %}
@@ -66,6 +79,20 @@
 {% endblock %}
 
 {% block js %}
+  <script>
+    $(function () {
 
+        $('#register-academy').click(function () {
+            $('#choose-academy').show()
+        });
+
+        $('#register-school').click(function () {
+            $('#choose-academy').hide()
+        });
+        $('#register-student').click(function () {
+            $('#choose-academy').show()
+        })
+    })
+  </script>
 
 {% endblock %}

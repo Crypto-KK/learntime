@@ -73,11 +73,11 @@
         <nav class="side-navbar">
           <!-- Sidebar Header-->
           <div class="sidebar-header d-flex align-items-center">
-            <div class="avatar"><img src="{% static 'img/avatar-1.jpg' %}" alt="..." class="img-fluid rounded-circle"></div>
+            <div class="avatar"><img src="{% static 'img/yangwenxuan.png' %}" alt="..." class="img-fluid rounded-circle"></div>
             <div class="title">
               <h1 class="h4">{{ request.user.name }}</h1>
               <p>{{ request.user.get_role_display }}</p>
-              <p><a href="{% url 'users:update_profile' request.user.pk %}">修改资料</a></p>
+{#              <p><a href="{% url 'users:update_profile' request.user.pk %}">修改资料</a></p>#}
             </div>
           </div>
           <!-- Sidebar Navidation Menus-->
@@ -97,7 +97,7 @@
 
                <li class="left-link student-page" ><a href="{% url 'students:students' %}"> <i class="fa fa-user-circle-o"></i>学生管理 </a></li>
             {% if role == 1 or role == 2 or role == 3 %}
-              <li class="left-link activity-verify-page"><a href="{% url 'activities:activity_verify' %}"> <i class="icon-grid"></i>活动审批 </a></li>
+              <li class="left-link activity-verify-page"><a href="{% url 'activities:activity_unverify' %}"> <i class="icon-grid"></i>活动审批 </a></li>
             {% endif %}
           </ul><span class="heading">活动管理</span>
           <ul>

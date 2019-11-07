@@ -30,6 +30,7 @@ class IndexView(LoginRequiredMixin, View):
             "admin_nums": User.objects.filter(is_active=True).count(),
             "verifying_admin_nums": User.objects.filter(is_active=False).count(),
             "activities": Activity.objects.all().order_by("-updated_at"),
+
         }
         if request.user.role == RoleEnum.ROOT.value or request.user.role == RoleEnum.SCHOOL.value:
             return render(request, "front/index.html", context=context)
@@ -73,17 +74,21 @@ def register_view(request):
     """
     if request.method == "GET":
         form = RegisterForm()
-        return render(request, 'users/register.html', {'form': form})
+        return render(request, 'users/register.html', {'form': form,
+                                                       "academies": Academy.objects.all()})
     elif request.method == 'POST':
         form = RegisterForm(request.POST)
-
         if form.is_valid():
+
             user = User(
                 username=form.cleaned_data['username'],
                 email = form.cleaned_data['email'],
                 name = form.cleaned_data['name'],
                 identity = form.cleaned_data['identity'],
             )
+            if form.cleaned_data['identity'] != 2:
+                user.academy = form.cleaned_data['academy']
+
             user.set_password(form.cleaned_data['password'])
             user.register()
             return render(request, 'users/register_success.html')
@@ -183,11 +188,12 @@ class AdminDetail(RoleRequiredMixin, DetailView):
     model = User
 
 
-class AdminUpdateView(LoginRequiredMixin, AuthorRequiredMixin, UpdateView):
+class AdminUpdateView(RoleRequiredMixin, UpdateView):
     """用户修改资料
 
     只允许修改自己的资料
     """
+    role_required = (RoleEnum.ROOT.value, )
     model = User
     context_object_name = "user"
     message = "资料修改成功"
@@ -226,13 +232,13 @@ class ApplyConfirmView(RoleRequiredMixin, View):
             data = request.body.decode("utf-8").split("&")
             role_id = data[0].split("=")[1]
             username = data[1].split("=")[1]
-
             user = User.objects.get(username=username)
             user.role = role_id  # 增加用户权限
             user.is_active = True  # 激活用户
             user.save()
 
-        except Exception:
+        except Exception as e:
+            print(e)
             return JsonResponse({"err": 1})
 
         else:

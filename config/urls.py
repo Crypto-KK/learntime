@@ -20,9 +20,6 @@ urlpatterns = [
     path("api/", include(router.urls)),
     path("",  IndexView.as_view(), name='index'),
 
-    path('testlogin', TemplateView.as_view(template_name='users/login.html'), name='log'),
-    path('testregister', TemplateView.as_view(template_name='users/register.html'), name='reg'),
-
     #学院管理
     path("academy/", AcademyList.as_view(), name="academy"),
     path("academy/create/", AcademyCreate.as_view(), name="academy_create"),

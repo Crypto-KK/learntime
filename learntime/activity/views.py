@@ -31,14 +31,14 @@ class ActivityList(RoleRequiredMixin, ListView):
         return Activity.objects.filter(user=self.request.user)
 
 
-class ActivityVerifyList(RoleRequiredMixin, ListView):
-    """活动审核列表页
+class ActivityUnVerifyList(RoleRequiredMixin, ListView):
+    """活动等待审核列表页
 
     需要ROOT、校级、学院级的权限
     """
     role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value,
                      RoleEnum.ACADEMY.value)
-    template_name = "activity/activity_verify_list.html"
+    template_name = "activity/activity_unverify_list.html"
     paginate_by = 20
     context_object_name = "activities"
 
@@ -46,9 +46,21 @@ class ActivityVerifyList(RoleRequiredMixin, ListView):
         """按照不同权限查看不同的活动"""
         role = self.request.user.role
         if role == RoleEnum.ROOT.value or role == RoleEnum.SCHOOL.value:
-            return Activity.objects.all().order_by("-time") #按照活动时间排序
+            return Activity.objects.filter(is_verify=False).order_by("-time") #按照活动时间排序
         elif role == RoleEnum.ACADEMY.value:
-            return Activity.objects.filter()
+            return Activity.objects.filter(is_verify=False)
+
+
+class ActivityVerifyList(ActivityUnVerifyList):
+    """活动审核通过的页面"""
+    template_name = "activity/activity_verify_list.html"
+    def get_queryset(self):
+        role = self.request.user.role
+        if role == RoleEnum.ROOT.value or role == RoleEnum.SCHOOL.value:
+            return Activity.objects.filter(is_verify=True).order_by("-time") #按照活动时间排序
+        elif role == RoleEnum.ACADEMY.value:
+            return Activity.objects.filter(is_verify=True)
+
 
 
 class ActivityCreate(RoleRequiredMixin, CreateView):
