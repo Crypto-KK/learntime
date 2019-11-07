@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django import forms
 
+from learntime.users.models import Academy
+
 User = get_user_model()
 
 
@@ -23,6 +25,12 @@ class RegisterForm(forms.ModelForm):
     class Meta:
         fields = ['username', 'name', 'email', 'password', 'identity']
         model = User
+
+
+class AcademyForm(forms.ModelForm):
+    class Meta:
+        model = Academy
+        fields = "__all__"
 
 
 class UserForm(forms.ModelForm):

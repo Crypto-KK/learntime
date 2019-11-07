@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AbstractUser
-from django.db.models import CharField, IntegerField
+from django.db.models import CharField, IntegerField, Model
 from django.urls import reverse
 from django.utils.functional import cached_property
 
@@ -51,3 +51,14 @@ class User(AbstractUser):
     class Meta:
         verbose_name = "管理员"
         verbose_name_plural = verbose_name
+
+
+class Academy(Model):
+    """学院数据库"""
+    name = CharField(max_length=50, verbose_name="学院名称")
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = "academy"
