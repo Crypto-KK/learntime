@@ -192,12 +192,17 @@ $(document).ready(function () {
         if (pathname === "/activities/") {
             removeMenuHighLight();
             $('.activity-page').addClass("active");
+        }
 
+        if (pathname === "/activities/activity-verify/") {
+            removeMenuHighLight();
+            $('.activity-verify-page').addClass("active");
         }
         if (pathname === "/students/") {
             removeMenuHighLight();
             $('.student-page').addClass("active")
         }
+
 
     }
 

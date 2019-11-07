@@ -5,7 +5,7 @@ from learntime.activity.models import Activity
 
 class ActivityForm(forms.ModelForm):
     class Meta:
-        exclude = ("user", "uid", "is_verify")
+        exclude = ("user", "uid", "is_verify", "is_academy_verify", "is_school_verify")
         model = Activity
 
     def clean_credit_type(self):

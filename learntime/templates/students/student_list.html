@@ -14,17 +14,20 @@
       <li class="breadcrumb-item active">学生管理</li>
     </ul>
     </div>
+    {% with role=request.user.role %}
 
     <section class="tables">
       <div class="container-fluid">
 
         <div class="row">
            <!-- Inline Form-->
+          {% if role == 1 or role == 2 %}
           <div class="col-lg-12">
             <div class="card">
               <div class="card-header d-flex align-items-center">
                 <h3 class="h4">筛选框</h3>
               </div>
+
               <div class="card-body">
                 <div class="row">
                   <div class="col-lg-5">
@@ -56,7 +59,8 @@
                     </form>
                   </div>
                   <div class="col-lg-4"></div>
-                  <div class="col-lg-3">
+                  {% if role == 1 %}
+                    <div class="col-lg-3">
                     <div class="pull-right">
                       <button class="btn btn-info" data-toggle="modal" data-target="#modal-in-class">
                         <i class="fa fa-caret-square-o-right" > 导入</i>
@@ -90,17 +94,23 @@
                     </div>
 
                   </div>
+                  {% endif %}
                 </div>
 
               </div>
             </div>
           </div>
+          {% endif %}
           <div class="col-lg-12">
             <div class="card">
               <div class="card-header">
+              {% if role == 3 %}
+              <h1>{{ request.user.academy }}</h1>
+              {% endif %}
+              {% if role == 1 or role == 2 %}
                 &nbsp;&nbsp;&nbsp;<input type="checkbox" id="checkAll" name='CheckAll'>
                 <div class="btn-group">
-                    &nbsp;&nbsp;
+
                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       筛选学院
                     </button>
@@ -111,15 +121,19 @@
                       {% endfor %}
                     </div>
                   </div>
+
                 &nbsp;<a href="#" class="btn btn-danger" id="bulk-delete-btn">删除所选学生</a>
-                <a href="{% url 'students:student_create' %}" class="btn btn-outline-success pull-right">添加学生</a>
+                  <a href="{% url 'students:student_create' %}" class="btn btn-outline-success pull-right">添加学生</a>
+              {% endif %}
               </div>
               <div class="card-body">
                 <div class="table-responsive">
                   <table class="table table-striped table-hover table-bordered">
                     <thead>
                       <tr>
-                        <th>选择</th>
+                        {% if role == 1 or role == 2 %}
+                          <th>选择</th>
+                        {% endif %}
                         <th>学号</th>
                         <th>姓名</th>
                         <th>学院</th>
@@ -135,10 +149,12 @@
                       </tr>
                     </thead>
                     <tbody>
-                    {% with role=request.user.role %}
+
                       {% for student in students %}
                           <tr data-uid="{{ student.uid }}">
+                          {% if role == 1 or role == 2 %}
                           <td><input type="checkbox" name="student-checkbox" value="{{ student.uid }}"></td>
+                          {% endif %}
                           <td style="font-weight: bold">{{ student.uid }}</td>
                           <td>{{ student.name }}</td>
                           <td>{{ student.academy }}</td>

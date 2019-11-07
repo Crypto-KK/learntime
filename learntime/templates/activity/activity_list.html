@@ -22,32 +22,18 @@
           <div class="col-lg-12">
             <div class="card">
               <div class="card-header">
-                &nbsp;&nbsp;&nbsp;<input type="checkbox" id="checkAll" name='CheckAll'>
-                <div class="btn-group">
-                    &nbsp;&nbsp;
-                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      筛选活动
-                    </button>
-                    <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{% url 'students:students' %}">全部</a>
-                      {% for academy in academy_list %}
-                        <a class="dropdown-item" href="?academy={{ academy }}" id="auto-select-academy">{{ academy }}</a>
-                      {% endfor %}
-                    </div>
-                  </div>
-
-                <a href="{% url 'activities:activity_create' %}" class="btn btn-outline-success pull-right">发布活动</a>
+                <h1 style="display: inline-block">共{{ activities.count }}个活动</h1>
+                <a href="{% url 'activities:activity_create' %}" class="btn btn-primary pull-right">发布活动</a>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
                   <table class="table table-striped table-hover table-bordered">
                     <thead>
                       <tr>
-                        <th>选择</th>
                         <th>活动名称</th>
-                        <th>活动时间</th>
+                        <th>发布时间</th>
                         <th>主办方</th>
-                        <th>发布者</th>
+                        <th>类别</th>
                         <th>参与者学时</th>
                         <th>工作人员学时</th>
                         <th>观众学时</th>
@@ -57,32 +43,13 @@
                     </thead>
                     <tbody>
                     {% with role=request.user.role %}
-                      <div class="modal fade" id="comfirmVerify" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="exampleModalLabel">温馨提醒</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                              </button>
-                            </div>
-                            <div class="modal-body">
-                              确认审核通过？
-                            </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                              <button type="button" class="btn btn-primary confirmBtn">确认</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                       {% for activity in activities %}
                           <tr data-uid="{{ activity.uid }}">
-                          <td><input type="checkbox" name="activity-checkbox" value="{{ activity.uid }}"></td>
                           <td style="font-weight: bold"><a href="{% url 'activities:activity_detail' activity.pk %}">{{ activity.name }}</a></td>
-                          <td>{{ activity.time }}</td>
+                          <td>{{ activity.updated_at }}</td>
                           <td>{{ activity.sponsor }}</td>
-                          <td>{{ activity.user.name }}</td>
+                          <td>{{ activity.get_credit_type_display }}</td>
+
                           <td style="color: blue">{{ activity.score_player }}</td>
                           <td style="color: blue">{{ activity.score_staff }}</td>
                           <td style="color: blue">{{ activity.score_viewer }}</td>
@@ -94,10 +61,12 @@
                               {% endif %}
                           </td>
                           <td>
-                            {% if role == 1 or role == 2 %}
-
-                              <button class="btn btn-success btn-sm verify" data-role="{{ role }}" data-uid="{{ activity.uid }}" data-toggle="modal" data-target="#comfirmVerify">审核通过</button>
+                            {% if activity.is_verify %}
+                              <a href="{% url 'activities:activity_detail' activity.pk %}" class="btn btn-primary btn-sm">查看</a>
+                              {% else %}
                               <a href="{% url 'activities:activity_update' activity.pk %}" class="btn btn-warning btn-sm">编辑</a>
+                              <a href="#" class="btn btn-danger btn-sm">删除</a>
+
                             {% endif %}
                           </td>
                           </tr>
@@ -116,48 +85,5 @@
     {% include 'pagination.html' %}
 {% endblock %}
 
-{% block js %}
-  <script>
-    $(function () {
-        var role = "";
-        var uid = "";
-        $('.verify').click(function () {
-            role = $(this).attr("data-role");
-            uid = $(this).attr("data-uid");
-
-        });
-
-        $('.confirmBtn').click(function () {
-           if (role !== "" && uid !== "") {
-             $.ajax({
-                url: "/activities/verify/",
-                cache: false,
-                method: "POST",
-                data: {
-                    role,
-                    uid
-                },
-                success: res => {
-                  if (res.status === "ok") {
-                      alert("审核通过！");
-                      window.location.reload();
-                  } else {
-                      alert("系统错误！");
-                  }
-                }
-              });
-           } else {
-               alert("err")
-           }
-
-
-        });
-
-
-
-    })
-
-  </script>
-{% endblock %}
 
 

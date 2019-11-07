@@ -32,7 +32,8 @@ class IndexView(LoginRequiredMixin, View):
         }
         if request.user.role == RoleEnum.ROOT.value or request.user.role == RoleEnum.SCHOOL.value:
             return render(request, "front/index.html", context=context)
-
+        else:
+            return render(request, "front/index.html")
 
 def login_view(request):
     """登录视图

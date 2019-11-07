@@ -16,7 +16,7 @@ from learntime.utils.helpers import RoleRequiredMixin
 
 
 class ActivityList(RoleRequiredMixin, ListView):
-    """活动列表页
+    """活动列表页 干部级可以在这里发布活动，查看自己的活动
 
     需要ROOT、校级、学院级的权限
     """
@@ -26,16 +26,29 @@ class ActivityList(RoleRequiredMixin, ListView):
     paginate_by = 20
     context_object_name = "activities"
 
+    def get_queryset(self):
+        """返回我发布的活动"""
+        return Activity.objects.filter(user=self.request.user)
+
+
+class ActivityVerifyList(RoleRequiredMixin, ListView):
+    """活动审核列表页
+
+    需要ROOT、校级、学院级的权限
+    """
+    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value,
+                     RoleEnum.ACADEMY.value)
+    template_name = "activity/activity_verify_list.html"
+    paginate_by = 20
+    context_object_name = "activities"
 
     def get_queryset(self):
-        """按照不同权限查看不同的学生"""
+        """按照不同权限查看不同的活动"""
         role = self.request.user.role
         if role == RoleEnum.ROOT.value or role == RoleEnum.SCHOOL.value:
             return Activity.objects.all().order_by("-time") #按照活动时间排序
         elif role == RoleEnum.ACADEMY.value:
-            pass
-        elif role == RoleEnum.STUDENT.value:
-            return Activity.objects.none()
+            return Activity.objects.filter()
 
 
 class ActivityCreate(RoleRequiredMixin, CreateView):

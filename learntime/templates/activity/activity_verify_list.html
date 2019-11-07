@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    活动审批
+{% endblock %}
+{% block header_name %}
+    活动审批
+{% endblock %}
+{% block body %}
+      <!-- Breadcrumb-->
+    <div class="breadcrumb-holder container-fluid">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+      <li class="breadcrumb-item active">活动审批</li>
+    </ul>
+    </div>
+
+    <section class="tables">
+      <div class="container-fluid">
+
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="card-header">
+                &nbsp;&nbsp;
+                <form action="" class="form-inline">
+                 <div class="btn-group">
+                        <div class="form-group">
+                        <label for="inlineFormInput" class="sr-only">搜索活动</label>
+                        <input id="inlineFormInput" name="uid" type="text" placeholder="搜索活动" class="mr-3 form-control">
+                      </div>
+                      <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">搜索</button>
+                        <button type="button" class="btn btn-info" id="reset-select">重置</button>
+                      </div>
+                 </div>
+                </form>
+
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                      <tr>
+                        <th>活动名称</th>
+                        <th>发布时间</th>
+                        <th>发布者</th>
+                        <th>主办方</th>
+                        <th>类别</th>
+                        <th>参与者学时</th>
+                        <th>工作人员学时</th>
+                        <th>观众学时</th>
+                        <th>审核</th>
+                        <th>操作</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% with role=request.user.role %}
+                      <div class="modal fade" id="comfirmVerify" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">温馨提醒</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              确认审核通过？
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                              <button type="button" class="btn btn-primary confirmBtn">确认</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {% for activity in activities %}
+                          <tr data-uid="{{ activity.uid }}">
+                          <td style="font-weight: bold"><a href="{% url 'activities:activity_detail' activity.pk %}">{{ activity.name }}</a></td>
+                          <td>{{ activity.updated_at }}</td>
+                          <td>{{ activity.user.name }}({{ activity.user.get_role_display }})</td>
+                          <td>{{ activity.sponsor }}</td>
+                          <td>{{ activity.get_credit_type_display }}</td>
+                          <td style="color: blue">{{ activity.score_player }}</td>
+                          <td style="color: blue">{{ activity.score_staff }}</td>
+                          <td style="color: blue">{{ activity.score_viewer }}</td>
+                          <td>
+                              {% if activity.is_verify %}
+                                <i class="fa fa-check" style="color: green"></i>
+                              {% else %}
+                                <i class="fa fa-remove" style="color: red"></i>
+                              {% endif %}
+                          </td>
+                          <td>
+
+                            {% if role == 1 or role == 2 %}
+                              {% if not activity.is_verify %}
+                                <button class="btn btn-success btn-sm verify" data-role="{{ role }}" data-uid="{{ activity.uid }}" data-toggle="modal" data-target="#comfirmVerify">批准</button>
+                                {% else %}
+                                <button class="btn btn-secondary btn-sm">已批准</button>
+                                {% endif %}
+                            {% endif %}
+                          </td>
+                          </tr>
+                      {% endfor %}
+                    {% endwith %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {% include 'pagination.html' %}
+{% endblock %}
+
+{% block js %}
+  <script>
+    $(function () {
+        var role = "";
+        var uid = "";
+        $('.verify').click(function () {
+            role = $(this).attr("data-role");
+            uid = $(this).attr("data-uid");
+
+        });
+
+        $('.confirmBtn').click(function () {
+           if (role !== "" && uid !== "") {
+             $.ajax({
+                url: "/activities/verify/",
+                cache: false,
+                method: "POST",
+                data: {
+                    role,
+                    uid
+                },
+                success: res => {
+                  if (res.status === "ok") {
+                      alert("审核通过！");
+                      window.location.reload();
+                  } else {
+                      alert("系统错误！");
+                  }
+                }
+              });
+           } else {
+               alert("err")
+           }
+
+
+        });
+
+
+
+    })
+
+  </script>
+{% endblock %}
+
+

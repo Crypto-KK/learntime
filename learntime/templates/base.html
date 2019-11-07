@@ -90,24 +90,18 @@
 
             {% if role == 1 or role == 2 %}
               <li class="left-link register-page"><a href="{% url 'users:admin_apply' %}"> <i class="fa fa-spinner"></i>注册审核 </a></li>
-            {% endif %}
-            {% if role == 1 or role == 2 or role == 3 %}
               <li class="left-link admin-page"><a href="{% url 'users:admins' %}"> <i class="fa fa-user-circle-o"></i>管理员 </a></li>
             {% endif %}
-{#            {% if perms.main.add_user %}#}
-{#              <li class="admin-list"><a href="/permission/auth/group/"> <i class="icon-grid"></i>权限分配 </a></li>#}
-{#            {% endif %}#}
+
+               <li class="left-link student-page" ><a href="{% url 'students:students' %}"> <i class="fa fa-user-circle-o"></i>学生管理 </a></li>
             {% if role == 1 or role == 2 or role == 3 %}
-              <li class="left-link activity-verify-page"><a href="#"> <i class="icon-grid"></i>活动审批 </a></li>
+              <li class="left-link activity-verify-page"><a href="{% url 'activities:activity_verify' %}"> <i class="icon-grid"></i>活动审批 </a></li>
             {% endif %}
           </ul><span class="heading">活动管理</span>
           <ul>
 
-            <li class="left-link activity-page" ><a href="{% url 'activities:activities' %}"> <i class="fa fa-cubes"></i>活动管理</a></li>
-
-            <li class="left-link student-page" ><a href="{% url 'students:students' %}"> <i class="fa fa-user-circle-o"></i>学生管理 </a></li>
+            <li class="left-link activity-page" ><a href="{% url 'activities:activities' %}"> <i class="fa fa-cubes"></i>我发布的活动</a></li>
             <li class="left-link" ><a href="#"> <i class="fa fa-bar-chart"></i>学时统计 </a></li>
-            <li class="left-link" ><a href="#"> <i class="fa fa-cogs"></i>设置 </a></li>
           </ul>
         {% endwith %}
         </nav>
