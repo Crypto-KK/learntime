@@ -11,6 +11,6 @@ urlpatterns = [
     path('create/', view=views.ActivityCreate.as_view(), name='activity_create'),
     path('detail/<str:pk>/', view=views.ActivityDetail.as_view(), name='activity_detail'),
     path('update/<str:pk>/', view=views.ActivityUpdate.as_view(), name='activity_update'),
-    path("verify/", view=views.ActivityVerifyView.as_view(), name='verify')
-
+    path("verify/", view=views.ActivityVerifyView.as_view(), name='verify'),
+    path("get-admins/", view=views.GetAdminsView.as_view(), name='get_admins')
 ]

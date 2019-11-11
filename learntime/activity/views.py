@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.urls import reverse
@@ -12,11 +13,12 @@ from learntime.activity.forms import ActivityForm
 from learntime.activity.models import Activity
 from learntime.activity.serializers import ActivitySerializer
 from learntime.users.enums import RoleEnum
+from learntime.users.models import Academy
 from learntime.utils.helpers import RoleRequiredMixin
 
 
 class ActivityList(RoleRequiredMixin, ListView):
-    """活动列表页 干部级可以在这里发布活动，查看自己的活动
+    """我发布的活动列表 干部级可以在这里发布活动，查看自己的活动
 
     需要ROOT、校级、学院级的权限
     """
@@ -48,7 +50,11 @@ class ActivityUnVerifyList(RoleRequiredMixin, ListView):
         if role == RoleEnum.ROOT.value or role == RoleEnum.SCHOOL.value:
             return Activity.objects.filter(is_verify=False).order_by("-time") #按照活动时间排序
         elif role == RoleEnum.ACADEMY.value:
-            return Activity.objects.filter(is_verify=False)
+            # 返回需要自己审核的活动
+            return self.request.user.waiting_for_verify_activities.filter(is_verify=False)
+        else:
+            # 返回空
+            return Activity.objects.none()
 
 
 class ActivityVerifyList(ActivityUnVerifyList):
@@ -59,8 +65,11 @@ class ActivityVerifyList(ActivityUnVerifyList):
         if role == RoleEnum.ROOT.value or role == RoleEnum.SCHOOL.value:
             return Activity.objects.filter(is_verify=True).order_by("-time") #按照活动时间排序
         elif role == RoleEnum.ACADEMY.value:
-            return Activity.objects.filter(is_verify=True)
-
+            # 返回自己审核通过的活动
+            return self.request.user.waiting_for_verify_activities.filter(is_verify=True)
+        else:
+            # 返回空
+            return Activity.objects.none()
 
 
 class ActivityCreate(RoleRequiredMixin, CreateView):
@@ -70,6 +79,11 @@ class ActivityCreate(RoleRequiredMixin, CreateView):
     model = Activity
     template_name = "activity/activity_create.html"
     form_class = ActivityForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['academies'] = Academy.objects.all()
+        return context
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -127,6 +141,25 @@ class ActivityVerifyView(RoleRequiredMixin, View):
             return JsonResponse({"status": "fail"})
         else:
             return JsonResponse({"status": "ok"})
+
+
+@method_decorator(csrf_exempt, "dispatch")
+class GetAdminsView(LoginRequiredMixin, View):
+    def post(self, request):
+        try:
+            admin_dict = {}
+            academy = Academy.objects.get(pk=request.POST['id'])
+            admins = get_user_model().objects.filter(academy__contains=academy)
+            for admin in admins:
+                admin_dict.update({admin.pk: admin.name})
+
+            return JsonResponse({
+                "status": "ok",
+                "admin_dict": admin_dict
+            })
+        except Exception:
+
+            return JsonResponse({"status": "fail"})
 
 
 class StoreDetailViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin,

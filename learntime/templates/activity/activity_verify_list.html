@@ -59,7 +59,7 @@
                         <th>参与者学时</th>
                         <th>工作人员学时</th>
                         <th>观众学时</th>
-                        <th>审核</th>
+{#                        <th>审核</th>#}
                         <th>操作</th>
                       </tr>
                     </thead>
@@ -94,13 +94,13 @@
                           <td style="color: blue">{{ activity.score_player }}</td>
                           <td style="color: blue">{{ activity.score_staff }}</td>
                           <td style="color: blue">{{ activity.score_viewer }}</td>
-                          <td>
-                              {% if activity.is_verify %}
-                                <i class="fa fa-check" style="color: green"></i>
-                              {% else %}
-                                <i class="fa fa-remove" style="color: red"></i>
-                              {% endif %}
-                          </td>
+{#                          <td>#}
+{#                              {% if activity.is_verify %}#}
+{#                                <i class="fa fa-check" style="color: green"></i>#}
+{#                              {% else %}#}
+{#                                <i class="fa fa-remove" style="color: red"></i>#}
+{#                              {% endif %}#}
+{#                          </td>#}
                           <td>
 
                             {% if role == 1 or role == 2 %}

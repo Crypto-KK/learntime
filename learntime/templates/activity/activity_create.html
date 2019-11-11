@@ -25,13 +25,32 @@
           {% csrf_token %}
           {{ form.media }}
           {{ form|crispy }}
+
+          <div class="form-group">
+            <label for="select_academy">选择学院</label>
+            <select name="academy" id="select_academy" onchange="academyChange()">
+              <option selected value="0">请选择</option>
+              {% for academy in academies %}
+                <option value="{{ academy.pk }}">{{ academy.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="select_to">选择审核者</label>
+            <select name="academy" id="select_to">
+              <option value="0">请先选择学院</option>
+          </select>
+          </div>
+
         </form>
         <div class="form-group">
-          <button type="submit" class="btn btn-primary" id="button-activity">发布活动</button>
-
+          <button type="submit" class="btn btn-primary btn-lg pull-right" id="button-activity">发布活动</button>
         </div>
       </div>
+
     </div>
+  <br><br>
   </div>
 
 {% endblock %}
@@ -42,7 +61,33 @@
         $('#button-activity').click(function () {
             $('#activity_form').submit();
             {#alert("发布活动成功！")#}
+        });
+
+        $('#select_academy').change(function () {
+            var id = $(this).val();
+            $.ajax({
+                url: "/activities/get-admins/",
+                cache: false,
+                data: {
+                    id
+                },
+                method: "POST",
+                success: res => {
+                    if (res.status === "ok") {
+                        $('#select_to').children().remove()
+                        for (let key of Object.keys(res.admin_dict)) {
+                            let name = res.admin_dict[key];
+                            $('#select_to').append(`<option value='${key}'>${name}</option>`);
+                        }
+
+                    } else {
+                        alert("获取失败！")
+                    }
+
+                }
+            })
         })
+
     })
   </script>
 {% endblock %}

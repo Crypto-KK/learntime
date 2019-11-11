@@ -28,7 +28,7 @@ class User(AbstractUser):
         return reverse("users:detail", kwargs={"username": self.username})
 
     def __str__(self):
-        return self.username
+        return self.name
 
     def register(self):
         """用户注册，后台需要审核"""
