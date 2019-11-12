@@ -93,10 +93,11 @@
               <li class="left-link admin-page"><a href="{% url 'users:admins' %}"> <i class="fa fa-user-circle-o"></i>管理员 </a></li>
             {% endif %}
 
-               <li class="left-link student-page" ><a href="{% url 'students:students' %}"> <i class="fa fa-user-circle-o"></i>学生管理 </a></li>
+               <li class="left-link student-page" ><a href="{% url 'students:students' %}"> <i class="fa fa-user-circle"></i>学生管理 </a></li>
             {% if role == 1 or role == 2 or role == 3 %}
               <li class="left-link activity-verify-page"><a href="{% url 'activities:activity_unverify' %}"> <i class="icon-grid"></i>活动审批 </a></li>
             {% endif %}
+              <li class="left-link log-page"><a href="#"><i class="fa fa-play-circle-o"></i>操作记录</a></li>
           </ul><span class="heading">活动管理</span>
           <ul>
 

@@ -137,23 +137,15 @@ class ActivityVerifyView(RoleRequiredMixin, View):
 
     def post(self, request):
         """
-        管理员、校级点击审核通过按钮 is_verify = True
-        学院点击审核通过按钮，is_verify = True
+        点击审核通过按钮 is_verify = True, is_verifying = False
         """
-        role = int(request.POST['role'])
         uid = request.POST['uid']
         try:
             activity = Activity.objects.get(pk=uid)
-            if role == RoleEnum.ROOT.value or role == RoleEnum.SCHOOL.value:
-                activity.is_verify = True
-                activity.is_verifying = False
-                activity.save()
-            elif role == RoleEnum.ACADEMY.value:
-                # 学院点击审核通过按钮
-                activity.is_verify = True
-                activity.is_verifying = False
-                activity.save()
-        except Exception as e:
+            activity.is_verify = True
+            activity.is_verifying = False
+            activity.save()
+        except Exception:
             return JsonResponse({"status": "fail"})
         else:
             return JsonResponse({"status": "ok"})
@@ -189,7 +181,7 @@ class ActivityPassVerifyView(RoleRequiredMixin, View):
 
     def post(self, request):
         """
-        院级点击向上级审核按钮，改变to的值
+        院级传递给校级，to_school指向校级管理员，to指向自己
         """
         activity_id = request.POST['activity_id']
         admin_id = request.POST['admin_id']
@@ -198,15 +190,15 @@ class ActivityPassVerifyView(RoleRequiredMixin, View):
             admin = get_user_model().objects.get(pk=admin_id)
             activity.to_school = admin
             activity.save()
-        except Exception as e:
+        except Exception:
             return JsonResponse({"status": "fail"})
         else:
             return JsonResponse({"status": "ok"})
 
 
-
 @method_decorator(csrf_exempt, "dispatch")
 class GetAdminsView(LoginRequiredMixin, View):
+    """通过学院id获取该学院的所有管理员"""
     def post(self, request):
         try:
             admin_dict = {}
@@ -220,7 +212,6 @@ class GetAdminsView(LoginRequiredMixin, View):
                 "admin_dict": admin_dict
             })
         except Exception:
-
             return JsonResponse({"status": "fail"})
 
 

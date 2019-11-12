@@ -27,8 +27,8 @@
           {{ form|crispy }}
 
           <div class="form-group">
-            <label for="select_academy">选择学院</label>
-            <select name="academy" id="select_academy" onchange="academyChange()">
+            <label for="select_academy">选择学院*</label>
+            <select name="academy" id="select_academy" class="form-control" onchange="academyChange()">
               <option selected value="0">请选择</option>
               {% for academy in academies %}
                 <option value="{{ academy.pk }}">{{ academy.name }}</option>
@@ -37,8 +37,8 @@
           </div>
 
           <div class="form-group">
-            <label for="select_to">选择审核者</label>
-            <select name="to" id="select_to">
+            <label for="select_to">选择审核者*</label>
+            <select name="to" id="select_to" class="form-control">
               <option value="0">请先选择学院</option>
           </select>
           </div>
@@ -59,6 +59,10 @@
   <script>
     $(function () {
         $('#button-activity').click(function () {
+            if ($('#select_to').val() === "0" || !$('#select_to').val()) {
+                alert("请选择审核者！");
+                return;
+            }
             $('#activity_form').submit();
             {#alert("发布活动成功！")#}
         });
