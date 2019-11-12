@@ -26,6 +26,24 @@
                 <a href="{% url 'activities:activity_create' %}" class="btn btn-primary pull-right">发布活动</a>
               </div>
               <div class="card-body">
+                <div class="modal fade" id="showReason" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">不通过的原因</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <div id="reason"></div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div class="table-responsive">
                   <table class="table table-striped table-hover table-bordered">
                     <thead>
@@ -38,7 +56,7 @@
                         <th>工作人员学时</th>
                         <th>观众学时</th>
                         <th>审核者</th>
-                        <th>审核</th>
+                        <th>状态</th>
                         <th>操作</th>
                       </tr>
                     </thead>
@@ -57,26 +75,27 @@
                           <td>{{ activity.to.name }}</td>
                           <td>
                               {% if activity.is_verifying %}
-                                <i class="fa fa-spinner" style="color: green"></i>
-
+                                <i class="fa fa-spinner" style="color: gray"></i>
                               {% else %}
                                   {% if activity.is_verify %}
                                   <i class="fa fa-check" style="color: green"></i>
                                   {% else %}
                                     <i class="fa fa-remove" style="color: red"></i>
-                                    ({{ activity.reason }})
                                   {% endif %}
                               {% endif %}
-
                           </td>
                           <td>
-                            {% if activity.is_verify %}
-                              <a href="{% url 'activities:activity_detail' activity.pk %}" class="btn btn-primary btn-sm">查看</a>
-                              {% else %}
-                              <a href="{% url 'activities:activity_update' activity.pk %}" class="btn btn-warning btn-sm">编辑</a>
-                              <a href="#" class="btn btn-danger btn-sm">删除</a>
-
+                            {% if activity.is_verifying %}
+                                <a href="{% url 'activities:activity_update' activity.pk %}" class="btn btn-warning btn-sm">编辑</a>
+                                <a href="#" class="btn btn-danger btn-sm">删除</a>
+                            {% else %}
+                              {% if activity.is_verify %}
+                                <a href="{% url 'activities:activity_detail' activity.pk %}" class="btn btn-primary btn-sm">查看详情</a>
+                                {% else %}
+                                <a href="#" class="btn btn-warning btn-sm showReasonBtn" data-toggle="modal" data-target="#showReason" data-reason="{{ activity.reason }}">查看原因</a>
+                              {% endif %}
                             {% endif %}
+
                           </td>
                           </tr>
                       {% endfor %}
@@ -94,5 +113,18 @@
     {% include 'pagination.html' %}
 {% endblock %}
 
+
+{% block js %}
+  <script>
+    $(function () {
+        var reason = "";
+        $('.showReasonBtn').click(function () {
+            reason = $(this).attr("data-reason");
+            $('#reason').text(reason)
+        });
+    })
+
+  </script>
+{% endblock %}
 
 
