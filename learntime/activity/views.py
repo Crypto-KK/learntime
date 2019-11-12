@@ -30,7 +30,7 @@ class ActivityList(RoleRequiredMixin, ListView):
 
     def get_queryset(self):
         """返回我发布的活动"""
-        return Activity.objects.filter(user=self.request.user).order_by("-updated_at")
+        return Activity.objects.filter(user=self.request.user)
 
 
 class ActivityUnVerifyList(RoleRequiredMixin, ListView):
@@ -68,8 +68,11 @@ class ActivityVerifyList(ActivityUnVerifyList):
     template_name = "activity/activity_verify_list.html"
     def get_queryset(self):
         role = self.request.user.role
-        if role == RoleEnum.ROOT.value or role == RoleEnum.SCHOOL.value:
+        if role == RoleEnum.ROOT.value:
             return Activity.objects.filter(is_verify=True).order_by("-time") #按照活动时间排序
+        if role == RoleEnum.SCHOOL.value:
+            # 返回to_school为自己的活动
+            return self.request.user.school_waiting_for_verify_activities.filter(is_verify=True)
         elif role == RoleEnum.ACADEMY.value:
             # 返回自己审核通过的活动
             return self.request.user.waiting_for_verify_activities.filter(is_verify=True)
@@ -193,7 +196,7 @@ class ActivityPassVerifyView(RoleRequiredMixin, View):
         try:
             activity = Activity.objects.get(pk=activity_id)
             admin = get_user_model().objects.get(pk=admin_id)
-            activity.to = admin
+            activity.to_school = admin
             activity.save()
         except Exception as e:
             return JsonResponse({"status": "fail"})

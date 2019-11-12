@@ -56,6 +56,7 @@
                         <th>工作人员学时</th>
                         <th>观众学时</th>
                         <th>审核者</th>
+                        <th>上级审核者</th>
                         <th>状态</th>
                         <th>操作</th>
                       </tr>
@@ -73,6 +74,7 @@
                           <td style="color: blue">{{ activity.score_staff }}</td>
                           <td style="color: blue">{{ activity.score_viewer }}</td>
                           <td>{{ activity.to.name }}</td>
+                          <td>{{ activity.to_school.name }}</td>
                           <td>
                               {% if activity.is_verifying %}
                                 <i class="fa fa-spinner" style="color: gray"></i>

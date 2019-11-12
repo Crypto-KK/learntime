@@ -144,15 +144,21 @@
                           <td style="color: blue">{{ activity.score_staff }}</td>
                           <td style="color: blue">{{ activity.score_viewer }}</td>
                           <td>
-                            <button class="btn btn-success btn-sm verify" data-role="{{ role }}" data-uid="{{ activity.uid }}" data-toggle="modal" data-target="#comfirmVerify">批准</button>
-                            <button class="btn btn-danger btn-sm fail-verify" data-role="{{ role }}" data-uid="{{ activity.uid }}" data-toggle="modal" data-target="#dontComfirmVerify">不批准</button>
+
                             {% if role == 1 or role == 2 %}
                               {% if activity.is_verify %}
                                 <button class="btn btn-secondary btn-sm">已批准</button>
                               {% endif %}
                             {% endif %}
                             {% if role == 3 %}
-                                <button class="btn btn-warning btn-sm pass-verify" data-toggle="modal" data-target="#passVerify" data-uid="{{ activity.uid }}">提交给上级</button>
+                                {% if activity.to_school %}
+                                  等待{{ activity.to_school.name }}审核
+                                {% else %}
+                                  <button class="btn btn-success btn-sm verify" data-role="{{ role }}" data-uid="{{ activity.uid }}" data-toggle="modal" data-target="#comfirmVerify">批准</button>
+                                  <button class="btn btn-danger btn-sm fail-verify" data-role="{{ role }}" data-uid="{{ activity.uid }}" data-toggle="modal" data-target="#dontComfirmVerify">不批准</button>
+                                  <button class="btn btn-warning btn-sm pass-verify" data-toggle="modal" data-target="#passVerify" data-uid="{{ activity.uid }}">提交给上级</button>
+                                {% endif %}
+
                             {% endif %}
 
                           </td>

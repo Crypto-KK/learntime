@@ -46,14 +46,17 @@ class Activity(CreatedUpdatedMixin, models.Model):
                              verbose_name="发布者", null=True, blank=True,
                              related_name="my_activities")
     to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-                             verbose_name="审核者", null=True, blank=True,
+                             verbose_name="院级审核者", null=True, blank=True,
                            related_name="waiting_for_verify_activities")
+    to_school = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                             verbose_name="校级审核者", null=True, blank=True,
+                           related_name="school_waiting_for_verify_activities")
 
     class Meta:
         verbose_name = "活动"
         verbose_name_plural = verbose_name
         db_table = "activity"
-
+        ordering = ('-created_at', )
 
     def __str__(self):
         return self.name
