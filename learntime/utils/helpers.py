@@ -78,7 +78,7 @@ class PaginatorListView(ListView):
         if current_page - 5 < 1:
             page_range = range(1, 11)
         elif current_page + 5 > context['paginator'].num_pages:
-            page_range = range(current_page - 5, self.paginator_class.num_pages + 1)
+            page_range = range(current_page - 5, context['paginator'].num_pages + 1)
         else:
             page_range = range(current_page - 5, current_page + 6)
         context['page_range'] = page_range
