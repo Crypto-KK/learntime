@@ -73,13 +73,20 @@ class PaginatorListView(ListView):
     """分页列表视图，默认左边和右边各5页"""
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=None, **kwargs)
-        page = self.request.GET.get('page', 1)
-        current_page = int(page)
-        if current_page - 5 < 1:
-            page_range = range(1, 11)
-        elif current_page + 5 > context['paginator'].num_pages:
-            page_range = range(current_page - 5, context['paginator'].num_pages + 1)
+        paginator = context['paginator']
+        try:
+            current_page = int(self.request.GET.get('page', 1))
+        except Exception:
+            current_page = 1
+
+        if paginator.num_pages > 11:
+            if current_page - 5 < 1:
+                page_range = range(1, 5)
+            elif current_page + 5 > paginator.num_pages:
+                page_range = range(current_page - 5, paginator.num_pages + 1)
+            else:
+                page_range = range(current_page - 5, current_page + 6)
         else:
-            page_range = range(current_page - 5, current_page + 6)
+            page_range = paginator.page_range
         context['page_range'] = page_range
         return context

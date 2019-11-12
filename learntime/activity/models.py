@@ -37,8 +37,6 @@ class Activity(CreatedUpdatedMixin, models.Model):
     score_staff = models.FloatField(default=0, verbose_name="工作人员学时")
     score_viewer = models.FloatField(default=0, verbose_name="观众学时")
 
-    is_academy_verify = models.BooleanField(verbose_name="学院是否审核通过", default=False)
-    is_school_verify = models.BooleanField(verbose_name="学校是否审核通过", default=False)
     is_verify = models.BooleanField(verbose_name="是否通过审核", default=False)
     is_verifying = models.BooleanField(verbose_name="是否正在进行审核", default=True)
     reason = models.CharField(max_length=255, verbose_name="审核失败原因", default="")

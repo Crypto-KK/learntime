@@ -14,10 +14,10 @@ from learntime.activity.models import Activity
 from learntime.activity.serializers import ActivitySerializer
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
-from learntime.utils.helpers import RoleRequiredMixin
+from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView
 
 
-class ActivityList(RoleRequiredMixin, ListView):
+class ActivityList(RoleRequiredMixin, PaginatorListView):
     """我发布的活动列表 干部级可以在这里发布活动，查看自己的活动
 
     需要ROOT、校级、学院级的权限
@@ -33,7 +33,7 @@ class ActivityList(RoleRequiredMixin, ListView):
         return Activity.objects.filter(user=self.request.user)
 
 
-class ActivityUnVerifyList(RoleRequiredMixin, ListView):
+class ActivityUnVerifyList(RoleRequiredMixin, PaginatorListView):
     """活动等待审核列表页
 
     需要ROOT、校级、学院级的权限
@@ -54,9 +54,11 @@ class ActivityUnVerifyList(RoleRequiredMixin, ListView):
         role = self.request.user.role
         if role == RoleEnum.ROOT.value:
             # 返回全部正在审核的活动
-            return Activity.objects.filter(is_verifying=True).order_by("-time") #按照活动时间排序
-        if role == RoleEnum.SCHOOL.value or role == RoleEnum.ACADEMY.value:
+            return Activity.objects.filter(is_verifying=True)
+        if role == RoleEnum.SCHOOL.value:
             # 返回需要自己审核的活动
+            return self.request.user.school_waiting_for_verify_activities.filter(is_verifying=True)
+        if role == RoleEnum.ACADEMY.value:
             return self.request.user.waiting_for_verify_activities.filter(is_verifying=True)
         else:
             # 返回空
@@ -135,8 +137,8 @@ class ActivityVerifyView(RoleRequiredMixin, View):
 
     def post(self, request):
         """
-        管理员、校级点击审核通过按钮，is_school_verify/is_verify = True
-        学院点击审核通过按钮，is_academy_verify/is_verify = True
+        管理员、校级点击审核通过按钮 is_verify = True
+        学院点击审核通过按钮，is_verify = True
         """
         role = int(request.POST['role'])
         uid = request.POST['uid']
@@ -144,13 +146,11 @@ class ActivityVerifyView(RoleRequiredMixin, View):
             activity = Activity.objects.get(pk=uid)
             if role == RoleEnum.ROOT.value or role == RoleEnum.SCHOOL.value:
                 activity.is_verify = True
-                activity.is_school_verify = True
                 activity.is_verifying = False
                 activity.save()
             elif role == RoleEnum.ACADEMY.value:
                 # 学院点击审核通过按钮
                 activity.is_verify = True
-                activity.is_academy_verify = True
                 activity.is_verifying = False
                 activity.save()
         except Exception as e:
