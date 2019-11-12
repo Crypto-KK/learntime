@@ -30,7 +30,7 @@ class ActivityList(RoleRequiredMixin, ListView):
 
     def get_queryset(self):
         """返回我发布的活动"""
-        return Activity.objects.filter(user=self.request.user)
+        return Activity.objects.filter(user=self.request.user).order_by("-updated_at")
 
 
 class ActivityUnVerifyList(RoleRequiredMixin, ListView):
@@ -44,14 +44,20 @@ class ActivityUnVerifyList(RoleRequiredMixin, ListView):
     paginate_by = 20
     context_object_name = "activities"
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=None, **kwargs)
+        context['admins'] = get_user_model().objects.filter(role=RoleEnum.SCHOOL.value)
+        return context
+
     def get_queryset(self):
         """按照不同权限查看不同的活动"""
         role = self.request.user.role
-        if role == RoleEnum.ROOT.value or role == RoleEnum.SCHOOL.value:
-            return Activity.objects.filter(is_verify=False).order_by("-time") #按照活动时间排序
-        elif role == RoleEnum.ACADEMY.value:
+        if role == RoleEnum.ROOT.value:
+            # 返回全部正在审核的活动
+            return Activity.objects.filter(is_verifying=True).order_by("-time") #按照活动时间排序
+        if role == RoleEnum.SCHOOL.value or role == RoleEnum.ACADEMY.value:
             # 返回需要自己审核的活动
-            return self.request.user.waiting_for_verify_activities.filter(is_verify=False)
+            return self.request.user.waiting_for_verify_activities.filter(is_verifying=True)
         else:
             # 返回空
             return Activity.objects.none()
@@ -136,14 +142,64 @@ class ActivityVerifyView(RoleRequiredMixin, View):
             if role == RoleEnum.ROOT.value or role == RoleEnum.SCHOOL.value:
                 activity.is_verify = True
                 activity.is_school_verify = True
+                activity.is_verifying = False
                 activity.save()
             elif role == RoleEnum.ACADEMY.value:
                 # 学院点击审核通过按钮
-                pass
+                activity.is_verify = True
+                activity.is_academy_verify = True
+                activity.is_verifying = False
+                activity.save()
         except Exception as e:
             return JsonResponse({"status": "fail"})
         else:
             return JsonResponse({"status": "ok"})
+
+
+@method_decorator(csrf_exempt, "dispatch")
+class ActivityVerifyFailView(RoleRequiredMixin, View):
+    """不批准审核接口"""
+    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value)
+
+    def post(self, request):
+        """
+        正在审核置为False，是否审核置为False
+        """
+        uid = request.POST['uid']
+        reason = request.POST['reason']
+        try:
+            activity = Activity.objects.get(pk=uid)
+            activity.is_verify = False
+            activity.is_verifying = False
+            activity.reason = reason
+            activity.save()
+        except Exception as e:
+            return JsonResponse({"status": "fail"})
+        else:
+            return JsonResponse({"status": "ok"})
+
+
+@method_decorator(csrf_exempt, "dispatch")
+class ActivityPassVerifyView(RoleRequiredMixin, View):
+    """传递给上级审核接口"""
+    role_required = (RoleEnum.ACADEMY.value,)
+
+    def post(self, request):
+        """
+        院级点击向上级审核按钮，改变to的值
+        """
+        activity_id = request.POST['activity_id']
+        admin_id = request.POST['admin_id']
+        try:
+            activity = Activity.objects.get(pk=activity_id)
+            admin = get_user_model().objects.get(pk=admin_id)
+            activity.to = admin
+            activity.save()
+        except Exception as e:
+            return JsonResponse({"status": "fail"})
+        else:
+            return JsonResponse({"status": "ok"})
+
 
 
 @method_decorator(csrf_exempt, "dispatch")

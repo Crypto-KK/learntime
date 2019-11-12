@@ -1,7 +1,6 @@
 from django.conf import settings
-from django.db.models import Count
 from django.http import JsonResponse, HttpResponse
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView

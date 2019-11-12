@@ -21,29 +21,29 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="card">
-              <div class="card-header">
-                &nbsp;&nbsp;
-                <form action="" class="form-inline">
-                 <div class="btn-group">
-                        <div class="form-group">
-                        <label for="inlineFormInput" class="sr-only">搜索活动</label>
-                        <input id="inlineFormInput" name="uid" type="text" placeholder="搜索活动" class="mr-3 form-control">
-                      </div>
-                      <div class="btn-group">
-                        <button type="submit" class="btn btn-primary">搜索</button>
-                        <button type="button" class="btn btn-info" id="reset-select">重置</button>
-                      </div>
-                 </div>
-                </form>
-
-              </div>
+{#              <div class="card-header">#}
+{#                &nbsp;&nbsp;#}
+{#                <form action="" class="form-inline">#}
+{#                 <div class="btn-group">#}
+{#                        <div class="form-group">#}
+{#                        <label for="inlineFormInput" class="sr-only">搜索活动</label>#}
+{#                        <input id="inlineFormInput" name="uid" type="text" placeholder="搜索活动" class="mr-3 form-control">#}
+{#                      </div>#}
+{#                      <div class="btn-group">#}
+{#                        <button type="submit" class="btn btn-primary">搜索</button>#}
+{#                        <button type="button" class="btn btn-info" id="reset-select">重置</button>#}
+{#                      </div>#}
+{#                 </div>#}
+{#                </form>#}
+{##}
+{#              </div>#}
               <div class="card-body">
                 <ul class="nav nav-tabs">
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'activities:activity_unverify' %}">未审核的活动</a>
+                    <a class="nav-link" href="{% url 'activities:activity_unverify' %}">等待我审核活动</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link active" href="{% url 'activities:activity_verify' %}">审核通过的活动</a>
+                    <a class="nav-link active" href="{% url 'activities:activity_verify' %}">我审核通过的活动</a>
                   </li>
                 </ul>
                 <br>

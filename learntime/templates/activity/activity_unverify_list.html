@@ -21,29 +21,29 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="card">
-              <div class="card-header">
-                &nbsp;&nbsp;
-                <form action="" class="form-inline">
-                 <div class="btn-group">
-                        <div class="form-group">
-                        <label for="inlineFormInput" class="sr-only">搜索活动</label>
-                        <input id="inlineFormInput" name="uid" type="text" placeholder="搜索活动" class="mr-3 form-control">
-                      </div>
-                      <div class="btn-group">
-                        <button type="submit" class="btn btn-primary">搜索</button>
-                        <button type="button" class="btn btn-info" id="reset-select">重置</button>
-                      </div>
-                 </div>
-                </form>
-
-              </div>
+{#              <div class="card-header">#}
+{#                &nbsp;&nbsp;#}
+{#                <form action="" class="form-inline">#}
+{#                 <div class="btn-group">#}
+{#                    <div class="form-group">#}
+{#                    <label for="inlineFormInput" class="sr-only">搜索活动</label>#}
+{#                    <input id="inlineFormInput" name="uid" type="text" placeholder="搜索活动" class="mr-3 form-control">#}
+{#                  </div>#}
+{#                  <div class="btn-group">#}
+{#                    <button type="submit" class="btn btn-primary">搜索</button>#}
+{#                    <button type="button" class="btn btn-info" id="reset-select">重置</button>#}
+{#                  </div>#}
+{#                 </div>#}
+{#                </form>#}
+{##}
+{#              </div>#}
               <div class="card-body">
                 <ul class="nav nav-tabs">
                   <li class="nav-item">
-                    <a class="nav-link active" href="{% url 'activities:activity_unverify' %}">未审核的活动</a>
+                    <a class="nav-link active" href="{% url 'activities:activity_unverify' %}">等待我审核活动</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'activities:activity_verify' %}">审核通过的活动</a>
+                    <a class="nav-link" href="{% url 'activities:activity_verify' %}">我审核通过的活动</a>
                   </li>
                 </ul>
                 <br>
@@ -84,7 +84,56 @@
                           </div>
                         </div>
                       </div>
-                      {% for activity in activities %}
+                      <div class="modal fade" id="dontComfirmVerify" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">温馨提醒</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              确认审核不通过？
+                              <div class="form-group">
+
+                                <input type="text" placeholder="请输入审核不通过的原因" class="form-control" id="reason">
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                              <button type="button" class="btn btn-danger confirmFailVerifyBtn">确认</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal fade" id="passVerify" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">温馨提醒</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="form-group">
+                                  <label for="select_to">选择审核者：</label>
+                                  <select name="to" id="select_to">
+                                    {% for admin in admins %}
+                                      <option value="{{ admin.pk }}">{{ admin.name }}</option>
+                                    {% endfor %}
+                                  </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                              <button type="button" class="btn btn-primary confirmSelectBtn">确认</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                        {% for activity in activities %}
                           <tr data-uid="{{ activity.uid }}">
                           <td style="font-weight: bold"><a href="{% url 'activities:activity_detail' activity.pk %}">{{ activity.name }}</a></td>
                           <td>{{ activity.updated_at }}</td>
@@ -94,25 +143,16 @@
                           <td style="color: blue">{{ activity.score_player }}</td>
                           <td style="color: blue">{{ activity.score_staff }}</td>
                           <td style="color: blue">{{ activity.score_viewer }}</td>
-{#                          <td>#}
-{#                              {% if activity.is_verify %}#}
-{#                                <i class="fa fa-check" style="color: green"></i>#}
-{#                              {% else %}#}
-{#                                <i class="fa fa-remove" style="color: red"></i>#}
-{#                              {% endif %}#}
-{#                          </td>#}
                           <td>
-
+                            <button class="btn btn-success btn-sm verify" data-role="{{ role }}" data-uid="{{ activity.uid }}" data-toggle="modal" data-target="#comfirmVerify">批准</button>
+                            <button class="btn btn-danger btn-sm fail-verify" data-role="{{ role }}" data-uid="{{ activity.uid }}" data-toggle="modal" data-target="#dontComfirmVerify">不批准</button>
                             {% if role == 1 or role == 2 %}
-                              {% if not activity.is_verify %}
-                                <button class="btn btn-success btn-sm verify" data-role="{{ role }}" data-uid="{{ activity.uid }}" data-toggle="modal" data-target="#comfirmVerify">批准</button>
-                                {% else %}
+                              {% if activity.is_verify %}
                                 <button class="btn btn-secondary btn-sm">已批准</button>
-                                {% endif %}
+                              {% endif %}
                             {% endif %}
                             {% if role == 3 %}
-                                <button class="btn btn-success btn-sm">批准</button>
-                                <button class="btn btn-warning btn-sm">提交给上级</button>
+                                <button class="btn btn-warning btn-sm pass-verify" data-toggle="modal" data-target="#passVerify" data-uid="{{ activity.uid }}">提交给上级</button>
                             {% endif %}
 
                           </td>
@@ -141,7 +181,14 @@
         $('.verify').click(function () {
             role = $(this).attr("data-role");
             uid = $(this).attr("data-uid");
+        });
+        $('.fail-verify').click(function () {
+            role = $(this).attr("data-role");
+            uid = $(this).attr("data-uid");
+        });
 
+        $('.pass-verify').click(function () {
+            uid = $(this).attr("data-uid");
         });
 
         $('.confirmBtn').click(function () {
@@ -163,13 +210,53 @@
                   }
                 }
               });
-           } else {
-               alert("err")
-           }
+           } else { alert("err") }
+        });
 
+        $('.confirmFailVerifyBtn').click(function () {
+            if (role !== "" && uid !== "") {
+                reason = $('#reason').val();
+             $.ajax({
+                url: "/activities/verify-fail/",
+                cache: false,
+                method: "POST",
+                data: {
+                    role,
+                    uid,
+                    reason
+                },
+                success: res => {
+                  if (res.status === "ok") {
+                      alert("审核不通过成功！");
+                      window.location.reload();
+                  } else {
+                      alert("系统错误！请稍候重试");
+                  }
+                }
+              });
+           } else { alert("err") }
 
         });
 
+        $('.confirmSelectBtn').click(function () {
+            $.ajax({
+                url: "/activities/pass-verify/",
+                cache: false,
+                method: "POST",
+                data: {
+                    activity_id: uid,
+                    admin_id: $('#select_to').val()
+                },
+                success: res => {
+                  if (res.status === "ok") {
+                      alert("已提交给上级，请等待审核");
+                      window.location.reload();
+                  } else {
+                      alert("提交失败，请稍候重试")
+                  }
+                }
+            })
+        });
 
 
     })

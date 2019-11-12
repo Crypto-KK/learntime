@@ -11,6 +11,11 @@ urlpatterns = [
     path('create/', view=views.ActivityCreate.as_view(), name='activity_create'),
     path('detail/<str:pk>/', view=views.ActivityDetail.as_view(), name='activity_detail'),
     path('update/<str:pk>/', view=views.ActivityUpdate.as_view(), name='activity_update'),
+
     path("verify/", view=views.ActivityVerifyView.as_view(), name='verify'),
+    path("verify-fail/", view=views.ActivityVerifyFailView.as_view(), name='verify_fail'),
+    path("pass-verify/", view=views.ActivityPassVerifyView.as_view(), name='pass_verify'),
+
     path("get-admins/", view=views.GetAdminsView.as_view(), name='get_admins')
+
 ]
