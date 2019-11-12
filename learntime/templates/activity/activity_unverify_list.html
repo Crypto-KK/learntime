@@ -110,7 +110,13 @@
                                 <button class="btn btn-secondary btn-sm">已批准</button>
                                 {% endif %}
                             {% endif %}
+                            {% if role == 3 %}
+                                <button class="btn btn-success btn-sm">批准</button>
+                                <button class="btn btn-warning btn-sm">提交给上级</button>
+                            {% endif %}
+
                           </td>
+
                           </tr>
                       {% endfor %}
                     {% endwith %}

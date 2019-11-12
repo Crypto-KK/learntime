@@ -3,6 +3,7 @@ from functools import wraps
 from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
 from django.core.exceptions import PermissionDenied, ImproperlyConfigured
 from django.http import HttpResponseBadRequest
+from django.views.generic import ListView
 from django.views.generic.base import View
 
 from learntime.users.enums import RoleEnum
@@ -68,17 +69,17 @@ class RoleRequiredMixin(View):
         return super().dispatch(request, *args, **kwargs)
 
 
-class RootRequiredMixin(RoleRequiredMixin):
-    role_required = (RoleEnum.ROOT.value, )
-
-
-class SchoolRequiredMixin(RoleRequiredMixin):
-    role_required = (RoleEnum.SCHOOL.value, )
-
-
-class AcademyRequiredMixin(RoleRequiredMixin):
-    role_required = (RoleEnum.ACADEMY.value, )
-
-
-class StudentRequiredMixin(RoleRequiredMixin):
-    role_required = (RoleEnum.STUDENT.value,)
+class PaginatorListView(ListView):
+    """分页列表视图，默认左边和右边各5页"""
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=None, **kwargs)
+        page = self.request.GET.get('page', 1)
+        current_page = int(page)
+        if current_page - 5 < 1:
+            page_range = range(1, 11)
+        elif current_page + 5 > context['paginator'].num_pages:
+            page_range = range(current_page - 5, self.paginator_class.num_pages + 1)
+        else:
+            page_range = range(current_page - 5, current_page + 6)
+        context['page_range'] = page_range
+        return context

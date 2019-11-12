@@ -86,6 +86,9 @@ class ActivityCreate(RoleRequiredMixin, CreateView):
         return context
 
     def form_valid(self, form):
+        # 指定审核者
+        to_admin = get_user_model().objects.get(pk=self.request.POST['to'])
+        form.instance.to = to_admin
         form.instance.user = self.request.user
         return super().form_valid(form)
 

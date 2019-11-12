@@ -13,10 +13,10 @@ from learntime.student.forms import StudentForm, StudentExcelForm
 from learntime.student.models import Student, StudentFile
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
-from learntime.utils.helpers import RoleRequiredMixin
+from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView
 
 
-class StudentList(RoleRequiredMixin, ListView):
+class StudentList(RoleRequiredMixin, PaginatorListView):
     """学生列表页
 
     需要ROOT、校级、学院级的权限
