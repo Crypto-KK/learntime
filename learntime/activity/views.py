@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView, CreateView, DetailView, UpdateView
+from django.views.generic import CreateView, DetailView, UpdateView
 from django.views.generic.base import View
 
 from rest_framework import mixins, viewsets

@@ -1,12 +1,10 @@
 from functools import wraps
 
-from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
+#from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
 from django.core.exceptions import PermissionDenied, ImproperlyConfigured
 from django.http import HttpResponseBadRequest
 from django.views.generic import ListView
 from django.views.generic.base import View
-
-from learntime.users.enums import RoleEnum
 
 
 def ajax_required(func):
@@ -20,7 +18,6 @@ def ajax_required(func):
         if not request.is_ajax():
             return HttpResponseBadRequest('ajax required')
         return func(request, *args, **kwargs)
-
     return _wrapper
 
 
@@ -53,9 +50,7 @@ class RoleRequiredMixin(View):
             roles = self.role_required
         return roles
 
-
     def has_permission(self):
-
         roles = self.get_role_required()
         if self.request.user.role in roles:
             return True
@@ -81,7 +76,7 @@ class PaginatorListView(ListView):
 
         if paginator.num_pages > 11:
             if current_page - 5 < 1:
-                page_range = range(1, 5)
+                page_range = range(1, 11)
             elif current_page + 5 > paginator.num_pages:
                 page_range = range(current_page - 5, paginator.num_pages + 1)
             else:
