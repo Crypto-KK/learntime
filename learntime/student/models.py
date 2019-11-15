@@ -7,8 +7,6 @@ class Student(CreatedUpdatedMixin, models.Model):
     """学生表"""
     uid = models.CharField(max_length=255, primary_key=True,
                            verbose_name="学号", help_text="学号")
-    password = models.CharField(max_length=255, verbose_name="密码", default="")
-    email = models.EmailField(verbose_name="邮箱", null=True, blank=True)
     name = models.CharField(max_length=255, verbose_name="姓名")
     grade = models.CharField(max_length=255, null=True, blank=True,
                              verbose_name="年级")
@@ -26,7 +24,7 @@ class Student(CreatedUpdatedMixin, models.Model):
     class Meta:
         verbose_name = "学生"
         verbose_name_plural = verbose_name
-        db_table = "student"
+        db_table = "student_backend"
         ordering = ('-credit',)
 
     def __str__(self):

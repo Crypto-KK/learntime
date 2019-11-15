@@ -11,7 +11,8 @@ class ActivityForm(forms.ModelForm):
 
     class Meta:
         exclude = ("user", "uid", "is_verify", "is_academy_verify",
-                   "is_school_verify", "to", "is_verifying", "reason", "to_school")
+                   "is_school_verify", "to", "is_verifying", "reason", "to_school",
+                   "stop")
         model = Activity
 
     def clean_credit_type(self):

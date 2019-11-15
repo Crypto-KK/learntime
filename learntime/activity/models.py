@@ -32,6 +32,7 @@ class Activity(CreatedUpdatedMixin, models.Model):
                                    default="n")
     time = models.CharField(verbose_name="活动时间", max_length=255)
     place = models.CharField(max_length=255, verbose_name="活动地点", default="")
+    deadline = models.DateTimeField(null=True, blank=True, verbose_name="报名截止日期")
     desc = RichTextUploadingField(verbose_name="活动描述")
     score_player = models.FloatField(default=0, verbose_name="参与者学时")
     score_staff = models.FloatField(default=0, verbose_name="工作人员学时")
@@ -50,10 +51,12 @@ class Activity(CreatedUpdatedMixin, models.Model):
                              verbose_name="校级审核者", null=True, blank=True,
                            related_name="school_waiting_for_verify_activities")
 
+    stop = models.BooleanField(verbose_name="是否截止", default=False)
+
     class Meta:
         verbose_name = "活动"
         verbose_name_plural = verbose_name
-        db_table = "activity"
+        db_table = "activity_backend"
         ordering = ('-created_at', )
 
     def __str__(self):

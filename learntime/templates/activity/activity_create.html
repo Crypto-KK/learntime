@@ -6,6 +6,9 @@
 {% block header_name %}
     发布活动
 {% endblock %}
+{% block css %}
+    <link href="https://cdn.bootcss.com/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" rel="stylesheet">
+{% endblock %}
 {% block body %}
       <!-- Breadcrumb-->
     <div class="breadcrumb-holder container-fluid">
@@ -56,6 +59,7 @@
 {% endblock %}
 
 {% block js %}
+  <script src="https://cdn.bootcss.com/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
   <script>
     $(function () {
         $('#button-activity').click(function () {
@@ -91,7 +95,17 @@
                 }
             })
         })
+        datetimepickerComponent();
 
+        function datetimepickerComponent(){
+            $.datetimepicker.setLocale('zh');
+            params = {
+                lang: 'zh',
+                format: 'Y-m-d h:i',//格式化显示
+            };
+            $('#id_deadline').datetimepicker(params);
+
+    }
     })
   </script>
 {% endblock %}

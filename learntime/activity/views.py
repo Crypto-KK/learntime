@@ -145,6 +145,9 @@ class ActivityVerifyView(RoleRequiredMixin, View):
             activity.is_verify = True
             activity.is_verifying = False
             activity.save()
+
+            # 此处写入到activity表
+
         except Exception:
             return JsonResponse({"status": "fail"})
         else:
