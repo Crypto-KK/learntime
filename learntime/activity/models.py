@@ -8,7 +8,7 @@ from learntime.utils.models import CreatedUpdatedMixin
 
 
 class Activity(CreatedUpdatedMixin, models.Model):
-    """活动表"""
+    """后台活动表"""
 
     TYPE = (
         ("n", "未选择"),
@@ -58,6 +58,43 @@ class Activity(CreatedUpdatedMixin, models.Model):
         verbose_name_plural = verbose_name
         db_table = "activity_backend"
         ordering = ('-created_at', )
+
+    def __str__(self):
+        return self.name
+
+
+class SimpleActivity(models.Model):
+    """活动表"""
+    uid = models.UUIDField(primary_key=True, editable=False, verbose_name="活动id")
+    name = models.CharField(max_length=255, verbose_name="活动名称",
+                            null=True, blank=True)
+    description = models.TextField(verbose_name="描述", null=True, blank=True)
+    score_player = models.FloatField(default=0, verbose_name="参与者学时",
+                                     null=True, blank=True)
+    score_staff = models.FloatField(default=0, verbose_name="工作人员学时",
+                                    null=True, blank=True)
+    score_viewer = models.FloatField(default=0, verbose_name="观众学时",
+                                     null=True, blank=True)
+    sponsor = models.CharField(verbose_name="主办方", max_length=255,
+                               null=True, blank=True)
+    time = models.CharField(verbose_name="活动时间", max_length=255,
+                            null=True, blank=True)
+    stop = models.BooleanField(verbose_name="是否截止", default=False,
+                               null=True, blank=True)
+    nums = models.IntegerField(default=0, verbose_name="参加人数",
+                               null=True, blank=True)
+    place = models.CharField(max_length=255, verbose_name="活动地点", default="",
+                             null=True, blank=True)
+    logo = models.CharField(verbose_name="活动图标", max_length=255, null=True, blank=True)
+    credit_type = models.CharField(max_length=255, verbose_name="学时类别",
+                                   null=True, blank=True)
+    deadline = models.DateTimeField(null=True, blank=True, verbose_name="报名截止日期")
+
+    class Meta:
+        verbose_name = "活动"
+        verbose_name_plural = verbose_name
+        db_table = "activity"
+        ordering = ('-stop', )
 
     def __str__(self):
         return self.name
