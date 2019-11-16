@@ -5,6 +5,7 @@ from django.views import defaults as default_views
 from rest_framework.routers import DefaultRouter
 
 from learntime.activity.views import StoreDetailViewSet
+from learntime.student.views import find_student_by_uid_and_name
 from learntime.users.views import IndexView, AcademyList, AcademyCreate, AcademyUpdate, AcademyDelete
 
 
@@ -27,6 +28,11 @@ urlpatterns = [
     path("activities/", include("learntime.activity.urls", namespace="activities")),
 
     path('ckeditor/', include('learntime.utils.ckeditor_urls')),
+
+
+    # 临时接口
+    path("api/find_student/", find_student_by_uid_and_name)
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

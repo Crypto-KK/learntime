@@ -1,3 +1,5 @@
+import json
+
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse
@@ -189,7 +191,20 @@ class StudentBulkDeleteView(RoleRequiredMixin, View):
         try:
             student_list = request.POST['student_list'].split('-')
             for uid in student_list:
-                student = Student.objects.get(pk=uid).delete()
+                Student.objects.get(pk=uid).delete()
             return JsonResponse({"status": "ok"})
-        except Exception as e:
+        except Exception:
             return JsonResponse({"status": "fail"})
+
+
+@csrf_exempt
+def find_student_by_uid_and_name(request):
+    if request.method == "POST":
+        POST = json.loads(request.body.decode('utf-8'))
+        uid = POST['uid']
+        name = POST['name']
+        try:
+            Student.objects.filter(uid=uid, name=name)[0]
+        except Exception:
+            return JsonResponse({"status": "fail"})
+        return JsonResponse({"status": "ok"})
