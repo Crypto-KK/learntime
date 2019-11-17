@@ -16,7 +16,7 @@ from learntime.student.models import Student
 from learntime.users.enums import RoleEnum
 from learntime.users.forms import LoginForm, RegisterForm, UserForm, AcademyForm, GradeForm
 from learntime.users.models import Academy, Grade
-from learntime.utils.helpers import AuthorRequiredMixin, RoleRequiredMixin
+from learntime.utils.helpers import AuthorRequiredMixin, RoleRequiredMixin, PaginatorListView
 
 User = get_user_model() # 惰性获取User对象
 
@@ -75,7 +75,8 @@ def register_view(request):
     if request.method == "GET":
         form = RegisterForm()
         return render(request, 'users/register.html', {'form': form,
-                                                       "academies": Academy.objects.all()})
+                                                       "academies": Academy.objects.all(),
+                                                       "grades": Grade.objects.all()})
     elif request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -88,6 +89,7 @@ def register_view(request):
             )
             if form.cleaned_data['identity'] != 2:
                 user.academy = form.cleaned_data['academy']
+                user.grade = form.cleaned_data['grade']
 
             user.set_password(form.cleaned_data['password'])
             user.register()
@@ -96,7 +98,7 @@ def register_view(request):
         return render(request, 'users/register.html', {'form': form})
 
 
-class AdminApplyList(RoleRequiredMixin, ListView):
+class AdminApplyList(RoleRequiredMixin, PaginatorListView):
     """等待审核的用户列表
 
     需要ROOT、校级的权限
@@ -105,12 +107,6 @@ class AdminApplyList(RoleRequiredMixin, ListView):
     context_object_name = "admins"
     paginate_by = 20
     role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(object_list=None, **kwargs)
-        groups = Group.objects.all().prefetch_related("permissions")
-        context['groups'] = groups
-        return context
 
     def get_queryset(self):
         """获取正在审核的用户"""
@@ -151,20 +147,16 @@ class AdminDetail(RoleRequiredMixin, DetailView):
 
 
 class AdminUpdateView(RoleRequiredMixin, UpdateView):
-    """用户修改资料
-
-    只允许修改自己的资料
-    """
+    """修改资料"""
     role_required = (RoleEnum.ROOT.value, )
     model = User
     context_object_name = "user"
-    message = "资料修改成功"
     template_name = "users/change_profile.html"
     form_class = UserForm
 
     def get_success_url(self):
-        messages.success(self.request, self.message)
-        return reverse("index")
+        messages.success(self.request, "修改资料成功")
+        return reverse_lazy("users:admins")
 
 
 class AdminDeleteView(RoleRequiredMixin, DeleteView):
@@ -178,6 +170,7 @@ class AdminDeleteView(RoleRequiredMixin, DeleteView):
     context_object_name = "admin"
 
     def get_success_url(self):
+        messages.warning(self.request, "删除管理员成功")
         return reverse_lazy("users:admins")
 
 
@@ -225,7 +218,9 @@ class AcademyCreate(RoleRequiredMixin, CreateView):
     template_name = "academy/create.html"
 
     def get_success_url(self):
-        return reverse("academy")
+        messages.success(self.request, "添加学院成功")
+        return reverse_lazy("academy")
+
 
 class AcademyUpdate(RoleRequiredMixin, UpdateView):
     """修改学院"""
@@ -235,7 +230,8 @@ class AcademyUpdate(RoleRequiredMixin, UpdateView):
     template_name = "academy/update.html"
 
     def get_success_url(self):
-        return reverse("academy")
+        messages.warning(self.request, "修改学院成功")
+        return reverse_lazy("academy")
 
 
 class AcademyDelete(RoleRequiredMixin, DeleteView):
@@ -245,24 +241,23 @@ class AcademyDelete(RoleRequiredMixin, DeleteView):
     template_name = "academy/delete.html"
 
     def get_success_url(self):
-        return reverse("academy")
+        messages.warning(self.request, "删除学院成功")
+        return reverse_lazy("academy")
 
 
-# class GradeList(RoleRequiredMixin, ListView):
-#     """学院列表页"""
-#     role_required = (RoleEnum.ROOT.value, )
-#     template_name = "grade/list.html"
-#     context_object_name = "grades"
-#     model = Grade
+class GradeList(RoleRequiredMixin, ListView):
+    """学院列表页"""
+    role_required = (RoleEnum.ROOT.value, )
+    template_name = "grade/list.html"
+    context_object_name = "grades"
+    model = Grade
 
-
-GradeList = type('GradeList', (RoleRequiredMixin, ListView, object,), {
-    'role_required': (RoleEnum.ROOT.value, ),
-    'template_name': "grade/list.html",
-    'context_object_name': "grades",
-    "model": Grade
-})
-
+# GradeList = type('GradeList', (RoleRequiredMixin, ListView, object,), {
+#     'role_required': (RoleEnum.ROOT.value, ),
+#     'template_name': "grade/list.html",
+#     'context_object_name': "grades",
+#     "model": Grade
+# })
 
 class GradeCreate(RoleRequiredMixin, CreateView):
     """新增年级"""
@@ -272,6 +267,7 @@ class GradeCreate(RoleRequiredMixin, CreateView):
     template_name = "grade/create.html"
 
     def get_success_url(self):
+        messages.success(self.request, "新增年级成功")
         return reverse_lazy("grade")
 
 
@@ -282,4 +278,5 @@ class GradeDelete(RoleRequiredMixin, DeleteView):
     template_name = "grade/delete.html"
 
     def get_success_url(self):
+        messages.warning(self.request, "删除年级成功")
         return reverse_lazy("grade")

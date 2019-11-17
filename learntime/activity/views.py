@@ -1,7 +1,8 @@
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, DetailView, UpdateView
@@ -105,7 +106,8 @@ class ActivityCreate(RoleRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("activities:activities")
+        messages.success(self.request, "发布活动成功")
+        return reverse_lazy("activities:activities")
 
 
 class ActivityDetail(LoginRequiredMixin, DetailView):
@@ -128,6 +130,7 @@ class ActivityUpdate(RoleRequiredMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
+        messages.success(self.request, "修改活动成功")
         return reverse("activities:activities")
 
 

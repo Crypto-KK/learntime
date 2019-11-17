@@ -5,14 +5,15 @@
 {% block header_name %}
     学院管理
 {% endblock %}
-{% block body %}
-      <!-- Breadcrumb-->
-    <div class="breadcrumb-holder container-fluid">
+{% block bread %}
+  <div class="breadcrumb-holder container-fluid">
     <ul class="breadcrumb">
       <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
       <li class="breadcrumb-item active">学院管理</li>
     </ul>
     </div>
+{% endblock %}
+{% block body %}
 
     <section class="tables">
       <div class="container-fluid">

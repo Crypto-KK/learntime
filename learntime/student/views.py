@@ -1,6 +1,7 @@
 import json
 
 from django.conf import settings
+from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -81,6 +82,7 @@ class StudentCreate(RoleRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
+        messages.success(self.request, "添加学生成功")
         return reverse_lazy("students:students")
 
 
@@ -98,9 +100,10 @@ class StudentUpdate(RoleRequiredMixin, UpdateView):
             user=self.request.user,
             content=f"修改了学生<{form.instance.name}>"
         )
-        super().form_valid(form)
+        return super().form_valid(form)
 
     def get_success_url(self):
+        messages.success(self.request, "修改学生成功")
         return reverse_lazy("students:students")
 
 
@@ -112,6 +115,7 @@ class StudentDelete(RoleRequiredMixin, DeleteView):
     context_object_name = "student"
 
     def get_success_url(self):
+        messages.success(self.request, "删除学生成功")
         return reverse_lazy("students:students")
 
 

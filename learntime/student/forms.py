@@ -16,7 +16,7 @@ class StudentCreateForm(forms.ModelForm):
 class StudentEditForm(forms.ModelForm):
     uid = forms.CharField(help_text="学号")
     class Meta:
-        fields = "__all__"
+        fields = ("uid", "name", "grade", "academy", "clazz")
         model = Student
 
 

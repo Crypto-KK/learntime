@@ -6,7 +6,7 @@
 {% block header_name %}
     学生管理
 {% endblock %}
-{% block body %}
+{% block bread %}
       <!-- Breadcrumb-->
     <div class="breadcrumb-holder container-fluid">
     <ul class="breadcrumb">
@@ -14,6 +14,9 @@
       <li class="breadcrumb-item active">学生管理</li>
     </ul>
     </div>
+{% endblock %}
+{% block body %}
+
     {% with role=request.user.role %}
 
     <section class="tables">
