@@ -14,8 +14,8 @@ from django.views.generic.base import View
 from learntime.activity.models import Activity
 from learntime.student.models import Student
 from learntime.users.enums import RoleEnum
-from learntime.users.forms import LoginForm, RegisterForm, UserForm, AcademyForm
-from learntime.users.models import Academy
+from learntime.users.forms import LoginForm, RegisterForm, UserForm, AcademyForm, GradeForm
+from learntime.users.models import Academy, Grade
 from learntime.utils.helpers import AuthorRequiredMixin, RoleRequiredMixin
 
 User = get_user_model() # 惰性获取User对象
@@ -94,44 +94,6 @@ def register_view(request):
             return render(request, 'users/register_success.html')
 
         return render(request, 'users/register.html', {'form': form})
-
-
-class AcademyList(RoleRequiredMixin, ListView):
-    """学院列表页"""
-    role_required = (RoleEnum.ROOT.value, )
-    template_name = "academy/list.html"
-    context_object_name = "academies"
-    model = Academy
-
-
-class AcademyCreate(RoleRequiredMixin, CreateView):
-    """新增学院"""
-    role_required = (RoleEnum.ROOT.value,)
-    model = Academy
-    form_class = AcademyForm
-    template_name = "academy/create.html"
-
-    def get_success_url(self):
-        return reverse("academy")
-
-class AcademyUpdate(RoleRequiredMixin, UpdateView):
-    """修改学院"""
-    role_required = (RoleEnum.ROOT.value,)
-    model = Academy
-    form_class = AcademyForm
-    template_name = "academy/update.html"
-
-    def get_success_url(self):
-        return reverse("academy")
-
-class AcademyDelete(RoleRequiredMixin, DeleteView):
-    """删除学院"""
-    role_required = (RoleEnum.ROOT.value,)
-    model = Academy
-    template_name = "academy/delete.html"
-
-    def get_success_url(self):
-        return reverse("academy")
 
 
 class AdminApplyList(RoleRequiredMixin, ListView):
@@ -244,4 +206,80 @@ class ApplyConfirmView(RoleRequiredMixin, View):
         else:
             return JsonResponse({"err": 0})
 
+# =============================================================================
+# =================================年级和学院视图=================================
 
+class AcademyList(RoleRequiredMixin, ListView):
+    """学院列表页"""
+    role_required = (RoleEnum.ROOT.value, )
+    template_name = "academy/list.html"
+    context_object_name = "academies"
+    model = Academy
+
+
+class AcademyCreate(RoleRequiredMixin, CreateView):
+    """新增学院"""
+    role_required = (RoleEnum.ROOT.value,)
+    model = Academy
+    form_class = AcademyForm
+    template_name = "academy/create.html"
+
+    def get_success_url(self):
+        return reverse("academy")
+
+class AcademyUpdate(RoleRequiredMixin, UpdateView):
+    """修改学院"""
+    role_required = (RoleEnum.ROOT.value,)
+    model = Academy
+    form_class = AcademyForm
+    template_name = "academy/update.html"
+
+    def get_success_url(self):
+        return reverse("academy")
+
+
+class AcademyDelete(RoleRequiredMixin, DeleteView):
+    """删除学院"""
+    role_required = (RoleEnum.ROOT.value,)
+    model = Academy
+    template_name = "academy/delete.html"
+
+    def get_success_url(self):
+        return reverse("academy")
+
+
+# class GradeList(RoleRequiredMixin, ListView):
+#     """学院列表页"""
+#     role_required = (RoleEnum.ROOT.value, )
+#     template_name = "grade/list.html"
+#     context_object_name = "grades"
+#     model = Grade
+
+
+GradeList = type('GradeList', (RoleRequiredMixin, ListView, object,), {
+    'role_required': (RoleEnum.ROOT.value, ),
+    'template_name': "grade/list.html",
+    'context_object_name': "grades",
+    "model": Grade
+})
+
+
+class GradeCreate(RoleRequiredMixin, CreateView):
+    """新增年级"""
+    role_required = (RoleEnum.ROOT.value,)
+    model = Grade
+    form_class = GradeForm
+    template_name = "grade/create.html"
+
+    def get_success_url(self):
+        return reverse_lazy("grade")
+
+
+class GradeDelete(RoleRequiredMixin, DeleteView):
+    """删除年级"""
+    role_required = (RoleEnum.ROOT.value,)
+    model = Grade
+    template_name = "grade/delete.html"
+
+    def get_success_url(self):
+        return reverse_lazy("grade")

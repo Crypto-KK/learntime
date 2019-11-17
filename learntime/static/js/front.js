@@ -198,6 +198,11 @@ $(document).ready(function () {
             $('.academy-page').addClass("active");
         }
 
+        if (pathname === "/grade/") {
+            removeMenuHighLight();
+            $('.grade-page').addClass("active");
+        }
+
         if (pathname === "/activities/activity-unverify/" || pathname === "/activities/activity-verify/") {
             removeMenuHighLight();
             $('.activity-verify-page').addClass("active");

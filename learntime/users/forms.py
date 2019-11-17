@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django import forms
 from django.forms import fields, widgets
 
-from learntime.users.models import Academy
+from learntime.users.models import Academy, Grade
 
 User = get_user_model()
 
@@ -33,6 +33,11 @@ class RegisterForm(forms.ModelForm):
 class AcademyForm(forms.ModelForm):
     class Meta:
         model = Academy
+        fields = "__all__"
+
+class GradeForm(forms.ModelForm):
+    class Meta:
+        model = Grade
         fields = "__all__"
 
 

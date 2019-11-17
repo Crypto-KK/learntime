@@ -1,12 +1,22 @@
 from django import forms
 
 from learntime.student.models import Student, StudentFile
+from learntime.users.models import Academy, Grade
 
 
-class StudentForm(forms.ModelForm):
+class StudentCreateForm(forms.ModelForm):
+    uid = forms.CharField(help_text="学号")
+    academy = forms.ModelChoiceField(label="学院", queryset=Academy.objects.all())
+    grade = forms.ModelChoiceField(label="年级", queryset=Grade.objects.all())
+    class Meta:
+        fields = "__all__"
+        model = Student
+
+
+class StudentEditForm(forms.ModelForm):
     uid = forms.CharField(help_text="学号")
     class Meta:
-        exclude = ('password', )
+        fields = "__all__"
         model = Student
 
 

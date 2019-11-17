@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db.models import CharField, IntegerField, Model
 from django.urls import reverse
-from django.utils.functional import cached_property
 
 from learntime.utils.models import CreatedUpdatedMixin
 
@@ -54,3 +53,14 @@ class Academy(Model):
 
     class Meta:
         db_table = "academy"
+
+
+class Grade(Model):
+    """年级数据库"""
+    name = CharField(max_length=20, verbose_name="年级")
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = "grade"

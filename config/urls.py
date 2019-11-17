@@ -6,8 +6,8 @@ from rest_framework.routers import DefaultRouter
 
 from learntime.activity.views import StoreDetailViewSet
 from learntime.student.views import find_student_by_uid_and_name
-from learntime.users.views import IndexView, AcademyList, AcademyCreate, AcademyUpdate, AcademyDelete
-
+from learntime.users.views import IndexView, AcademyList, AcademyCreate, AcademyUpdate, AcademyDelete, GradeList, \
+    GradeCreate, GradeDelete
 
 router = DefaultRouter()
 router.register("activities", StoreDetailViewSet, base_name="activities")
@@ -22,6 +22,12 @@ urlpatterns = [
     path("academy/create/", AcademyCreate.as_view(), name="academy_create"),
     path("academy/update/<int:pk>/", AcademyUpdate.as_view(), name="academy_update"),
     path("academy/delete/<int:pk>/", AcademyDelete.as_view(), name="academy_delete"),
+
+    #年级管理
+    path("grade/", GradeList.as_view(), name="grade"),
+    path("grade/create/", GradeCreate.as_view(), name="grade_create"),
+    # path("academy/update/<int:pk>/", AcademyUpdate.as_view(), name="academy_update"),
+    path("grade/delete/<int:pk>/", GradeDelete.as_view(), name="grade_delete"),
 
     path("users/", include("learntime.users.urls", namespace="users")),
     path("students/", include("learntime.student.urls", namespace="students")),

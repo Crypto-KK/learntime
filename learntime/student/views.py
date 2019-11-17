@@ -2,15 +2,16 @@ import json
 
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse
-from django.urls import reverse
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
 from django.views.generic.base import View
 
 from io import BytesIO
 
-from learntime.student.forms import StudentForm, StudentExcelForm
+from learntime.operation.models import Log
+from learntime.student.forms import StudentExcelForm, StudentCreateForm, StudentEditForm
 from learntime.student.models import Student, StudentFile
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
@@ -69,23 +70,38 @@ class StudentCreate(RoleRequiredMixin, CreateView):
     role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
     model = Student
     template_name = "students/student_create.html"
-    form_class = StudentForm
+    form_class = StudentCreateForm
 
+    def form_valid(self, form):
+        # 添加日志
+        Log.objects.create(
+            user=self.request.user,
+            content=f"添加了学生<{form.instance.name}>"
+        )
+        return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("students:students")
+        return reverse_lazy("students:students")
 
 
 class StudentUpdate(RoleRequiredMixin, UpdateView):
     """修改学生"""
     role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
     model = Student
-    form_class = StudentForm
+    form_class = StudentEditForm
     template_name = "students/student_update.html"
     context_object_name = "student"
 
+    def form_valid(self, form):
+        # 添加日志
+        Log.objects.create(
+            user=self.request.user,
+            content=f"修改了学生<{form.instance.name}>"
+        )
+        super().form_valid(form)
+
     def get_success_url(self):
-        return reverse("students:students")
+        return reverse_lazy("students:students")
 
 
 class StudentDelete(RoleRequiredMixin, DeleteView):
@@ -96,7 +112,7 @@ class StudentDelete(RoleRequiredMixin, DeleteView):
     context_object_name = "student"
 
     def get_success_url(self):
-        return reverse("students:students")
+        return reverse_lazy("students:students")
 
 
 class StudentExcelImportView(RoleRequiredMixin, View):
@@ -128,6 +144,11 @@ class StudentExcelImportView(RoleRequiredMixin, View):
             except Exception as e: # 文件内容有误
                 return JsonResponse({"status": "fail", "reason": "导入失败！"})
 
+            # 写入日志中
+            Log.objects.create(
+                user=self.request.user,
+                content=f"导入了{nrows - 1}条学生记录"
+            )
             return JsonResponse({"status": "ok"})
 
         else: # 文件格式错误
@@ -179,6 +200,13 @@ class StudentExcelExportView(RoleRequiredMixin, View):
         response = HttpResponse(sio.getvalue(), content_type='application/vnd.ms-excel')
         response['Content-Disposition'] = 'attachment;filename=students.xls'
         response.write(sio.getvalue())
+
+        # 写入日志
+        Log.objects.create(
+            user=self.request.user,
+            content=f"下载了{row - 1}条学生记录"
+        )
+
         return response
 
 
@@ -192,6 +220,11 @@ class StudentBulkDeleteView(RoleRequiredMixin, View):
             student_list = request.POST['student_list'].split('-')
             for uid in student_list:
                 Student.objects.get(pk=uid).delete()
+            # 写入日志
+            Log.objects.create(
+                user=self.request.user,
+                content=f"批量删除了{len(student_list)}条学生记录"
+            )
             return JsonResponse({"status": "ok"})
         except Exception:
             return JsonResponse({"status": "fail"})
