@@ -203,6 +203,10 @@ def find_student_by_uid_and_name(request):
         POST = json.loads(request.body.decode('utf-8'))
         uid = POST['uid']
         name = POST['name']
+        if isinstance(uid, list):
+            uid = POST['uid'][0]
+        if isinstance(name, list):
+            name = POST['name'][0]
         try:
             Student.objects.filter(uid=uid, name=name)[0]
         except Exception:
