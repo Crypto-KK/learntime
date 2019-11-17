@@ -1,7 +1,7 @@
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
-from learntime.activity.models import Activity
+from learntime.activity.models import Activity, SimpleActivity
 from learntime.operation.models import Log
 
 
@@ -16,6 +16,24 @@ def after_create_activity(sender, instance=None, created=False, **kwargs):
     else:
         # 活动审核通过
         if instance.is_verify:
+
+            # 写入activity表中
+            SimpleActivity.objects.create(
+                uid=instance.uid,
+                name=instance.name,
+                description=instance.desc,
+                score_player=instance.score_player,
+                score_staff=instance.score_staff,
+                score_viewer=instance.score_viewer,
+                sponsor=instance.sponsor,
+                time=instance.time,
+                stop=instance.stop,
+                place=instance.place,
+                logo=instance.logo,
+                credit_type=instance.credit_type,
+                deadline=instance.deadline
+            )
+
             if not instance.to_school:
                 # 院级审核通过
 
@@ -40,6 +58,10 @@ def after_create_activity(sender, instance=None, created=False, **kwargs):
                     user=instance.to_school,
                     content=f"我批准了活动<{instance.name}>"
                 )
+
+
+
+
         else:
             if instance.reason and not instance.is_verifying:
                 # 审核不通过

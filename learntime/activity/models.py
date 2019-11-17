@@ -65,7 +65,7 @@ class Activity(CreatedUpdatedMixin, models.Model):
 
 class SimpleActivity(models.Model):
     """活动表"""
-    uid = models.UUIDField(primary_key=True, editable=False, verbose_name="活动id")
+    uid = models.UUIDField(primary_key=True, verbose_name="活动id")
     name = models.CharField(max_length=255, verbose_name="活动名称",
                             null=True, blank=True)
     description = models.TextField(verbose_name="描述", null=True, blank=True)
