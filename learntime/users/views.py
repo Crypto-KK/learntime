@@ -1,7 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
@@ -16,6 +15,7 @@ from learntime.student.models import Student
 from learntime.users.enums import RoleEnum
 from learntime.users.forms import LoginForm, RegisterForm, UserForm, AcademyForm, GradeForm
 from learntime.users.models import Academy, Grade
+from learntime.utils.factories import CrudViewFactory
 from learntime.utils.helpers import AuthorRequiredMixin, RoleRequiredMixin, PaginatorListView
 
 User = get_user_model() # 惰性获取User对象
@@ -202,81 +202,60 @@ class ApplyConfirmView(RoleRequiredMixin, View):
 # =============================================================================
 # =================================年级和学院视图=================================
 
-class AcademyList(RoleRequiredMixin, ListView):
-    """学院列表页"""
-    role_required = (RoleEnum.ROOT.value, )
-    template_name = "academy/list.html"
-    context_object_name = "academies"
-    model = Academy
+# =======学院的增删改查========
+academy_crud = CrudViewFactory('academy', 'academies', Academy,
+                            {'role_required': (RoleEnum.ROOT.value, )}, (RoleRequiredMixin,))
+AcademyList = academy_crud.create_list_view()
+AcademyCreate = academy_crud.create_create_view(True, 0, "新增学院成功", 'academy')
+AcademyDelete = academy_crud.create_delete_view("删除学院成功", "academy")
+AcademyUpdate = academy_crud.create_update_view(True, 0, '修改学院成功', 'academy')
 
+# =======年级的增删改查========
+grade_crud = CrudViewFactory('grade', 'grades', Grade,
+                            {'role_required': (RoleEnum.ROOT.value, )}, (RoleRequiredMixin,))
+GradeList = grade_crud.create_list_view()
+GradeCreate = grade_crud.create_create_view(True, 0, "新增年级成功", 'grade')
+GradeDelete = grade_crud.create_delete_view("删除年级成功", "grade")
+GradeUpdate = grade_crud.create_update_view(True, 0, '修改年级成功', 'grade')
 
-class AcademyCreate(RoleRequiredMixin, CreateView):
-    """新增学院"""
-    role_required = (RoleEnum.ROOT.value,)
-    model = Academy
-    form_class = AcademyForm
-    template_name = "academy/create.html"
-
-    def get_success_url(self):
-        messages.success(self.request, "添加学院成功")
-        return reverse_lazy("academy")
-
-
-class AcademyUpdate(RoleRequiredMixin, UpdateView):
-    """修改学院"""
-    role_required = (RoleEnum.ROOT.value,)
-    model = Academy
-    form_class = AcademyForm
-    template_name = "academy/update.html"
-
-    def get_success_url(self):
-        messages.warning(self.request, "修改学院成功")
-        return reverse_lazy("academy")
-
-
-class AcademyDelete(RoleRequiredMixin, DeleteView):
-    """删除学院"""
-    role_required = (RoleEnum.ROOT.value,)
-    model = Academy
-    template_name = "academy/delete.html"
-
-    def get_success_url(self):
-        messages.warning(self.request, "删除学院成功")
-        return reverse_lazy("academy")
-
-
-class GradeList(RoleRequiredMixin, ListView):
-    """学院列表页"""
-    role_required = (RoleEnum.ROOT.value, )
-    template_name = "grade/list.html"
-    context_object_name = "grades"
-    model = Grade
-
-# GradeList = type('GradeList', (RoleRequiredMixin, ListView, object,), {
-#     'role_required': (RoleEnum.ROOT.value, ),
-#     'template_name': "grade/list.html",
-#     'context_object_name': "grades",
-#     "model": Grade
-# })
-
-class GradeCreate(RoleRequiredMixin, CreateView):
-    """新增年级"""
-    role_required = (RoleEnum.ROOT.value,)
-    model = Grade
-    form_class = GradeForm
-    template_name = "grade/create.html"
-
-    def get_success_url(self):
-        messages.success(self.request, "新增年级成功")
-        return reverse_lazy("grade")
-
-
-class GradeDelete(RoleRequiredMixin, DeleteView):
-    """删除年级"""
-    role_required = (RoleEnum.ROOT.value,)
-    model = Grade
-    template_name = "grade/delete.html"
-
-    def get_success_url(self):
-        messages.warning(self.request, "删除年级成功")
-        return reverse_lazy("grade")
+# class AcademyList(RoleRequiredMixin, ListView):
+#     """学院列表页"""
+#     role_required = (RoleEnum.ROOT.value, )
+#     template_name = "academy/list.html"
+#     context_object_name = "academies"
+#     model = Academy
+#
+#
+# class AcademyCreate(RoleRequiredMixin, CreateView):
+#     """新增学院"""
+#     role_required = (RoleEnum.ROOT.value,)
+#     model = Academy
+#     form_class = AcademyForm
+#     template_name = "academy/create.html"
+#
+#     def get_success_url(self):
+#         messages.success(self.request, "添加学院成功")
+#         return reverse_lazy("academy")
+#
+#
+# class AcademyUpdate(RoleRequiredMixin, UpdateView):
+#     """修改学院"""
+#     role_required = (RoleEnum.ROOT.value,)
+#     model = Academy
+#     form_class = AcademyForm
+#     template_name = "academy/update.html"
+#
+#     def get_success_url(self):
+#         messages.warning(self.request, "修改学院成功")
+#         return reverse_lazy("academy")
+#
+#
+# class AcademyDelete(RoleRequiredMixin, DeleteView):
+#     """删除学院"""
+#     role_required = (RoleEnum.ROOT.value,)
+#     model = Academy
+#     template_name = "academy/delete.html"
+#
+#     def get_success_url(self):
+#         messages.warning(self.request, "删除学院成功")
+#         return reverse_lazy("academy")

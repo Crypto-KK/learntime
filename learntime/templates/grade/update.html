@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+    修改年级
+{% endblock %}
+{% block header_name %}
+    修改年级
+{% endblock %}
+{% block body %}
+      <!-- Breadcrumb-->
+    <div class="breadcrumb-holder container-fluid">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'grade' %}">年级管理</a></li>
+      <li class="breadcrumb-item active">修改年级</li>
+    </ul>
+    </div>
+
+  <br>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <form id="form" action="{% url 'grade_update' grade.pk %}" method="post">
+          {% csrf_token %}
+          {{ form.media }}
+          {{ form|crispy }}
+        </form>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary button-submit">确认更改</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+{% endblock %}
+{% block js %}
+  <script>
+    $(function () {
+        $('.button-submit').click(function () {
+            $('#form').submit()
+        })
+    })
+  </script>
+{% endblock %}

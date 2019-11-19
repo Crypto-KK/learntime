@@ -13,7 +13,6 @@ from rest_framework import mixins, viewsets
 from learntime.activity.forms import ActivityForm
 from learntime.activity.models import Activity
 from learntime.activity.serializers import ActivitySerializer
-from learntime.operation.models import Log
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
 from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView

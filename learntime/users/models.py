@@ -55,6 +55,7 @@ class Academy(Model):
         db_table = "academy"
 
 
+
 class Grade(Model):
     """年级数据库"""
     name = CharField(max_length=20, verbose_name="年级")
