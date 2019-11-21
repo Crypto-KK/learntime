@@ -90,7 +90,7 @@ class SimpleActivity(models.Model):
     credit_type = models.CharField(max_length=255, verbose_name="学时类别",
                                    null=True, blank=True)
     deadline = models.DateTimeField(null=True, blank=True, verbose_name="报名截止日期")
-    created_at = models.DateTimeField(db_index=True, auto_now_add=True, verbose_name='创建时间',
+    created = models.DateTimeField(db_index=True, auto_now_add=True, verbose_name='创建时间',
                                       blank=True, null=True)
     class Meta:
         verbose_name = "活动"

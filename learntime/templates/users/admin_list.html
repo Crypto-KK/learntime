@@ -21,7 +21,17 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-lg-12">
-
+              <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  筛选学院
+                </button>
+                <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% url 'users:admins' %}">全部</a>
+                  {% for academy in academy_list %}
+                    <a class="dropdown-item" href="?academy={{ academy }}" id="auto-select-academy">{{ academy }}</a>
+                  {% endfor %}
+                </div>
+              </div>
             <div class="card">
 
               <div class="card-body">
@@ -36,9 +46,7 @@
                         <th>班级</th>
                         <th>上次登录</th>
                         <th>权限</th>
-
                         <th>操作</th>
-
                       </tr>
                     </thead>
                     <tbody>
@@ -47,20 +55,14 @@
                           <tr>
                           <td>{{ admin.name }}</td>
                           <td>{{ admin.email }}</td>
-                          <td>{% if admin.academy %}{{ admin.academy }}{% else %}无{% endif %}</td>
-                          <td>{% if admin.grade %}{{ admin.grade }}{% else %}无{% endif %}</td>
-                          <td>{% if admin.klass %}{{ admin.klass }}{% else %}无{% endif %}</td>
-
+                          <td>{% if admin.academy %}{{ admin.academy }}{% else %}-{% endif %}</td>
+                          <td>{% if admin.grade %}{{ admin.grade }}{% else %}-{% endif %}</td>
+                          <td>{% if admin.klass %}{{ admin.klass }}{% else %}-{% endif %}</td>
                           <td>{{ admin.last_login }}</td>
+                          <td>{{ admin.get_role_display }}</td>
                           <td>
-                            {{ admin.get_role_display }}
-
-                          </td>
-
-                          <td>
-
                             {% if role == 1 or role == 2 %}
-                              <a href="{% url 'users:admin_detail' admin.pk %}" class="btn btn-primary btn-sm">查看</a>
+{#                              <a href="{% url 'users:admin_detail' admin.pk %}" class="btn btn-primary btn-sm">查看</a>#}
                               <a href="{% url 'users:update_profile' admin.pk %}" class="btn btn-warning btn-sm">编辑</a>
                               <a href="{% url 'users:admin_delete' admin.pk %}" class="btn btn-danger btn-sm">删除</a>
                             {% endif %}
@@ -71,7 +73,6 @@
                     </tbody>
                   </table>
                 </div>
-
               </div>
             </div>
           </div>
@@ -81,4 +82,29 @@
 
     {% include 'pagination.html' %}
 {% endblock %}
-
+{% block js %}
+  <script>
+    $(function () {
+        function getQueryVariable(variable) {
+          var query = window.location.search.substring(1);
+          var vars = query.split("&");
+          for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+          }
+          return false;
+        }
+        var concatQuery = "";
+        var academy = getQueryVariable("academy");
+        if (academy) {
+        concatQuery = "academy=" + academy;
+        }
+        $('.page-link').each(function () {
+          // 分页时携带参数
+          var oldHref = $(this).attr("href");
+          newHref = oldHref + "&" + concatQuery;
+          $(this).attr("href", newHref);
+        });
+    })
+  </script>
+{% endblock %}

@@ -113,26 +113,28 @@ class AdminApplyList(RoleRequiredMixin, PaginatorListView):
         return User.objects.filter(is_active=False)
 
 
-class AdminList(RoleRequiredMixin, ListView):
+class AdminList(RoleRequiredMixin, PaginatorListView):
     """管理员列表页
 
-    需要ROOT、校级、学院级的权限
+    需要ROOT
     """
     template_name = "users/admin_list.html"
     context_object_name = "admins"
     paginate_by = 20
-    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value)
+    role_required = (RoleEnum.ROOT.value, )
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=None, **kwargs)
+        academies = Academy.objects.values_list("name")
+        context['academy_list'] = [name[0] for name in academies]
+        return context
 
     def get_queryset(self):
         """按照不同权限查看不同的管理员"""
-        role = self.request.user.role
-        if role == RoleEnum.ROOT.value or role == RoleEnum.SCHOOL.value:
-            return User.objects.filter(is_active=True)
-        elif role == RoleEnum.ACADEMY.value:
-            return User.objects.filter(
-                role=RoleEnum.ACADEMY.value, is_active=True)
-        else:
-            return User.objects.none()
+        academy = self.request.GET.get('academy', None)
+        if academy:
+            return User.objects.filter(is_active=True, academy=academy)
+        return User.objects.filter(is_active=True)
 
 
 class AdminDetail(RoleRequiredMixin, DetailView):

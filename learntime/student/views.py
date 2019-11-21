@@ -26,7 +26,7 @@ class StudentList(RoleRequiredMixin, PaginatorListView):
     """
     role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value)
     template_name = "students/student_list.html"
-    paginate_by = 20
+    paginate_by = 2
     context_object_name = "students"
 
     def get_context_data(self, *, object_list=None, **kwargs):

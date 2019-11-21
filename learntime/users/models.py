@@ -42,6 +42,7 @@ class User(AbstractUser):
     class Meta:
         verbose_name = "管理员"
         verbose_name_plural = verbose_name
+        ordering = ('role', )
 
 
 class Academy(Model):
