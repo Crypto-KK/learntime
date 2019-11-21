@@ -30,19 +30,10 @@ class RegisterForm(forms.ModelForm):
         model = User
 
 
-class AcademyForm(forms.ModelForm):
-    class Meta:
-        model = Academy
-        fields = "__all__"
-
-class GradeForm(forms.ModelForm):
-    class Meta:
-        model = Grade
-        fields = "__all__"
-
-
 class UserForm(forms.ModelForm):
-
+    academy = forms.ModelChoiceField(queryset=Academy.objects.all(),
+                                     )
+    grade = forms.ModelChoiceField(queryset=Grade.objects.all())
     class Meta:
         fields = ['name', "email", "academy", "grade", "klass"]
         model = User

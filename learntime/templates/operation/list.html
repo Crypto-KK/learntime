@@ -24,12 +24,17 @@
               <div class="card-body">
 
                 <div class="table-responsive">
+                  {% with request.user.role as role %}
+
 
                   <table class="table table-striped table-hover table-bordered ">
                     <thead>
                       <tr>
                         <th>序号</th>
                         <th>时间</th>
+                        {% if role == 1 %}
+                          <th>操作者</th>
+                        {% endif %}
                         <th>内容</th>
                       </tr>
                     </thead>
@@ -38,13 +43,16 @@
                           <tr>
                           <td>{{ forloop.counter }}</td>
                           <td>{{ log.created_at }}</td>
+                            {% if role == 1 %}
+                              <td>{{ log.user }}</td>
+                            {% endif %}
                           <td>{{ log.content }}</td>
                           </tr>
                       {% endfor %}
                     </tbody>
                   </table>
                 </div>
-
+                {% endwith %}
               </div>
             </div>
           </div>

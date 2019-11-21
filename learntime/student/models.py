@@ -30,6 +30,13 @@ class Student(CreatedUpdatedMixin, models.Model):
     def __str__(self):
         return self.uid
 
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        """总学时校准"""
+        self.credit = self.cxcy_credit + self.sxdd_credit + self.fl_credit + self.wt_credit + self.xl_credit
+        super().save(force_insert=False, force_update=False, using=None,
+             update_fields=None)
+
 
 class StudentFile(models.Model):
     excel_file = models.FileField(upload_to="student/%Y/%m/%d/", verbose_name="学生文件")

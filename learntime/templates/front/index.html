@@ -160,40 +160,7 @@
               </div>
             </div>
           </section>
-    <!-- Projects Section-->
-    <section class="projects no-padding-top">
-    <div class="container-fluid">
-      <h1>正在进行的活动</h1>
-      <!-- Project-->
-      {% for activity in activities %}
-        <div class="project">
-        <div class="row bg-white has-shadow">
-          <div class="left-col col-lg-6 d-flex align-items-center justify-content-between">
-            <div class="project-title d-flex align-items-center">
-              <div class="image has-shadow"><img src="{% static 'img/project-1.jpg' %}" alt="..." class="img-fluid"></div>
-              <div class="text">
-                <h3 class="h4"><a href="{% url 'activities:activity_detail' activity.pk %}">{{ activity.name }}</a></h3>
-                <small>
-                  <span class="badge badge-success">{{ activity.get_credit_type_display }}</span>
-                </small>
-              </div>
-            </div>
-            <div class="project-date"><span class="hidden-sm-down">{{ activity.time }}</span></div>
-          </div>
-          <div class="right-col col-lg-6 d-flex align-items-center">
-            <div class="time"><i class="fa fa-clock-o"></i>发布时间：{{ activity.updated_at }}</div>
-            <div class="time"><i class="fa fa-clock-o"></i>主办方：{{ activity.sponsor }}</div>
 
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-
-
-
-
-    </div>
-    </section>
 {% endblock %}
 
 {% block js %}

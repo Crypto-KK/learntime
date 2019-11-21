@@ -18,7 +18,19 @@ from learntime.users.models import Academy
 from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView
 
 
-class ActivityList(RoleRequiredMixin, PaginatorListView):
+class AllActivityList(RoleRequiredMixin, PaginatorListView):
+    """管理员权限：看到所有活动"""
+    role_required = (RoleEnum.ROOT.value, )
+    template_name = "activity/all_activity_list.html"
+    paginate_by = 20
+    context_object_name = "activities"
+
+    def get_queryset(self):
+        """返回全部"""
+        return Activity.objects.all().select_related('user', 'to', 'to_school')
+
+
+class MyActivityList(RoleRequiredMixin, PaginatorListView):
     """我发布的活动列表 干部级可以在这里发布活动，查看自己的活动
 
     需要ROOT、校级、学院级的权限
@@ -209,7 +221,7 @@ class GetAdminsView(LoginRequiredMixin, View):
         try:
             admin_dict = {}
             academy = Academy.objects.get(pk=request.POST['id'])
-            admins = get_user_model().objects.filter(academy__contains=academy)
+            admins = get_user_model().objects.filter(academy__contains=academy, role=3)
             for admin in admins:
                 admin_dict.update({admin.pk: admin.name})
 

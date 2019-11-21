@@ -15,6 +15,8 @@ class StudentCreateForm(forms.ModelForm):
 
 class StudentEditForm(forms.ModelForm):
     uid = forms.CharField(help_text="学号")
+    academy = forms.ModelChoiceField(queryset=Academy.objects.all(), help_text="选择学院")
+    grade = forms.ModelChoiceField(queryset=Grade.objects.all(), help_text="选择年级")
     class Meta:
         fields = ("uid", "name", "grade", "academy", "clazz")
         model = Student

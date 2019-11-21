@@ -7,16 +7,16 @@ from django.urls import reverse, reverse_lazy
 from django.contrib.auth import authenticate, login, logout
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
+from django.views.generic import DetailView, UpdateView, DeleteView
 from django.views.generic.base import View
 
 from learntime.activity.models import Activity
 from learntime.student.models import Student
 from learntime.users.enums import RoleEnum
-from learntime.users.forms import LoginForm, RegisterForm, UserForm, AcademyForm, GradeForm
+from learntime.users.forms import LoginForm, RegisterForm, UserForm
 from learntime.users.models import Academy, Grade
 from learntime.utils.factories import CrudViewFactory
-from learntime.utils.helpers import AuthorRequiredMixin, RoleRequiredMixin, PaginatorListView
+from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView
 
 User = get_user_model() # 惰性获取User对象
 
@@ -29,8 +29,6 @@ class IndexView(LoginRequiredMixin, View):
             "activity_nums": Activity.objects.count(),
             "admin_nums": User.objects.filter(is_active=True).count(),
             "verifying_admin_nums": User.objects.filter(is_active=False).count(),
-            "activities": Activity.objects.all().order_by("-updated_at"),
-
         }
         if request.user.role == RoleEnum.ROOT.value or request.user.role == RoleEnum.SCHOOL.value:
             return render(request, "front/index.html", context=context)

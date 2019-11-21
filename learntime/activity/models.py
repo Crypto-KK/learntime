@@ -1,5 +1,4 @@
 import uuid
-from datetime import datetime
 
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings

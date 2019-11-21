@@ -212,6 +212,11 @@ $(document).ready(function () {
             $('.student-page').addClass("active")
         }
 
+        if (pathname === '/activities/all/') {
+            removeMenuHighLight();
+            $('.activity-all-page').addClass("active")
+        }
+
 
     }
 

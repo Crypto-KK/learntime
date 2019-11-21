@@ -39,22 +39,29 @@ class StudentList(RoleRequiredMixin, PaginatorListView):
     def get_queryset(self):
         """按照不同权限查看不同的学生"""
         role = self.request.user.role
-        if role == RoleEnum.ROOT.value or role == RoleEnum.SCHOOL.value:
-            if self.request.GET.get('uid') is not None:
-                return Student.objects.filter(uid=self.request.GET['uid'])
-            if self.request.GET.get('name') is not None:
-                return Student.objects.filter(name=self.request.GET['name'])
-            if self.request.GET.get('academy') is not None:
-                return Student.objects.filter(academy__contains=self.request.GET['academy'])
-            if self.request.GET.get('grade') is not None:
-                return Student.objects.filter(grade__contains=self.request.GET['grade'])
-            if self.request.GET.get('clazz') is not None:
-                return Student.objects.filter(clazz__contains=self.request.GET['clazz'])
-            return Student.objects.all()
-        elif role == RoleEnum.ACADEMY.value:
-            return Student.objects.filter(academy=self.request.user.academy)
-        else:
-            return Student.objects.none()
+        uid = self.request.GET.get('uid')
+        name = self.request.GET.get('name')
+        academy = self.request.GET.get('academy')
+        grade = self.request.GET.get('grade')
+        clazz = self.request.GET.get('clazz')
+
+        # 初步的students查询集
+        students = Student.objects.filter(
+            academy=self.request.user.academy) \
+            if role == RoleEnum.ACADEMY.value else Student.objects.all()
+
+        if uid:
+            return students.filter(uid=uid)
+        if name:
+            return students.filter(name__contains=name)
+        if academy:
+            return students.filter(academy__contains=academy)
+        if grade:
+            return students.filter(grade__contains=grade)
+        if clazz:
+            return students.filter(clazz__contains=clazz)
+
+        return students
 
 
 class StudentDetail(RoleRequiredMixin, DetailView):
