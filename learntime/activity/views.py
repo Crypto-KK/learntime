@@ -3,8 +3,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.urls import reverse, reverse_lazy
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.views.generic.base import View
 
@@ -12,7 +10,7 @@ from learntime.activity.forms import ActivityForm
 from learntime.activity.models import Activity
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
-from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView
+from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, disable_csrf
 
 
 class AllActivityList(RoleRequiredMixin, PaginatorListView):
@@ -142,7 +140,7 @@ class ActivityUpdate(RoleRequiredMixin, UpdateView):
         return reverse("activities:activities")
 
 
-@method_decorator(csrf_exempt, "dispatch")
+@disable_csrf
 class ActivityVerifyView(RoleRequiredMixin, View):
     """批准审核接口"""
     role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value)
@@ -166,7 +164,7 @@ class ActivityVerifyView(RoleRequiredMixin, View):
             return JsonResponse({"status": "ok"})
 
 
-@method_decorator(csrf_exempt, "dispatch")
+@disable_csrf
 class ActivityVerifyFailView(RoleRequiredMixin, View):
     """不批准审核接口"""
     role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value)
@@ -189,7 +187,7 @@ class ActivityVerifyFailView(RoleRequiredMixin, View):
             return JsonResponse({"status": "ok"})
 
 
-@method_decorator(csrf_exempt, "dispatch")
+@disable_csrf
 class ActivityPassVerifyView(RoleRequiredMixin, View):
     """传递给上级审核接口"""
     role_required = (RoleEnum.ACADEMY.value,)
@@ -211,7 +209,7 @@ class ActivityPassVerifyView(RoleRequiredMixin, View):
             return JsonResponse({"status": "ok"})
 
 
-@method_decorator(csrf_exempt, "dispatch")
+@disable_csrf
 class GetAdminsView(LoginRequiredMixin, View):
     """通过学院id获取该学院的所有管理员"""
     def post(self, request):

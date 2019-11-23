@@ -5,8 +5,6 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth import authenticate, login, logout
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, UpdateView, DeleteView
 from django.views.generic.base import View
 
@@ -36,10 +34,7 @@ class IndexView(LoginRequiredMixin, View):
             return render(request, "front/index.html")
 
 def login_view(request):
-    """登录视图
-
-    使用邮箱做为登录账号
-    """
+    """登录视图使用邮箱做为登录账号"""
     next = request.GET.get('next', '')
     if request.method == 'GET':
         form = LoginForm()
@@ -67,7 +62,6 @@ def logout_view(request):
 
 def register_view(request):
     """注册为管理员
-
     注册后需要等待后台审核，审核成功后is_active置为True
     """
     if request.method == "GET":
