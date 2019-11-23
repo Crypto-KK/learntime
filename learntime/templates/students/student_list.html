@@ -110,7 +110,7 @@
               <h1>{{ request.user.academy }} {{ request.user.grade }}</h1>
               {% endif %}
               {% if role == 1 or role == 2 %}
-                &nbsp;&nbsp;&nbsp;<input type="checkbox" id="checkAll" name='CheckAll'>
+{#                &nbsp;&nbsp;&nbsp;<input type="checkbox" id="checkAll" name='CheckAll'>#}
                 <div class="btn-group">
 
                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -134,9 +134,9 @@
                   <table class="table table-striped table-hover table-bordered">
                     <thead>
                       <tr>
-                        {% if role == 1 or role == 2 %}
-                          <th>选择</th>
-                        {% endif %}
+{#                        {% if role == 1 or role == 2 %}#}
+{#                          <th>选择</th>#}
+{#                        {% endif %}#}
                         <th>学号</th>
                         <th>姓名</th>
                         <th>学院</th>
@@ -158,7 +158,7 @@
                       {% for student in students %}
                           <tr data-uid="{{ student.uid }}">
                           {% if role == 1 or role == 2 %}
-                          <td><input type="checkbox" name="student-checkbox" value="{{ student.uid }}"></td>
+{#                          <td><input type="checkbox" name="student-checkbox" value="{{ student.uid }}"></td>#}
                           {% endif %}
                           <td style="font-weight: bold">{{ student.uid }}</td>
                           <td>{{ student.name }}</td>

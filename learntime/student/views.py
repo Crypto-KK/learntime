@@ -28,7 +28,7 @@ class StudentList(RoleRequiredMixin, PaginatorListView):
     """
     role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value)
     template_name = "students/student_list.html"
-    paginate_by = 2
+    paginate_by = 20
     context_object_name = "students"
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -148,9 +148,9 @@ class StudentExcelImportView(RoleRequiredMixin, View):
                     row = table.row_values(_) # 获取一条记录
                     student = Student.objects.create(
                         uid=row[0], name=row[1], academy=row[2],
-                        grade=row[3], clazz=row[4], credit=row[5],
-                        wt_credit=row[6], fl_credit=row[7], xl_credit=row[8],
-                        cxcy_credit=row[9], sxdd_credit=row[10]
+                        grade=row[3], clazz=row[4], credit=float(row[5]),
+                        wt_credit=float(row[6]), fl_credit=float(row[7]), xl_credit=float(row[8]),
+                        cxcy_credit=float(row[9]), sxdd_credit=float(row[10])
                     ) # 创建一个学生实例
                     student.save() # 保存
 

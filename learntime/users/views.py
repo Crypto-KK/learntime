@@ -1,22 +1,41 @@
+import json
+from random import randrange
+
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import DetailView, UpdateView, DeleteView
 from django.views.generic.base import View
+from pyecharts.globals import ThemeType
 
 from learntime.activity.models import Activity
 from learntime.student.models import Student
 from learntime.users.enums import RoleEnum
 from learntime.users.forms import LoginForm, RegisterForm, UserForm
 from learntime.users.models import Academy, Grade
+from learntime.utils.echarts_utils import EchartsResponse
 from learntime.utils.factories import CrudViewFactory
 from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, disable_csrf
+from pyecharts.charts import Bar
+from pyecharts import options as opts
 
 User = get_user_model() # 惰性获取User对象
+
+
+def chart_view(request):
+    c = (
+        Bar(init_opts=opts.InitOpts(theme=ThemeType.LIGHT))
+            .add_xaxis(["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"])
+            .add_yaxis("商家A", [randrange(0, 100) for _ in range(6)])
+            .add_yaxis("商家B", [randrange(0, 100) for _ in range(6)])
+            .set_global_opts(title_opts=opts.TitleOpts(title="Bar-基本示例", subtitle="我是副标题"))
+            .dump_options_with_quotes()
+    )
+    return EchartsResponse(json.loads(c))
 
 
 class IndexView(LoginRequiredMixin, View):

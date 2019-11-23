@@ -20,6 +20,7 @@ xlwt = "*"
 django-ckeditor = "*"
 pillow = "*"
 django-test-plus = "*"
+pyecharts = "*"
 
 [requires]
 python_version = "3.7"

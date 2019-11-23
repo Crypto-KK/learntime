@@ -65,7 +65,7 @@
     </div>
     </section>
   <br>
-            <!-- Charts Section-->
+    <!-- Charts Section-->
     <section class="charts">
       <div class="container-fluid">
         <div class="row">
@@ -82,7 +82,7 @@
                 <h3 class="h4">Line Chart Example</h3>
               </div>
               <div class="card-body">
-                <canvas id="lineChartExample"></canvas>
+                <div id="bar" style="width:800px; height:500px;"></div>
               </div>
             </div>
           </div>
@@ -161,10 +161,25 @@
       </div>
     </section>
 
+
 {% endblock %}
 
 {% block js %}
     <script src={% static 'js/charts-home.js' %}></script>
     <script src="https://cdn.bootcss.com/Chart.js/2.7.2/Chart.min.js"></script>
     <script src="{% static 'js/charts-custom.js' %}"></script>
+    <script src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
+  <script>
+    var chart = echarts.init(document.getElementById('bar'), 'white', {renderer: 'canvas'});
+      $(function () {
+        $.ajax({
+            type: "GET",
+            url: "/chart/",
+            dataType: 'json',
+            success: function (result) {
+                chart.setOption(result.data);
+            }
+        });
+      })
+  </script>
 {% endblock %}
