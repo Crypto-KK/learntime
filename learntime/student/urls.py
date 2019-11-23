@@ -1,8 +1,8 @@
 from django.urls import path
 
 from learntime.student import views
-from learntime.student.views import StudentExcelImportView, StudentExcelExportView, StudentBulkDeleteView, \
-    StudentAllDeleteView, StudentCreditView, StudentEditCreditView
+from learntime.student.views import (StudentExcelImportView, StudentExcelExportView, StudentBulkDeleteView, \
+    StudentAllDeleteView, StudentCreditView, StudentEditCreditView, StudentBulkAddCreditView)
 
 app_name = "students"
 urlpatterns = [
@@ -13,16 +13,20 @@ urlpatterns = [
     path('student-update/<int:pk>/', view=views.StudentUpdate.as_view(), name='student_update'),
     path("student-delete/<int:pk>/", view=views.StudentDelete.as_view(), name='student_delete'),
 
+    # 导入学生接口
     path("student-import/", view=StudentExcelImportView.as_view(), name='student_import'),
+    # 导出学生接口
     path("student-export/", view=StudentExcelExportView.as_view(), name='student_export'),
 
+    # 学生批量删除接口
     path("student-bulk-delete/", view=StudentBulkDeleteView.as_view(), name='student_bulk_delete'),
+    # 学生全部删除
     path("student-all-delete/", view=StudentAllDeleteView.as_view(), name='student_all_delete'),
 
-    # 学生学时管理
+    # 学时管理页
     path("credit/", view=StudentCreditView.as_view(), name='student_credit'),
-    path("edit-credit/", view=StudentEditCreditView.as_view(), name='student_credit_edit')
-    # path('admin-delete/<int:pk>/', view=AdminDeleteView.as_view(), name='admin_delete'),
-    # path("apply_comfirm/", view=ApplyConfirmView.as_view(), name="apply_comfirm"),
-    # path("update_profile/<int:pk>/", view=AdminUpdateView.as_view(), name="update_profile")
+    # 学时修改接口
+    path("edit-credit/", view=StudentEditCreditView.as_view(), name='student_credit_edit'),
+    # 学时批量增加接口
+    path("bulk-add-credit/", view=StudentBulkAddCreditView.as_view(), name='student_credit_add'),
 ]

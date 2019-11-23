@@ -217,6 +217,16 @@ $(document).ready(function () {
             $('.activity-all-page').addClass("active")
         }
 
+        if (pathname === '/logs/') {
+            removeMenuHighLight();
+            $('.log-page').addClass("active")
+        }
+
+        if (pathname === "/students/credit/") {
+            removeMenuHighLight();
+            $('.credit-page').addClass("active")
+        }
+
 
     }
 

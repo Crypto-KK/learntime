@@ -89,7 +89,7 @@
               <li class="left-link activity-all-page"><a href="{% url 'activities:activity_unverify' %}"> <i class="icon-grid"></i>活动审批 </a></li>
             {% endif %}
             {% if role == 1 %}
-              <li class="left-link activity-verify-page"><a href="{% url 'activities:activity_all' %}"> <i class="icon-grid"></i>全部活动 </a></li>
+              <li class="left-link activity-all-page"><a href="{% url 'activities:activity_all' %}"> <i class="icon-grid"></i>全部活动 </a></li>
               <li class="left-link credit-page"><a href="{% url 'students:student_credit' %}"> <i class="icon-grid"></i>学时操作 </a></li>
             {% endif %}
               <li class="left-link log-page"><a href="{% url 'logs:list' %}"><i class="fa fa-play-circle-o"></i>操作记录</a></li>

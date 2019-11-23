@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse_lazy
-from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
 from django.views.generic.base import View
@@ -262,7 +261,7 @@ class StudentAllDeleteView(RoleRequiredMixin, View):
 
 
 class StudentCreditView(RoleRequiredMixin, PaginatorListView):
-    """学生学时操作"""
+    """学生学时列表页"""
     role_required = (RoleEnum.ROOT.value,)
     template_name = 'students/student_credit.html'
     paginate_by = 2
@@ -299,6 +298,7 @@ class StudentCreditView(RoleRequiredMixin, PaginatorListView):
 
 @disable_csrf
 class StudentEditCreditView(RoleRequiredMixin, View):
+    """根据学号查询和修改某个学生的学时"""
     role_required = (RoleEnum.ROOT.value, )
 
     def get(self, request):
@@ -344,7 +344,7 @@ class StudentEditCreditView(RoleRequiredMixin, View):
             if amount_credit > 0:
                 op = f"增加{amount_credit}"
             elif amount_credit < 0:
-                op = f'减少{amount_credit}'
+                op = f'减少{-amount_credit}'
             # 写入日志
             Log.objects.create(
                 user=self.request.user,
@@ -355,6 +355,40 @@ class StudentEditCreditView(RoleRequiredMixin, View):
                 "name": student.name,
             })
         return fail
+
+
+@disable_csrf
+class StudentBulkAddCreditView(RoleRequiredMixin, View):
+    """批量增加某个班级所有学生的学时"""
+    role_required = (RoleEnum.ROOT.value, )
+    def post(self, request):
+        _get = request.POST.get
+        # 学时类别，增量，班级
+        _type, amount, clazz = _get('_type'), _get('amount'), _get('clazz')
+        real_clazz = ''
+        credit_map = {
+            "wt_credit": "文体学时",
+            "fl_credit": "法律学时",
+            "xl_credit": "心理学时",
+            "cxcy_credit": "创新创业学时",
+            "sxdd_credit": "思想道德学时",
+        }
+        try:
+            # 模糊查询班级
+            for student in Student.objects.filter(clazz__contains=clazz):
+                if not real_clazz:
+                    real_clazz = student.clazz
+                # 设置学生的某学时
+                setattr(student, _type, getattr(student, _type) + float(amount))
+                student.save()
+            # 记录日志
+            Log.objects.create(
+                user = self.request.user,
+                content = f'批量增加了{real_clazz}所有学生的{credit_map[_type]} {amount}分'
+            )
+        except Exception:
+            return fail
+        return success
 
 @csrf_exempt
 def find_student_by_uid_and_name(request):
