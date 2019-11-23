@@ -19,7 +19,7 @@ xlrd = "*"
 xlwt = "*"
 django-ckeditor = "*"
 pillow = "*"
-djangorestframework = "*"
+django-test-plus = "*"
 
 [requires]
 python_version = "3.7"

@@ -2,19 +2,13 @@ from django.conf import settings
 from django.urls import include, path
 from django.conf.urls.static import static
 from django.views import defaults as default_views
-from rest_framework.routers import DefaultRouter
 
-from learntime.activity.views import StoreDetailViewSet
 from learntime.student.views import find_student_by_uid_and_name
 from learntime.users.views import IndexView, AcademyList, AcademyCreate, AcademyUpdate, AcademyDelete, GradeList, \
     GradeCreate, GradeDelete, GradeUpdate
 
-router = DefaultRouter()
-router.register("activities", StoreDetailViewSet, base_name="activities")
 
 urlpatterns = [
-
-    path("api/", include(router.urls)),
     path("",  IndexView.as_view(), name='index'),
 
     #学院管理

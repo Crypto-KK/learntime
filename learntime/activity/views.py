@@ -8,11 +8,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.views.generic.base import View
 
-from rest_framework import mixins, viewsets
-
 from learntime.activity.forms import ActivityForm
 from learntime.activity.models import Activity
-from learntime.activity.serializers import ActivitySerializer
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
 from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView
@@ -231,12 +228,3 @@ class GetAdminsView(LoginRequiredMixin, View):
             })
         except Exception:
             return JsonResponse({"status": "fail"})
-
-
-class StoreDetailViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin,
-                         viewsets.GenericViewSet):
-
-    serializer_class = ActivitySerializer
-
-    def get_queryset(self):
-        return Activity.objects.all()
