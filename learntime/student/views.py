@@ -274,14 +274,16 @@ class StudentCreditView(RoleRequiredMixin, PaginatorListView):
         return context
 
     def get_queryset(self):
-        uid = self.request.GET.get('uid')
-        name = self.request.GET.get('name')
-        academy = self.request.GET.get('academy')
-        grade = self.request.GET.get('grade')
-        clazz = self.request.GET.get('clazz')
+        _get = self.request.GET.get
+        role = self.request.user.role
+        # 获取条件查询参数
+        uid, name, academy, grade, clazz = _get('uid'), _get('name'), \
+                                           _get('academy'), _get('grade'), _get('clazz')
 
         # 初步的students查询集
         students = Student.objects.all()
+        if role == RoleEnum.ACADEMY.value:
+            students = students.filter(academy=self.request.user.academy)
 
         if uid:
             return students.filter(uid=uid)
@@ -294,7 +296,7 @@ class StudentCreditView(RoleRequiredMixin, PaginatorListView):
         if clazz:
             return students.filter(clazz__contains=clazz)
 
-        return Student.objects.none()
+        return students
 
 @disable_csrf
 class StudentEditCreditView(RoleRequiredMixin, View):

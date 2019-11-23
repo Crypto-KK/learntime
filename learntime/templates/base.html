@@ -90,13 +90,13 @@
 
             {% if role == 1 or role == 3 %}
 
-              <li class="left-link credit-page"><a href="{% url 'students:student_credit' %}"> <i class="fa fa-wrench"></i>学时操作 </a></li>
+              <li class="left-link credit-page"><a href="{% url 'students:student_credit' %}"> <i class="fa fa-wrench"></i>学时变更 </a></li>
             {% endif %}
               <li class="left-link log-page"><a href="{% url 'logs:list' %}"><i class="fa fa-play-circle-o"></i>操作记录</a></li>
           </ul><span class="heading">活动管理</span>
           <ul>
             {% if role == 2 or role == 3 %}
-              <li class="left-link activity-all-page"><a href="{% url 'activities:activity_unverify' %}"> <i class="fa fa-bullhorn"></i>活动审批 </a></li>
+              <li class="left-link activity-verify-page"><a href="{% url 'activities:activity_unverify' %}"> <i class="fa fa-bullhorn"></i>活动审批 </a></li>
             {% endif %}
             {% if role != 1 %}
             <li class="left-link activity-page" ><a href="{% url 'activities:activities' %}"> <i class="fa fa-pencil-square-o"></i>我的活动</a></li>

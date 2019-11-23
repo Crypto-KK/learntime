@@ -148,7 +148,9 @@
                         <th>心理</th>
                         <th>创新创业</th>
                         <th>思想道德</th>
-                        <th>操作</th>
+                        {% if role == 1 or role == 2 %}
+                          <th>操作</th>
+                        {% endif %}
                       </tr>
                     </thead>
                     <tbody>
@@ -169,13 +171,13 @@
                           <td style="color: blue">{{ student.xl_credit }}</td>
                           <td style="color: blue">{{ student.cxcy_credit }}</td>
                           <td style="color: blue">{{ student.sxdd_credit }}</td>
+                          {% if role == 1 or role == 2 %}
                           <td>
-                            {% if role == 1 or role == 2 %}
 {#                              <a href="{% url 'students:student_detail' student.pk %}" class="btn btn-success btn-sm">查看</a>#}
                               <a href="{% url 'students:student_update' student.pk %}" class="btn btn-warning btn-sm">编辑</a>
                               <a href="{% url 'students:student_delete' student.pk %}" class="btn btn-danger btn-sm ">删除</a>
-                            {% endif %}
                           </td>
+                          {% endif %}
                           </tr>
                       {% endfor %}
                     {% endwith %}

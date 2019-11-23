@@ -227,6 +227,11 @@ $(document).ready(function () {
             $('.credit-page').addClass("active")
         }
 
+        if (pathname === "/activities/activity-unverify/") {
+            removeMenuHighLight();
+            $('.activity-verify-page').addClass("active")
+        }
+
 
     }
 
