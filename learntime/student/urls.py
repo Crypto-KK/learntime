@@ -1,7 +1,8 @@
 from django.urls import path
 
 from learntime.student import views
-from learntime.student.views import StudentExcelImportView, StudentExcelExportView, StudentBulkDeleteView
+from learntime.student.views import StudentExcelImportView, StudentExcelExportView, StudentBulkDeleteView, \
+    StudentAllDeleteView
 
 app_name = "students"
 urlpatterns = [
@@ -15,7 +16,8 @@ urlpatterns = [
     path("student-import/", view=StudentExcelImportView.as_view(), name='student_import'),
     path("student-export/", view=StudentExcelExportView.as_view(), name='student_export'),
 
-    path("student-bulk-delete/", view=StudentBulkDeleteView.as_view(), name='student_bulk_delete')
+    path("student-bulk-delete/", view=StudentBulkDeleteView.as_view(), name='student_bulk_delete'),
+    path("student-all-delete/", view=StudentAllDeleteView.as_view(), name='student_all_delete')
     # path('admin-delete/<int:pk>/', view=AdminDeleteView.as_view(), name='admin_delete'),
     # path("apply_comfirm/", view=ApplyConfirmView.as_view(), name="apply_comfirm"),
     # path("update_profile/<int:pk>/", view=AdminUpdateView.as_view(), name="update_profile")

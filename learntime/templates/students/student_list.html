@@ -124,7 +124,8 @@
                     </div>
                   </div>
 
-                &nbsp;<a href="#" class="btn btn-danger" id="bulk-delete-btn">删除所选学生</a>
+{#                &nbsp;<a href="#" class="btn btn-danger" id="bulk-delete-btn">删除所选学生</a>#}
+                &nbsp;<a href="{% url 'students:student_export' %}" class="btn btn-danger" id="delete-all-btn">删除所有学生</a>
                   <a href="{% url 'students:student_create' %}" class="btn btn-outline-success pull-right">添加学生</a>
               {% endif %}
               </div>

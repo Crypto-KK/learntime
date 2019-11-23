@@ -19,6 +19,10 @@ from learntime.users.models import Academy
 from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView
 
 
+success = JsonResponse({"status": "ok"})
+fail = JsonResponse({"status": "fail"})
+
+
 class StudentList(RoleRequiredMixin, PaginatorListView):
     """学生列表页
 
@@ -223,8 +227,8 @@ class StudentExcelExportView(RoleRequiredMixin, View):
 
 @method_decorator(csrf_exempt, "dispatch")
 class StudentBulkDeleteView(RoleRequiredMixin, View):
-    """学生excel导出视图"""
-    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
+    """学生批量删除"""
+    role_required = (RoleEnum.ROOT.value, )
 
     def post(self, request):
         try:
@@ -241,6 +245,22 @@ class StudentBulkDeleteView(RoleRequiredMixin, View):
             return JsonResponse({"status": "fail"})
 
 
+@method_decorator(csrf_exempt, "dispatch")
+class StudentAllDeleteView(RoleRequiredMixin, View):
+    """学生全部删除"""
+    role_required = (RoleEnum.ROOT.value, )
+    def post(self, request):
+        try:
+            Student.objects.all().delete()
+            # 写入日志
+            Log.objects.create(
+                user=self.request.user,
+                content=f"删除了所有学生记录"
+            )
+        except Exception:
+            return fail
+        return success
+
 @csrf_exempt
 def find_student_by_uid_and_name(request):
     if request.method == "POST":
@@ -254,5 +274,5 @@ def find_student_by_uid_and_name(request):
         try:
             Student.objects.filter(uid=uid, name=name)[0]
         except Exception:
-            return JsonResponse({"status": "fail"})
-        return JsonResponse({"status": "ok"})
+            return fail
+        return success

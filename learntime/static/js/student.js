@@ -63,6 +63,24 @@ $(function () {
       }
   });
 
+  $('#delete-all-btn').click(function () {
+      if (confirm("确认删除所有学生吗？")) {
+          $.ajax({
+              url: '/students/student-all-delete/',
+              cache: false,
+              method: "POST",
+              success: res => {
+                  if (res.status === "fail") {
+                      alert("删除所有学生失败！")
+
+                  } else {
+                      alert("删除所有学生成功！")
+                      window.location.reload();
+                  }
+              }
+          })
+      }
+  });
 
   $('#select-uid').click(function () {
       $('#select-btn').text("学号");

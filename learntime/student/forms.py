@@ -9,7 +9,7 @@ class StudentCreateForm(forms.ModelForm):
     academy = forms.ModelChoiceField(label="学院", queryset=Academy.objects.all())
     grade = forms.ModelChoiceField(label="年级", queryset=Grade.objects.all())
     class Meta:
-        fields = "__all__"
+        exclude = ('credit', )
         model = Student
 
 
@@ -17,6 +17,7 @@ class StudentEditForm(forms.ModelForm):
     uid = forms.CharField(help_text="学号")
     academy = forms.ModelChoiceField(queryset=Academy.objects.all(), help_text="选择学院")
     grade = forms.ModelChoiceField(queryset=Grade.objects.all(), help_text="选择年级")
+
     class Meta:
         fields = ("uid", "name", "grade", "academy", "clazz")
         model = Student
