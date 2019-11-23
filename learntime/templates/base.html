@@ -81,7 +81,7 @@
               <li class="left-link academy-page"><a href="{% url 'academy' %}"> <i class="fa fa-database"></i>学院管理 </a></li>
               <li class="left-link grade-page"><a href="{% url 'grade' %}"> <i class="fa fa-cube"></i>年级管理 </a></li>
             {% endif %}
-            {% if role == 1 or role == 2 %}
+            {% if role == 1 %}
               <li class="left-link register-page"><a href="{% url 'users:admin_apply' %}"> <i class="fa fa-edit"></i>注册审核 </a></li>
               <li class="left-link admin-page"><a href="{% url 'users:admins' %}"> <i class="fa fa-user-circle-o"></i>用户管理 </a></li>
             {% endif %}

@@ -16,7 +16,7 @@ from learntime.users.enums import RoleEnum
 from learntime.users.forms import LoginForm, RegisterForm, UserForm
 from learntime.users.models import Academy, Grade
 from learntime.utils.factories import CrudViewFactory
-from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView
+from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, disable_csrf
 
 User = get_user_model() # 惰性获取User对象
 
@@ -97,14 +97,11 @@ def register_view(request):
 
 
 class AdminApplyList(RoleRequiredMixin, PaginatorListView):
-    """等待审核的用户列表
-
-    需要ROOT、校级的权限
-    """
+    """等待审核的用户列表 需要ROOT的权限"""
     template_name = "users/admin_apply.html"
     context_object_name = "admins"
     paginate_by = 20
-    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
+    role_required = (RoleEnum.ROOT.value,)
 
     def get_queryset(self):
         """获取正在审核的用户"""
@@ -112,10 +109,7 @@ class AdminApplyList(RoleRequiredMixin, PaginatorListView):
 
 
 class AdminList(RoleRequiredMixin, PaginatorListView):
-    """管理员列表页
-
-    需要ROOT
-    """
+    """管理员列表页需要ROOT"""
     template_name = "users/admin_list.html"
     context_object_name = "admins"
     paginate_by = 20
@@ -136,11 +130,8 @@ class AdminList(RoleRequiredMixin, PaginatorListView):
 
 
 class AdminDetail(RoleRequiredMixin, DetailView):
-    """管理员详情页
-
-    需要ROOT、校级的权限
-    """
-    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
+    """管理员详情页需要ROOT权限"""
+    role_required = (RoleEnum.ROOT.value,)
     context_object_name = 'admin'
     template_name = "users/admin_detail.html"
     model = User
@@ -160,11 +151,8 @@ class AdminUpdateView(RoleRequiredMixin, UpdateView):
 
 
 class AdminDeleteView(RoleRequiredMixin, DeleteView):
-    """删除管理员
-
-    此操作需要ROOT或校级的权限
-    """
-    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, )
+    """删除管理员此操作需要ROOT权限"""
+    role_required = (RoleEnum.ROOT.value, )
     model = User
     template_name = "users/admin_delete.html"
     context_object_name = "admin"
@@ -174,13 +162,10 @@ class AdminDeleteView(RoleRequiredMixin, DeleteView):
         return reverse_lazy("users:admins")
 
 
-@method_decorator(csrf_exempt, name="dispatch")
+@disable_csrf
 class ApplyConfirmView(RoleRequiredMixin, View):
-    """批准用户注册为管理员
-
-    需要ROOT、校级、的权限
-    """
-    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, )
+    """批准用户注册为管理员需要ROOT权限"""
+    role_required = (RoleEnum.ROOT.value, )
 
     def post(self, request):
         try:
