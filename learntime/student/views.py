@@ -16,8 +16,7 @@ from learntime.student.forms import StudentExcelForm, StudentCreateForm, Student
 from learntime.student.models import Student, StudentFile
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
-from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView
-
+from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, disable_csrf
 
 success = JsonResponse({"status": "ok"})
 fail = JsonResponse({"status": "fail"})
@@ -225,7 +224,7 @@ class StudentExcelExportView(RoleRequiredMixin, View):
         return response
 
 
-@method_decorator(csrf_exempt, "dispatch")
+@disable_csrf
 class StudentBulkDeleteView(RoleRequiredMixin, View):
     """学生批量删除"""
     role_required = (RoleEnum.ROOT.value, )
@@ -245,7 +244,7 @@ class StudentBulkDeleteView(RoleRequiredMixin, View):
             return JsonResponse({"status": "fail"})
 
 
-@method_decorator(csrf_exempt, "dispatch")
+@disable_csrf
 class StudentAllDeleteView(RoleRequiredMixin, View):
     """学生全部删除"""
     role_required = (RoleEnum.ROOT.value, )
@@ -260,6 +259,102 @@ class StudentAllDeleteView(RoleRequiredMixin, View):
         except Exception:
             return fail
         return success
+
+
+class StudentCreditView(RoleRequiredMixin, PaginatorListView):
+    """学生学时操作"""
+    role_required = (RoleEnum.ROOT.value,)
+    template_name = 'students/student_credit.html'
+    paginate_by = 2
+    context_object_name = 'students'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=None, **kwargs)
+        count = self.get_queryset().count()
+        context['count'] = count
+        return context
+
+    def get_queryset(self):
+        uid = self.request.GET.get('uid')
+        name = self.request.GET.get('name')
+        academy = self.request.GET.get('academy')
+        grade = self.request.GET.get('grade')
+        clazz = self.request.GET.get('clazz')
+
+        # 初步的students查询集
+        students = Student.objects.all()
+
+        if uid:
+            return students.filter(uid=uid)
+        if name:
+            return students.filter(name__contains=name)
+        if academy:
+            return students.filter(academy__contains=academy)
+        if grade:
+            return students.filter(grade__contains=grade)
+        if clazz:
+            return students.filter(clazz__contains=clazz)
+
+        return Student.objects.none()
+
+@disable_csrf
+class StudentEditCreditView(RoleRequiredMixin, View):
+    role_required = (RoleEnum.ROOT.value, )
+
+    def get(self, request):
+        """获取当前学生的所有学时信息并渲染到表单上"""
+        uid = request.GET.get('uid')
+        if uid:
+            student = Student.objects.get(pk=uid)
+            return JsonResponse({
+                "status": "ok",
+                "name": student.name,
+                "wt_credit": student.wt_credit,
+                "fl_credit": student.fl_credit,
+                "xl_credit": student.xl_credit,
+                "cxcy_credit": student.cxcy_credit,
+                "sxdd_credit": student.sxdd_credit,
+            })
+        return fail
+
+    def post(self, request):
+        """修改当前学生的学时"""
+        get = request.POST.get
+        uid = get('uid')
+        wt_credit = get('wt_credit')
+        fl_credit = get('fl_credit')
+        xl_credit = get('xl_credit')
+        cxcy_credit = get('cxcy_credit')
+        sxdd_credit = get('sxdd_credit')
+
+        if uid:
+            student = Student.objects.get(pk=uid)
+            previous_credit = student.credit
+            student.wt_credit = float(wt_credit)
+            student.fl_credit = float(fl_credit)
+            student.xl_credit = float(xl_credit)
+            student.cxcy_credit = float(cxcy_credit)
+            student.sxdd_credit = float(sxdd_credit)
+            student.save()
+            current_credit = student.credit
+            amount_credit = current_credit - previous_credit
+            op = ""
+            if amount_credit == 0:
+                op = "无变化"
+            if amount_credit > 0:
+                op = f"增加{amount_credit}"
+            elif amount_credit < 0:
+                op = f'减少{amount_credit}'
+            # 写入日志
+            Log.objects.create(
+                user=self.request.user,
+                content=f"修改了<{student.uid}>{student.name}的学时，总学时{op}"
+            )
+            return JsonResponse({
+                "status": "ok",
+                "name": student.name,
+            })
+        return fail
 
 @csrf_exempt
 def find_student_by_uid_and_name(request):

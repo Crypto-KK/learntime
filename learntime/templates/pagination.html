@@ -8,7 +8,7 @@
             {% endif %}
             {% for i in page_range %}
                 {% if page_obj.number == i %}
-                    <li class="page-item disabled"><a class="page-link btn-primary" href="#">{{ i }} <span class="sr-only">(current)</span></a></li>
+                    <li class="page-item active" aria-current="page"><a class="page-link btn-primary disabled" href="#">{{ i }} <span class="sr-only">(current)</span></a></li>
                 {% else %}
                     <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
                 {% endif %}

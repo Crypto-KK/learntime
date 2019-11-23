@@ -3,9 +3,13 @@ from functools import wraps
 #from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
 from django.core.exceptions import PermissionDenied, ImproperlyConfigured
 from django.http import HttpResponseBadRequest
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView
 from django.views.generic.base import View
 
+
+disable_csrf = method_decorator(csrf_exempt, "dispatch")
 
 def ajax_required(func):
     '''
