@@ -262,7 +262,7 @@ class StudentAllDeleteView(RoleRequiredMixin, View):
 
 class StudentCreditView(RoleRequiredMixin, PaginatorListView):
     """学生学时列表页"""
-    role_required = (RoleEnum.ROOT.value,)
+    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)
     template_name = 'students/student_credit.html'
     paginate_by = 2
     context_object_name = 'students'
@@ -299,7 +299,7 @@ class StudentCreditView(RoleRequiredMixin, PaginatorListView):
 @disable_csrf
 class StudentEditCreditView(RoleRequiredMixin, View):
     """根据学号查询和修改某个学生的学时"""
-    role_required = (RoleEnum.ROOT.value, )
+    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)
 
     def get(self, request):
         """获取当前学生的所有学时信息并渲染到表单上"""
@@ -360,7 +360,7 @@ class StudentEditCreditView(RoleRequiredMixin, View):
 @disable_csrf
 class StudentBulkAddCreditView(RoleRequiredMixin, View):
     """批量增加某个班级所有学生的学时"""
-    role_required = (RoleEnum.ROOT.value, )
+    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)
     def post(self, request):
         _get = request.POST.get
         # 学时类别，增量，班级
