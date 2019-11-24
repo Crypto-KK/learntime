@@ -26,9 +26,8 @@
       <div class="col-md-8 offset-md-2">
         <form id="activity_form" action="{% url 'activities:activity_create' %}" method="post" enctype="multipart/form-data">
           {% csrf_token %}
-          {{ form.media }}
           {{ form|crispy }}
-
+          {{ form.media }}
           <div class="form-group">
             <label for="select_academy">选择学院*</label>
             <select name="academy" id="select_academy" class="form-control" onchange="academyChange()">
@@ -101,7 +100,7 @@
             $.datetimepicker.setLocale('zh');
             params = {
                 lang: 'zh',
-                format: 'Y-m-d h:i',//格式化显示
+                format: 'Y-m-d H:i',//格式化显示
             };
             $('#id_deadline').datetimepicker(params);
 

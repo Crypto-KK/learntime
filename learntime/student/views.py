@@ -223,7 +223,6 @@ class StudentExcelExportView(RoleRequiredMixin, View):
         return response
 
 
-@disable_csrf
 class StudentBulkDeleteView(RoleRequiredMixin, View):
     """学生批量删除"""
     role_required = (RoleEnum.ROOT.value, )
@@ -243,7 +242,6 @@ class StudentBulkDeleteView(RoleRequiredMixin, View):
             return JsonResponse({"status": "fail"})
 
 
-@disable_csrf
 class StudentAllDeleteView(RoleRequiredMixin, View):
     """学生全部删除"""
     role_required = (RoleEnum.ROOT.value, )
@@ -264,14 +262,8 @@ class StudentCreditView(RoleRequiredMixin, PaginatorListView):
     """学生学时列表页"""
     role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)
     template_name = 'students/student_credit.html'
-    paginate_by = 2
+    paginate_by = 20
     context_object_name = 'students'
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(object_list=None, **kwargs)
-        count = self.get_queryset().count()
-        context['count'] = count
-        return context
 
     def get_queryset(self):
         _get = self.request.GET.get
@@ -298,7 +290,7 @@ class StudentCreditView(RoleRequiredMixin, PaginatorListView):
 
         return students
 
-@disable_csrf
+
 class StudentEditCreditView(RoleRequiredMixin, View):
     """根据学号查询和修改某个学生的学时"""
     role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)
@@ -359,7 +351,6 @@ class StudentEditCreditView(RoleRequiredMixin, View):
         return fail
 
 
-@disable_csrf
 class StudentBulkAddCreditView(RoleRequiredMixin, View):
     """批量增加某个班级所有学生的学时"""
     role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)

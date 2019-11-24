@@ -82,7 +82,7 @@
                 <h3 class="h4">Line Chart Example</h3>
               </div>
               <div class="card-body">
-                <div id="bar" style="width:800px; height:500px;"></div>
+                <div id="bar" style="width:600px; height:500px;"></div>
               </div>
             </div>
           </div>
@@ -168,7 +168,7 @@
     <script src={% static 'js/charts-home.js' %}></script>
     <script src="https://cdn.bootcss.com/Chart.js/2.7.2/Chart.min.js"></script>
     <script src="{% static 'js/charts-custom.js' %}"></script>
-    <script src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/echarts/4.4.0-rc.1/echarts.min.js"></script>
   <script>
     var chart = echarts.init(document.getElementById('bar'), 'white', {renderer: 'canvas'});
       $(function () {

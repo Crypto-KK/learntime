@@ -53,6 +53,7 @@ class SimpleStudent(models.Model):
                            verbose_name="学号", help_text="学号")
     name = models.CharField(max_length=255, verbose_name="姓名")
     password = models.CharField(max_length=255, verbose_name="密码")
+    email = models.CharField(max_length=50, verbose_name="邮箱", default='')
     grade = models.CharField(max_length=255, null=True, blank=True,
                              verbose_name="年级")
     academy = models.CharField(max_length=255, null=True, blank=True,

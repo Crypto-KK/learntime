@@ -175,7 +175,6 @@ class AdminDeleteView(RoleRequiredMixin, DeleteView):
         return reverse_lazy("users:admins")
 
 
-@disable_csrf
 class ApplyConfirmView(RoleRequiredMixin, View):
     """批准用户注册为管理员需要ROOT权限"""
     role_required = (RoleEnum.ROOT.value, )

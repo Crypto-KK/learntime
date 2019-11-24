@@ -88,4 +88,5 @@ class PaginatorListView(ListView):
         else:
             page_range = paginator.page_range
         context['page_range'] = page_range
+        context['count'] = self.get_queryset().count()
         return context

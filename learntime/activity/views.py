@@ -140,7 +140,6 @@ class ActivityUpdate(RoleRequiredMixin, UpdateView):
         return reverse("activities:activities")
 
 
-@disable_csrf
 class ActivityVerifyView(RoleRequiredMixin, View):
     """批准审核接口"""
     role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value)
@@ -164,7 +163,6 @@ class ActivityVerifyView(RoleRequiredMixin, View):
             return JsonResponse({"status": "ok"})
 
 
-@disable_csrf
 class ActivityVerifyFailView(RoleRequiredMixin, View):
     """不批准审核接口"""
     role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value)
@@ -187,7 +185,6 @@ class ActivityVerifyFailView(RoleRequiredMixin, View):
             return JsonResponse({"status": "ok"})
 
 
-@disable_csrf
 class ActivityPassVerifyView(RoleRequiredMixin, View):
     """传递给上级审核接口"""
     role_required = (RoleEnum.ACADEMY.value,)
@@ -209,7 +206,6 @@ class ActivityPassVerifyView(RoleRequiredMixin, View):
             return JsonResponse({"status": "ok"})
 
 
-@disable_csrf
 class GetAdminsView(LoginRequiredMixin, View):
     """通过学院id获取该学院的所有管理员"""
     def post(self, request):

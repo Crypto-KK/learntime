@@ -15,6 +15,7 @@ class ActivityForm(forms.ModelForm):
                    "stop")
         model = Activity
 
+
     def clean_credit_type(self):
         # 学时类别选择了 未选择 ，验证失败
         credit_type = self.cleaned_data['credit_type']
