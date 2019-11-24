@@ -16,11 +16,16 @@
             <div class="form-group">
               <input id="login-password" type="password" name="password" required data-msg="请输入您的密码" class="input-material">
               <label for="login-password" class="label-material">密码</label>
+              {% if error %}
+                <div style="color: red">邮箱或密码错误</div>
+              {% endif %}
+
             </div>
+
               {% csrf_token %}
               <button type="submit" id="login" href="#" class="btn btn-primary">登录</button>
             <!-- This should be submit button but I replaced it with <a> for demo purposes-->
-          </form><a href="#" class="forgot-pass">忘记密码?</a><br><small>还没有账号? </small><a href="{% url 'users:register' %}" class="signup">注册</a>
+          </form><a href="{% url 'users:forgot_pwd' %}" class="forgot-pass">忘记密码?</a><br><small>还没有账号? </small><a href="{% url 'users:register' %}" class="signup">注册</a>
         </div>
       </div>
     </div>

@@ -22,11 +22,19 @@ class RegisterForm(forms.ModelForm):
             raise forms.ValidationError("邮箱重复！")
         return email
 
+    def clean(self):
+        password = self.cleaned_data['password']
+        password2 = self.cleaned_data['password2']
+        if password2 != password:
+            raise forms.ValidationError("两次输入密码不一致")
+        return self.cleaned_data
+
     academy = forms.CharField()
     grade =forms.CharField()
+    password2 = forms.CharField()
 
     class Meta:
-        fields = ['username', 'name', 'email', 'password', 'identity']
+        fields = ['name', 'email', 'password', 'identity']
         model = User
 
 
@@ -37,3 +45,13 @@ class UserForm(forms.ModelForm):
     class Meta:
         fields = ['name', "email", "academy", "grade", "klass"]
         model = User
+
+
+class ForgetForm(forms.Form):
+    email=forms.EmailField(required=True)
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User.objects.filter(email=email, is_active=True).count() == 0:
+            raise forms.ValidationError("邮箱尚未注册！")
+        return email

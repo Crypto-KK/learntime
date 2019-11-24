@@ -9,14 +9,10 @@
       <div class="form d-flex align-items-center">
         <div class="content">
           <form class="form-validate" action="{% url 'users:register' %}" method="post">
-            <div class="form-group">
-              <input id="register-username" type="text" name="username" required data-msg="请输入您的用户名" class="input-material">
-              <label for="register-username" class="label-material">用户名</label>
-            </div>
-            <div class="form-group">
-              <input id="register-name" type="text" name="name" required data-msg="请输入您的姓名" class="input-material">
-              <label for="register-name" class="label-material">姓名</label>
-            </div>
+{#            <div class="form-group">#}
+{#              <input id="register-username" type="text" name="username" required data-msg="请输入您的用户名" class="input-material">#}
+{#              <label for="register-username" class="label-material">用户名</label>#}
+{#            </div>#}
             <div class="form-group">
               <input id="register-email" type="email" name="email" required data-msg="请输入邮箱地址" class="input-material">
               <label for="register-email" class="label-material">邮箱      </label>
@@ -25,6 +21,15 @@
               <input id="register-password" type="password" name="password" required data-msg="请输入密码" class="input-material">
               <label for="register-password" class="label-material">密码        </label>
             </div>
+            <div class="form-group">
+              <input id="register-password2" type="password" name="password2" required data-msg="请再次输入密码" class="input-material">
+              <label for="register-password2" class="label-material">重复密码        </label>
+            </div>
+            <div class="form-group">
+              <input id="register-name" type="text" name="name" required data-msg="请输入您的姓名" class="input-material">
+              <label for="register-name" class="label-material">姓名</label>
+            </div>
+
             <div class="form-group" id="choose-academy">
               <label for="inputState">选择所属学院</label>
               <select id="inputState" class="form-control" name="academy">
@@ -54,30 +59,14 @@
                 <input id="register-student" name="identity" type="radio" required value="4" data-msg="" class="checkbox-template" checked>
                 <label for="register-student" class="form-check-label" >干部级</label>
               </div>
-
             </div>
-
-
               {% csrf_token %}
-
             <div class="form-group">
+                {% for err in form.errors.values %}
+                      {{ err }}
+                {% endfor %}
                 <!-- Button trigger modal -->
                  <button id="register" type="submit" name="registerSubmit" class="btn btn-primary">注册</button>
-                {% if form.errors %}
-                    {% for err in form.errors %}
-                        {% ifequal err "username" %}
-                            <div class="is-invalid invalid-feedback" style="display: block; font-size: 18px;">用户名重复,请重新输入</div>
-                        {% endifequal %}
-                        {% ifequal err "email" %}
-                            <div class="is-invalid invalid-feedback" style="display: block; font-size: 18px;">邮箱重复,请重新输入</div>
-                        {% endifequal %}
-                        {% ifequal err "identity" %}
-                            <div class="is-invalid invalid-feedback" style="display: block; font-size: 18px;">请选择级别</div>
-                        {% endifequal %}
-                    {% endfor %}
-
-                {% endif %}
-
             </div>
           </form><small>已经有账号了? </small><a href="{% url 'users:login' %}" class="signup">登录</a>
         </div>
@@ -101,7 +90,8 @@
         $('#register-student').click(function () {
             $('#choose-academy').show()
             $('#choose-grade').show()
-        })
+        });
+        $('.errorlist').css("color", "red")
     })
   </script>
 

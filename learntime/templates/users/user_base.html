@@ -11,9 +11,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="robots" content="all,follow">
     <!-- Bootstrap CSS-->
-    <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome CSS-->
-    <link rel="stylesheet" href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <!-- Fontastic Custom icon font-->
     <link rel="stylesheet" href="{% static 'css/fontastic.css' %}">
     <!-- Google fonts - Poppins -->
@@ -49,20 +49,23 @@
         </div>
       </div>
       <div class="copyrights text-center">
-        <p>广州商学院</a>
+        <p>广州商学院学时通后台管理系统
           <!-- Please do not remove the backlink to us unless you support further theme's development at https://bootstrapious.com/donate. It is part of the license conditions. Thank you for understanding :)-->
         </p>
       </div>
     </div>
     <!-- JavaScript files-->
-    <script src={% static 'vendor/jquery/jquery.min.js' %}></script>
-    <script src="{% static 'vendor/popper.js/umd/popper.min.js' %}"> </script>
-    <script src={% static 'vendor/bootstrap/js/bootstrap.min.js' %}></script>
-    <script src={% static 'vendor/jquery.cookie/jquery.cookie.js' %}> </script>
-    <script src={% static 'vendor/chart.js/Chart.min.js' %}></script>
-    <script src={% static 'vendor/jquery-validation/jquery.validate.min.js' %}></script>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+{#    <script src="{% static 'vendor/popper.js/umd/popper.min.js' %}"> </script>#}
+    <script src="https://cdn.bootcss.com/popper.js/1.15.0/umd/popper.min.js"></script>
+{#    <script src={% static 'vendor/bootstrap/js/bootstrap.min.js' %}></script>#}
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+{#    <script src={% static 'vendor/jquery.cookie/jquery.cookie.js' %}> </script>#}
+    <script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+{#    <script src={% static 'vendor/jquery-validation/jquery.validate.min.js' %}></script>#}
+    <script src="https://cdn.bootcss.com/jquery-validate/1.17.0/jquery.validate.min.js"></script>
     <!-- Main File-->
-     <script src="{% static 'js/front.js' %}"></script>
+     <script src="{% static 'js/common.js' %}"></script>
 
     {% block js %}
 

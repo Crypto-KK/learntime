@@ -90,8 +90,8 @@
                           </td>
                           <td>
                             {% if activity.is_verifying %}
-                                <a href="{% url 'activities:activity_update' activity.pk %}" class="btn btn-warning btn-sm">编辑</a>
-                                <a href="#" class="btn btn-danger btn-sm">删除</a>
+{#                                <a href="{% url 'activities:activity_update' activity.pk %}" class="btn btn-warning btn-sm">编辑</a>#}
+{#                                <a href="#" class="btn btn-danger btn-sm">删除</a>#}
                             {% else %}
                               {% if activity.is_verify %}
                                 <a href="{% url 'activities:activity_detail' activity.pk %}" class="btn btn-primary btn-sm">查看详情</a>

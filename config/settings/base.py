@@ -77,7 +77,7 @@ LOCAL_APPS = [
     "learntime.student.apps.StudentConfig",
     "learntime.activity.apps.ActivityConfig",
     "learntime.operation.apps.OperationConfig",
-
+    "learntime.statistic.apps.StatisticConfig"
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -250,7 +250,7 @@ EMAIL_PORT = env('DJANGO_EMAIL_PORT', default=465)
 EMAIL_HOST_USER = env('DJANGO_EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('DJANGO_EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = env('DJANGO_DEFAULT_FROM_EMAIL')
-
+EMAIL_RECIPIENT_LIST = ['705555262@qq.com']
 
 # ckeditor配置
 CKEDITOR_CONFIGS = {

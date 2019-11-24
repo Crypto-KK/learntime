@@ -1,56 +1,20 @@
-import json
-from random import randrange
-
+from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+from django.contrib.auth import get_user_model, authenticate, login, logout
+from django.core.mail import send_mail
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
-from django.contrib.auth import authenticate, login, logout
 from django.views.generic import DetailView, UpdateView, DeleteView
 from django.views.generic.base import View
-from pyecharts.globals import ThemeType
 
-from learntime.activity.models import Activity
-from learntime.student.models import Student
 from learntime.users.enums import RoleEnum
-from learntime.users.forms import LoginForm, RegisterForm, UserForm
+from learntime.users.forms import LoginForm, RegisterForm, UserForm, ForgetForm
 from learntime.users.models import Academy, Grade
-from learntime.utils.echarts_utils import EchartsResponse
 from learntime.utils.factories import CrudViewFactory
-from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, disable_csrf
-from pyecharts.charts import Bar
-from pyecharts import options as opts
+from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView
 
 User = get_user_model() # 惰性获取User对象
-
-
-def chart_view(request):
-    c = (
-        Bar(init_opts=opts.InitOpts(theme=ThemeType.LIGHT))
-            .add_xaxis(["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"])
-            .add_yaxis("商家A", [randrange(0, 100) for _ in range(6)])
-            .add_yaxis("商家B", [randrange(0, 100) for _ in range(6)])
-            .set_global_opts(title_opts=opts.TitleOpts(title="Bar-基本示例", subtitle="我是副标题"))
-            .dump_options_with_quotes()
-    )
-    return EchartsResponse(json.loads(c))
-
-
-class IndexView(LoginRequiredMixin, View):
-    """首页视图"""
-    def get(self, request):
-        context = {
-            "student_nums": Student.objects.count(),
-            "activity_nums": Activity.objects.count(),
-            "admin_nums": User.objects.filter(is_active=True).count(),
-            "verifying_admin_nums": User.objects.filter(is_active=False).count(),
-        }
-        if request.user.role == RoleEnum.ROOT.value or request.user.role == RoleEnum.SCHOOL.value:
-            return render(request, "front/index.html", context=context)
-        else:
-            return render(request, "front/index.html")
 
 def login_view(request):
     """登录视图使用邮箱做为登录账号"""
@@ -70,7 +34,7 @@ def login_view(request):
                     return HttpResponseRedirect(reverse('index'))
                 else:
                     return HttpResponseRedirect(next)
-        return render(request, 'users/login.html', {'form': form})
+        return render(request, 'users/login.html', {'form': form, 'error': "账号名或密码错误"})
 
 
 def logout_view(request):
@@ -83,17 +47,17 @@ def register_view(request):
     """注册为管理员
     注册后需要等待后台审核，审核成功后is_active置为True
     """
+    context = {'form': RegisterForm(),
+               "academies": Academy.objects.all(),
+               "grades": Grade.objects.all()
+               }
     if request.method == "GET":
-        form = RegisterForm()
-        return render(request, 'users/register.html', {'form': form,
-                                                       "academies": Academy.objects.all(),
-                                                       "grades": Grade.objects.all()})
+        return render(request, 'users/register.html', context)
     elif request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-
             user = User(
-                username=form.cleaned_data['username'],
+                username=form.cleaned_data['email'],
                 email = form.cleaned_data['email'],
                 name = form.cleaned_data['name'],
                 identity = form.cleaned_data['identity'],
@@ -106,7 +70,23 @@ def register_view(request):
             user.register()
             return render(request, 'users/register_success.html')
 
-        return render(request, 'users/register.html', {'form': form})
+        return render(request, 'users/register.html', context)
+
+class ForgetPwdView(View):
+    '''忘记密码'''
+    def get(self,request):
+        form = ForgetForm()
+        return render(request,'users/forget_pwd.html',{'form':form})
+    def post(self,request):
+        form = ForgetForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            send_mail("TEST", message="", from_email=settings.DEFAULT_FROM_EMAIL,
+                      recipient_list=[email])
+            return render(request,'users/send_success.html')
+        else:
+            return render(request,'users/forget_pwd.html',{'form':form})
+
 
 
 class AdminApplyList(RoleRequiredMixin, PaginatorListView):

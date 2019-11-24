@@ -1,0 +1,28 @@
+{% extends 'users/user_base.html' %}
+{% load static %}
+{% block title %}
+    忘记密码
+{% endblock %}
+{% block body %}
+<!-- Form Panel    -->
+    <div class="col-lg-6 bg-white">
+        <div class="form d-flex align-items-center">
+        <div class="content">
+          <form method="post" class="form-validate" action="{% url 'users:forgot_pwd' %}">
+            <div class="form-group">
+              <input id="login-username" type="text" name="email" required data-msg="请输入您的邮箱" class="input-material">
+              <label for="login-username" class="label-material">邮箱</label>
+              {% if form.errors %}
+                <div style="color: red">邮箱输入错误</div>
+              {% endif %}
+            </div>
+
+              {% csrf_token %}
+              <button type="submit" id="login" href="#" class="btn btn-primary">发送确认邮件</button>
+            <!-- This should be submit button but I replaced it with <a> for demo purposes-->
+          </form>
+          <br><small>想起密码了? </small><a href="{% url 'users:login' %}" class="signup">登录</a>
+        </div>
+      </div>
+    </div>
+{% endblock %}

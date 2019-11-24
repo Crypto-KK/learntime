@@ -32,7 +32,7 @@
                   <div class="col-lg-5">
                     <form class="form-inline">
                       <div class="btn-group">
-                        <button type="button" id="select-btn" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button type="button" id="select-btn" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           学号
                         </button>
                         <div class="dropdown-menu">
@@ -52,7 +52,7 @@
                             <input id="inlineFormInput" name="uid" type="text" placeholder="搜索学号" class="mr-3 form-control">
                             <div class="input-group-append">
                               <button type="submit" class="btn btn-primary">搜索</button>
-                              <button type="button" class="btn btn-success" id="reset-select">重置</button>
+                              <button type="button" class="btn btn-blue" id="reset-select">重置</button>
                             </div>
                          </div>
                       </div>
@@ -90,7 +90,7 @@
                           </div>
                         </div>
                       </div>
-                      <a class="btn btn-secondary" href="{% url 'students:student_export' %}">
+                      <a class="btn btn-blue" href="{% url 'students:student_export' %}">
                         <i class="fa fa-download">下载数据</i>
                       </a>
                     </div>
