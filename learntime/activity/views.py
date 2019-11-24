@@ -10,7 +10,7 @@ from learntime.activity.forms import ActivityForm
 from learntime.activity.models import Activity
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
-from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, disable_csrf, AuthorRequiredMixin
+from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, AuthorRequiredMixin
 
 
 class AllActivityList(RoleRequiredMixin, PaginatorListView):
@@ -134,6 +134,19 @@ class ActivityUpdate(AuthorRequiredMixin, UpdateView):
     def get_success_url(self):
         messages.success(self.request, "修改活动成功")
         return reverse("activities:activities")
+
+
+class ActivityDelete(AuthorRequiredMixin, View):
+    """删除活动接口"""
+    def post(self, request):
+        try:
+            activity_id = request.POST.get('activity_id')
+            Activity.objects.get(pk=activity_id).delete()
+            # 记录日志
+        except Exception:
+            return JsonResponse({'status': 'fail'})
+        messages.success(self.request, "删除活动成功")
+        return JsonResponse({'status': 'ok'})
 
 
 class ActivityVerifyView(RoleRequiredMixin, View):

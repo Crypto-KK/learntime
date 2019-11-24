@@ -1,5 +1,5 @@
 from django.dispatch import receiver
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete, pre_delete
 
 from learntime.activity.models import Activity, SimpleActivity
 from learntime.operation.models import Log
@@ -45,7 +45,7 @@ def after_create_activity(sender, instance=None, created=False, **kwargs):
                 # 给院级记录日志
                 Log.objects.create(
                     user=instance.to,
-                    content=f"我批准了活动<{instance.name}>"
+                    content=f"批准了活动<{instance.name}>"
                 )
             else:
                 # 校级审核通过 给发布活动者记录日志
@@ -56,7 +56,7 @@ def after_create_activity(sender, instance=None, created=False, **kwargs):
                 # 给校级记录日志
                 Log.objects.create(
                     user=instance.to_school,
-                    content=f"我批准了活动<{instance.name}>"
+                    content=f"批准了活动<{instance.name}>"
                 )
 
 
@@ -73,7 +73,7 @@ def after_create_activity(sender, instance=None, created=False, **kwargs):
                 # 给操作者添加日志
                 Log.objects.create(
                     user=instance.to or instance.to_school,
-                    content=f"我不批准活动<{instance.name}>，原因：{instance.reason}"
+                    content=f"不批准活动<{instance.name}>，原因：{instance.reason}"
                 )
             if instance.is_verifying and instance.to_school:
                 # 操作了提交给上级按钮 给发布活动者添加日志
@@ -84,6 +84,12 @@ def after_create_activity(sender, instance=None, created=False, **kwargs):
                 # 给操作者添加日志
                 Log.objects.create(
                     user=instance.to,
-                    content=f"我提交活动<{instance.name}>给上级审核，上级审核者：{instance.to_school}"
+                    content=f"提交活动<{instance.name}>给上级审核，上级审核者：{instance.to_school}"
                 )
 
+@receiver(pre_delete, sender=Activity)
+def after_delete(sender, instance=None, **kwargs):
+    Log.objects.create(
+        user=instance.user,
+        content=f"删除了活动<{instance.name}>"
+    )

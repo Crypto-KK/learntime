@@ -20,7 +20,7 @@ urlpatterns = [
     path('detail/<str:pk>/', view=views.ActivityDetail.as_view(), name='activity_detail'),
     # 更新活动
     path('update/<str:pk>/', view=views.ActivityUpdate.as_view(), name='activity_update'),
-
+    path('delete/', view=views.ActivityDelete.as_view(), name='activity_delete'),
     # 审核通过地址
     path("verify/", view=views.ActivityVerifyView.as_view(), name='verify'),
 
