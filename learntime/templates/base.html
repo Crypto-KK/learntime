@@ -10,7 +10,8 @@
     <meta name="robots" content="all,follow">
     <!-- Bootstrap CSS-->
 {#    <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">#}
-    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet">
+{#    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">#}
     <!-- Font Awesome CSS-->
 {#    <link rel="stylesheet" href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}">#}
     <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -96,7 +97,7 @@
             {% if role == 2 or role == 3 %}
               <li class="left-link activity-verify-page"><a href="{% url 'activities:activity_unverify' %}"> <i class="fa fa-bullhorn"></i>活动审批 </a></li>
             {% endif %}
-            {% if role != 1 %}
+            {% if role == 4 %}
             <li class="left-link activity-page" ><a href="{% url 'activities:activities' %}"> <i class="fa fa-pencil-square-o"></i>我的活动</a></li>
             {% endif %}
             {% if role == 1 %}

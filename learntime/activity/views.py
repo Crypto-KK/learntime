@@ -10,7 +10,7 @@ from learntime.activity.forms import ActivityForm
 from learntime.activity.models import Activity
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
-from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, disable_csrf
+from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, disable_csrf, AuthorRequiredMixin
 
 
 class AllActivityList(RoleRequiredMixin, PaginatorListView):
@@ -27,13 +27,11 @@ class AllActivityList(RoleRequiredMixin, PaginatorListView):
 
 class MyActivityList(RoleRequiredMixin, PaginatorListView):
     """我发布的活动列表 干部级可以在这里发布活动，查看自己的活动
-
-    需要ROOT、校级、学院级的权限
+    只能由干部操作
     """
-    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value,
-                     RoleEnum.ACADEMY.value, RoleEnum.STUDENT.value)
+    role_required = (RoleEnum.STUDENT.value,)
     template_name = "activity/activity_list.html"
-    paginate_by = 20
+    paginate_by = 10
     context_object_name = "activities"
 
     def get_queryset(self):
@@ -92,9 +90,8 @@ class ActivityVerifyList(ActivityUnVerifyList):
 
 
 class ActivityCreate(RoleRequiredMixin, CreateView):
-    """添加活动"""
-    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value,
-                     RoleEnum.ACADEMY.value, RoleEnum.STUDENT.value)
+    """发布活动，只能由干部发布"""
+    role_required = (RoleEnum.STUDENT.value, )
     model = Activity
     template_name = "activity/activity_create.html"
     form_class = ActivityForm
@@ -123,9 +120,8 @@ class ActivityDetail(LoginRequiredMixin, DetailView):
     context_object_name = "activity"
 
 
-class ActivityUpdate(RoleRequiredMixin, UpdateView):
+class ActivityUpdate(AuthorRequiredMixin, UpdateView):
     """修改活动"""
-    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
     model = Activity
     form_class = ActivityForm
     template_name = "activity/activity_update.html"

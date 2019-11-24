@@ -6,6 +6,9 @@
 {% block header_name %}
     活动管理
 {% endblock %}
+{% block css %}
+    <link href="https://cdn.bootcss.com/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" rel="stylesheet">
+{% endblock %}
 {% block body %}
       <!-- Breadcrumb-->
     <div class="breadcrumb-holder container-fluid">
@@ -34,17 +37,31 @@
     </div>
   </div>
 
-
-
-
 {% endblock %}
 {% block js %}
+  <script src="https://cdn.bootcss.com/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
   <script>
     $(function () {
         $('.button-submit').click(function () {
             $('#activity_form').submit();
-            {#alert("更新学生资料成功！")#}
-        })
+        });
+
+        datetimepickerComponent();
+        function datetimepickerComponent(){
+            $.datetimepicker.setLocale('zh');
+            params = {
+                lang: 'zh',
+                format: 'Y-m-d H:i',//格式化显示
+            };
+            $('#id_deadline').datetimepicker(params);
+            $('#id_time').datetimepicker(params);
+        };
+
+        $('#id_logo').removeClass('custom-file-input form-control')
+            .parent().removeClass('custom-file');
+        $('#id_file').removeClass('custom-file-input form-control')
+            .parent().removeClass('custom-file');
+        $('.custom-file-label').hide()
     })
   </script>
 {% endblock %}

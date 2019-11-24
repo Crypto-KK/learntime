@@ -8,6 +8,21 @@
 {% endblock %}
 {% block css %}
     <link href="https://cdn.bootcss.com/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" rel="stylesheet">
+  <style>
+  #loading {
+    position: fixed;
+    z-index: 400;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0%;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #595758;
+    background-color: black;
+}
+
+  </style>
 {% endblock %}
 {% block body %}
       <!-- Breadcrumb-->
@@ -60,14 +75,14 @@
 {% block js %}
   <script src="https://cdn.bootcss.com/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
   <script>
-    $(function () {
+    $(function() {
+
         $('#button-activity').click(function () {
             if ($('#select_to').val() === "0" || !$('#select_to').val()) {
                 alert("请选择审核者！");
                 return;
             }
             $('#activity_form').submit();
-            {#alert("发布活动成功！")#}
         });
 
         $('#select_academy').change(function () {
@@ -103,8 +118,15 @@
                 format: 'Y-m-d H:i',//格式化显示
             };
             $('#id_deadline').datetimepicker(params);
+            $('#id_time').datetimepicker(params);
 
-    }
+        };
+
+        $('#id_logo').removeClass('custom-file-input form-control')
+            .parent().removeClass('custom-file')
+        $('#id_file').removeClass('custom-file-input form-control')
+            .parent().removeClass('custom-file')
+        $('.custom-file-label').hide()
     })
   </script>
 {% endblock %}

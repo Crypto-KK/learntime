@@ -30,8 +30,8 @@ class Activity(CreatedUpdatedMixin, models.Model):
     sponsor = models.CharField(verbose_name="主办方", max_length=255)
     credit_type = models.CharField(choices=TYPE, max_length=20, verbose_name="学时类别",
                                    default="n")
-    time = models.CharField(verbose_name="活动时间", max_length=255)
     place = models.CharField(max_length=255, verbose_name="活动地点", default="")
+    time = models.CharField(verbose_name="活动时间", max_length=255)
     deadline = models.DateTimeField(null=True, blank=True, verbose_name="报名截止日期")
     desc = RichTextUploadingField(verbose_name="活动描述")
     score_player = models.FloatField(default=0, verbose_name="参与者学时")
