@@ -41,8 +41,8 @@
                           <td>{{ forloop.counter }}</td>
                           <td>{{ academy.name }}</td>
                           <td>
-                            <a href="{% url 'academy_update' academy.pk %}" class="btn btn-warning btn-sm">修改</a>
-                            <a href="{% url 'academy_delete' academy.pk %}" class="btn btn-warning btn-danger btn-sm">删除</a>
+                            <a href="{% url 'academy_update' academy.pk %}" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i>修改</a>
+                            <a href="{% url 'academy_delete' academy.pk %}" class="btn btn-warning btn-danger btn-sm"><i class="fa fa-eraser"></i>删除</a>
                           </td>
 
                           </tr>

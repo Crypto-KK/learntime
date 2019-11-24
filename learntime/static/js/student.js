@@ -1,14 +1,11 @@
 $(function () {
 
-  function getQueryVariable(variable)
-    {
-        var query = window.location.search.substring(1);
-        var vars = query.split("&");
-        for (var i=0;i<vars.length;i++) {
-           var pair = vars[i].split("=");
-           if(pair[0] == variable){return pair[1];}
-        }
-        return false;
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);//search,查询？后面的参数，并匹配正则
+        if(r!=null)
+         return  decodeURIComponent(r[2])
+        return null;
     }
 
 
@@ -121,21 +118,36 @@ $(function () {
   });
 
   var concatQuery = "";
-  var uid = getQueryVariable("uid");
-  var name = getQueryVariable("name");
-  var grade = getQueryVariable("grade");
-  var clazz = getQueryVariable("clazz");
-  var academy = getQueryVariable("academy");
+  var uid = getQueryString("uid");
+  var name = getQueryString("name");
+  var grade = getQueryString("grade");
+  var clazz = getQueryString("clazz");
+  var academy = getQueryString("academy");
+  if (!uid && !name && !grade && !clazz && !academy) {
+      $('#delete-all-btn').show()
+  } else {
+      $('#delete-all-btn').hide()
+  }
   if (uid) {
       concatQuery = "uid=" + uid;
+      $('#select-uid').click();
+      $('#inlineFormInput').attr('value', uid)
   } else if (name) {
       concatQuery = "name=" + name;
+      $('#select-name').click();
+      $('#inlineFormInput').attr('value', name)
   } else if (grade) {
       concatQuery = "grade=" + grade;
+      $('#select-grade').click();
+      $('#inlineFormInput').attr('value', grade)
   } else if (clazz) {
       concatQuery = "clazz=" + clazz;
+      $('#select-clazz').click();
+      $('#inlineFormInput').attr('value', clazz)
   } else if (academy) {
       concatQuery = "academy=" + academy;
+      $('#select-academy').click();
+      $('#inlineFormInput').attr('value', academy)
   }
 
   $('.page-link').each(function () {

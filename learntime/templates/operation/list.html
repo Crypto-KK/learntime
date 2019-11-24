@@ -42,7 +42,7 @@
                           <td>{{ forloop.counter }}</td>
                           <td>{{ log.created_at }}</td>
                             {% if role == 1 %}
-                              <td>{{ log.user }}</td>
+                              <td>{{ log.user }}({{ log.user.get_role_display }})</td>
                             {% endif %}
                           <td>{{ log.content }}</td>
                           </tr>

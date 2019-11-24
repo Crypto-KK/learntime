@@ -42,8 +42,8 @@
                           <td>{{ forloop.counter }}</td>
                           <td>{{ grade.name }}</td>
                           <td>
-                            <a href="{% url 'grade_update' grade.pk %}" class="btn btn-warning btn-sm">修改</a>
-                            <a href="{% url 'grade_delete' grade.pk %}" class="btn btn-warning btn-danger btn-sm">删除</a>
+                            <a href="{% url 'grade_update' grade.pk %}" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i>修改</a>
+                            <a href="{% url 'grade_delete' grade.pk %}" class="btn btn-warning btn-danger btn-sm"><i class="fa fa-eraser"></i>删除</a>
                           </td>
 
                           </tr>

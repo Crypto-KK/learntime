@@ -17,195 +17,192 @@
 {% endblock %}
 {% block body %}
 
-    {% with role=request.user.role %}
+  {% with role=request.user.role %}
 
-    <section class="tables">
-      <div class="container-fluid">
+  <section class="tables">
+    <div class="container-fluid">
 
-        <div class="row">
-           <!-- Inline Form-->
-          {% if role == 1 or role == 2 or role == 3 %}
-          <div class="col-lg-12">
-            <div class="card">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-lg-5">
-                    <form class="form-inline">
-                      <div class="btn-group">
-                        <button type="button" id="select-btn" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          学号
-                        </button>
-                        <div class="dropdown-menu">
-                      <a class="dropdown-item" href="#" id="select-uid">学号</a>
-                      <a class="dropdown-item" href="#" id="select-name">姓名</a>
-                      {% if role != 3 %}
-                      <a class="dropdown-item" href="#" id="select-academy">学院</a>
-                      <a class="dropdown-item" href="#" id="select-grade">年级</a>
-                      {% endif %}
-                      <a class="dropdown-item" href="#" id="select-clazz">班级</a>
-                    </div>
-                      </div>
-                      <div class="btn-group">
-                        <div class="form-group">
-                        <label for="inlineFormInput" class="sr-only">搜索学号或姓名</label>
-                          <div class="input-group">
-                            <input id="inlineFormInput" name="uid" type="text" placeholder="搜索学号" class="mr-3 form-control">
-                            <div class="input-group-append">
-                              <button type="submit" class="btn btn-primary">搜索</button>
-                              <button type="button" class="btn btn-info" id="reset-select">重置</button>
-                            </div>
-                         </div>
-                      </div>
-
-                      </div>
-                    </form>
+      <div class="row">
+         <!-- Inline Form-->
+        {% if role == 1 or role == 2 or role == 3 %}
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-5">
+                  <form class="form-inline">
+                    <div class="btn-group">
+                      <button type="button" id="select-btn" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        学号
+                      </button>
+                      <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#" id="select-uid">学号</a>
+                    <a class="dropdown-item" href="#" id="select-name">姓名</a>
+                    {% if role != 3 %}
+                    <a class="dropdown-item" href="#" id="select-academy">学院</a>
+                    <a class="dropdown-item" href="#" id="select-grade">年级</a>
+                    {% endif %}
+                    <a class="dropdown-item" href="#" id="select-clazz">班级</a>
                   </div>
-                  <div class="col-lg-4"></div>
-                  <div class="col-lg-3">
-                    <div class="pull-right">
-                      <button class="btn btn-success" style="display: none" id="bulk-add-btn" data-toggle="modal" data-target="#bulk-add-modal">批量增加学时</button>
                     </div>
-                    <div class="modal fade" id="bulk-add-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
-                      <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="bulk-add-modal-title">批量增加学时</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
+                    <div class="btn-group">
+                      <div class="form-group">
+                      <label for="inlineFormInput" class="sr-only">搜索学号或姓名</label>
+                        <div class="input-group">
+                          <input id="inlineFormInput" name="uid" type="text" placeholder="搜索学号" class="mr-3 form-control">
+                          <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary">搜索</button>
+                            <button type="button" class="btn btn-info" id="reset-select">重置</button>
                           </div>
-                          <div class="modal-body">
-                            <form>
-                              <div class="form-group">
-                                <label for="select-type">请选择学时类别</label>
-                                <select class="form-control" id="select-type">
-                                  <option value="wt_credit">文体学时</option>
-                                  <option value="fl_credit">法律学时</option>
-                                  <option value="xl_credit">心理学时</option>
-                                  <option value="cxcy_credit">创新创业学时</option>
-                                  <option value="sxdd_credit">思想道德学时</option>
-                                </select>
-                              </div>
-                              <div class="form-group">
-                                <label for="credit-amount-input">增加学时</label>
-                                <input class="form-control" type="text" id="credit-amount-input">
-                              </div>
-                            </form>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                            <button type="button" class="btn btn-primary" id="confirm-bulk-add">确认</button>
-                          </div>
-                        </div>
-                      </div>
+                       </div>
                     </div>
-                  </div>
 
-
+                    </div>
+                  </form>
                 </div>
-
-              </div>
-            </div>
-          </div>
-          {% endif %}
-          <div class="col-lg-12">
-            <div class="card">
-              <div class="card-header">
-
-                <h2>搜索结果 {{ count }}条</h2>
-              </div>
-
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table table-striped table-hover table-bordered">
-                    <thead>
-                      <tr>
-                        <th>学号</th>
-                        <th>姓名</th>
-                        <th>学院</th>
-                        <th>年级</th>
-                        <th>班级</th>
-                        <th>总学时</th>
-                        <th>文体</th>
-                        <th>法律</th>
-                        <th>心理</th>
-                        <th>创新创业</th>
-                        <th>思想道德</th>
-                        <th>操作</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-
-                      {% for student in students %}
-                          <tr data-uid="{{ student.uid }}">
-                          <td style="font-weight: bold">{{ student.uid }}</td>
-                          <td>{{ student.name }}</td>
-                          <td>{{ student.academy }}</td>
-                          <td>{{ student.grade }}</td>
-                          <td>{{ student.clazz }}</td>
-                          <td style="color: blue">{{ student.credit }}</td>
-                          <td style="color: blue">{{ student.wt_credit }}</td>
-                          <td style="color: blue">{{ student.fl_credit }}</td>
-                          <td style="color: blue">{{ student.xl_credit }}</td>
-                          <td style="color: blue">{{ student.cxcy_credit }}</td>
-                          <td style="color: blue">{{ student.sxdd_credit }}</td>
-                          <td>
-                              <button class="btn btn-success btn-sm edit-credit-btn" data-toggle="modal" data-target="#creditModal"
-                                      data-uid="{{ student.uid }}">修改学时</button>
-                          </td>
-                          </tr>
-                      {% endfor %}
-                      <div class="modal fade" id="creditModal" tabindex="-1" role="dialog" aria-labelledby="edit-credit-label" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="edit-credit-label">修改学时</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                              </button>
+                <div class="col-lg-4"></div>
+                <div class="col-lg-3">
+                  <div class="pull-right">
+                    <button class="btn btn-success" style="display: none" id="bulk-add-btn" data-toggle="modal" data-target="#bulk-add-modal">批量增加学时</button>
+                  </div>
+                  <div class="modal fade" id="bulk-add-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="bulk-add-modal-title">批量增加学时</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <form>
+                            <div class="form-group">
+                              <label for="select-type">请选择学时类别</label>
+                              <select class="form-control" id="select-type">
+                                <option value="wt_credit">文体学时</option>
+                                <option value="fl_credit">法律学时</option>
+                                <option value="xl_credit">心理学时</option>
+                                <option value="cxcy_credit">创新创业学时</option>
+                                <option value="sxdd_credit">思想道德学时</option>
+                              </select>
                             </div>
-                            <div class="modal-body">
-                              <form method="post" id="creditForm">
-                                <div class="form-group">
-                                  <label for="wt-credit" class="col-form-label">文体学时:</label>
-                                  <input type="text" class="form-control" id="wt-credit">
-                                </div>
-                                <div class="form-group">
-                                  <label for="fl-credit" class="col-form-label">法律学时:</label>
-                                  <input type="text" class="form-control" id="fl-credit">
-                                </div>
-                                <div class="form-group">
-                                  <label for="xl-credit" class="col-form-label">心理学时:</label>
-                                  <input type="text" class="form-control" id="xl-credit">
-                                </div>
-                                <div class="form-group">
-                                  <label for="cxcy-credit" class="col-form-label">创新创业学时:</label>
-                                  <input type="text" class="form-control" id="cxcy-credit">
-                                </div>
-                                <div class="form-group">
-                                  <label for="sxdd-credit" class="col-form-label">思想道德学时:</label>
-                                  <input type="text" class="form-control" id="sxdd-credit">
-                                </div>
-
-                              </form>
+                            <div class="form-group">
+                              <label for="credit-amount-input">增加学时</label>
+                              <input class="form-control" type="text" id="credit-amount-input">
                             </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                              <button type="button" class="btn btn-primary" id="confirm-edit-credit">确认修改</button>
-                            </div>
-                          </div>
+                          </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                          <button type="button" class="btn btn-primary" id="confirm-bulk-add">确认</button>
                         </div>
                       </div>
-                    {% endwith %}
-                    </tbody>
-                  </table>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        {% endif %}
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-header">
+
+              <h2 id="search-result">搜索结果 {{ count }}条</h2>
+            </div>
+
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered">
+                  <thead>
+                    <tr>
+                      <th>学号</th>
+                      <th>姓名</th>
+                      <th>学院</th>
+                      <th>年级</th>
+                      <th>班级</th>
+                      <th>总学时</th>
+                      <th>文体</th>
+                      <th>法律</th>
+                      <th>心理</th>
+                      <th>创新创业</th>
+                      <th>思想道德</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    {% for student in students %}
+                        <tr data-uid="{{ student.uid }}">
+                        <td style="font-weight: bold">{{ student.uid }}</td>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.academy }}</td>
+                        <td>{{ student.grade }}</td>
+                        <td>{{ student.clazz }}</td>
+                        <td style="color: blue">{{ student.credit }}</td>
+                        <td style="color: blue">{{ student.wt_credit }}</td>
+                        <td style="color: blue">{{ student.fl_credit }}</td>
+                        <td style="color: blue">{{ student.xl_credit }}</td>
+                        <td style="color: blue">{{ student.cxcy_credit }}</td>
+                        <td style="color: blue">{{ student.sxdd_credit }}</td>
+                        <td>
+                            <button class="btn btn-success btn-sm edit-credit-btn" data-toggle="modal" data-target="#creditModal"
+                                    data-uid="{{ student.uid }}"><i class="fa fa-edit"></i>修改</button>
+                        </td>
+                        </tr>
+                    {% endfor %}
+                    <div class="modal fade" id="creditModal" tabindex="-1" role="dialog" aria-labelledby="edit-credit-label" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="edit-credit-label">修改学时</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <form method="post" id="creditForm">
+                              <div class="form-group">
+                                <label for="wt-credit" class="col-form-label">文体学时:</label>
+                                <input type="text" class="form-control" id="wt-credit">
+                              </div>
+                              <div class="form-group">
+                                <label for="fl-credit" class="col-form-label">法律学时:</label>
+                                <input type="text" class="form-control" id="fl-credit">
+                              </div>
+                              <div class="form-group">
+                                <label for="xl-credit" class="col-form-label">心理学时:</label>
+                                <input type="text" class="form-control" id="xl-credit">
+                              </div>
+                              <div class="form-group">
+                                <label for="cxcy-credit" class="col-form-label">创新创业学时:</label>
+                                <input type="text" class="form-control" id="cxcy-credit">
+                              </div>
+                              <div class="form-group">
+                                <label for="sxdd-credit" class="col-form-label">思想道德学时:</label>
+                                <input type="text" class="form-control" id="sxdd-credit">
+                              </div>
+
+                            </form>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-primary" id="confirm-edit-credit">确认修改</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% endwith %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </section>
+    </div>
+  </section>
 
     {% include 'pagination.html' %}
 {% endblock %}

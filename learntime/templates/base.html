@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="{% static 'css/style.default.css' %}" id="theme-stylesheet">
     <!-- Favicon-->
     <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
-
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
     {% block css %}
 
     {% endblock %}
@@ -71,7 +71,7 @@
             </div>
           </div>
           <!-- Sidebar Navidation Menus-->
-          <span class="heading">系统管理</span>
+          <span class="heading">学生管理</span>
 
           <ul class="list-unstyled">
             <li class="left-link index-page"><a href="{% url 'index' %}"> <i class="icon-home"></i>首页 </a></li>
@@ -79,19 +79,25 @@
               <li class="left-link academy-page"><a href="{% url 'academy' %}"> <i class="fa fa-database"></i>学院管理 </a></li>
               <li class="left-link grade-page"><a href="{% url 'grade' %}"> <i class="fa fa-cube"></i>年级管理 </a></li>
             {% endif %}
-            {% if role == 1 %}
-              <li class="left-link register-page"><a href="{% url 'users:admin_apply' %}"> <i class="fa fa-edit"></i>注册审核 </a></li>
-              <li class="left-link admin-page"><a href="{% url 'users:admins' %}"> <i class="fa fa-user-circle-o"></i>用户管理 </a></li>
-            {% endif %}
-
-               <li class="left-link student-page" ><a href="{% url 'students:students' %}"> <i class="fa fa-users"></i>学生管理 </a></li>
-
+            <li class="left-link student-page" ><a href="{% url 'students:students' %}"> <i class="fa fa-users"></i>学生管理 </a></li>
             {% if role == 1 or role == 3 %}
 
               <li class="left-link credit-page"><a href="{% url 'students:student_credit' %}"> <i class="fa fa-wrench"></i>学时变更 </a></li>
             {% endif %}
               <li class="left-link log-page"><a href="{% url 'logs:list' %}"><i class="fa fa-play-circle-o"></i>操作记录</a></li>
-          </ul><span class="heading">活动管理</span>
+          </ul>
+            {% if role == 1 %}
+              <span class="heading">系统管理</span>
+              <ul>
+              <li class="left-link register-page"><a href="{% url 'users:admin_apply' %}"> <i class="fa fa-edit"></i>注册审核 </a></li>
+              <li class="left-link admin-page"><a href="{% url 'users:admins' %}"> <i class="fa fa-user-circle-o"></i>用户管理 </a></li>
+              </ul>
+            {% endif %}
+
+
+
+
+          <span class="heading">活动管理</span>
           <ul>
             {% if role == 2 or role == 3 %}
               <li class="left-link activity-verify-page"><a href="{% url 'activities:activity_unverify' %}"> <i class="fa fa-bullhorn"></i>活动审批 </a></li>

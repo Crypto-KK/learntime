@@ -32,7 +32,7 @@
                   <div class="col-lg-5">
                     <form class="form-inline">
                       <div class="btn-group">
-                        <button type="button" id="select-btn" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button type="button" id="select-btn" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           学号
                         </button>
                         <div class="dropdown-menu">
@@ -52,7 +52,7 @@
                             <input id="inlineFormInput" name="uid" type="text" placeholder="搜索学号" class="mr-3 form-control">
                             <div class="input-group-append">
                               <button type="submit" class="btn btn-primary">搜索</button>
-                              <button type="button" class="btn btn-info" id="reset-select">重置</button>
+                              <button type="button" class="btn btn-success" id="reset-select">重置</button>
                             </div>
                          </div>
                       </div>
@@ -64,7 +64,7 @@
                   {% if role == 1 %}
                     <div class="col-lg-3">
                     <div class="pull-right">
-                      <button class="btn btn-info" data-toggle="modal" data-target="#modal-in-class">
+                      <button class="btn btn-blue" data-toggle="modal" data-target="#modal-in-class">
                         <i class="fa fa-caret-square-o-right" > 导入</i>
                       </button>
                       <div class="modal modal-default fade" id="modal-in-class">
@@ -113,7 +113,7 @@
 {#                &nbsp;&nbsp;&nbsp;<input type="checkbox" id="checkAll" name='CheckAll'>#}
                 <div class="btn-group">
 
-                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       筛选学院
                     </button>
                     <div class="dropdown-menu">
@@ -174,8 +174,8 @@
                           {% if role == 1 or role == 2 %}
                           <td>
 {#                              <a href="{% url 'students:student_detail' student.pk %}" class="btn btn-success btn-sm">查看</a>#}
-                              <a href="{% url 'students:student_update' student.pk %}" class="btn btn-warning btn-sm">编辑</a>
-                              <a href="{% url 'students:student_delete' student.pk %}" class="btn btn-danger btn-sm ">删除</a>
+                              <a href="{% url 'students:student_update' student.pk %}" class="btn btn-success btn-sm"><i class="fa fa-edit"></i>编辑</a>
+                              <a href="{% url 'students:student_delete' student.pk %}" class="btn btn-danger btn-sm "><i class="fa fa-eraser"></i>删除</a>
                           </td>
                           {% endif %}
                           </tr>

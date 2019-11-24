@@ -67,8 +67,8 @@
                           <td>
                             {% if role == 1 or role == 2 %}
 {#                              <a href="{% url 'users:admin_detail' admin.pk %}" class="btn btn-primary btn-sm">查看</a>#}
-                              <a href="{% url 'users:update_profile' admin.pk %}" class="btn btn-warning btn-sm">编辑</a>
-                              <a href="{% url 'users:admin_delete' admin.pk %}" class="btn btn-danger btn-sm">删除</a>
+                              <a href="{% url 'users:update_profile' admin.pk %}" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i>编辑</a>
+                              <a href="{% url 'users:admin_delete' admin.pk %}" class="btn btn-danger btn-sm"><i class="fa fa-eraser"></i>删除</a>
                             {% endif %}
                           </td>
                           </tr>
