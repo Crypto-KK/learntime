@@ -26,12 +26,12 @@
                   <table class="table table-striped table-hover table-bordered">
                     <thead>
                       <tr>
-                        <th>用户名</th>
-                        <th>姓名</th>
                         <th>邮箱</th>
+                        <th>姓名</th>
                         <th>级别</th>
                         <th>学院</th>
                         <th>年级</th>
+
                         <th>操作</th>
 
                       </tr>
@@ -39,9 +39,8 @@
                     <tbody>
                       {% for admin in admins %}
                           <tr>
-                          <td>{{ admin.username }}</td>
-                          <td>{{ admin.name }}</td>
                           <td>{{ admin.email }}</td>
+                          <td>{{ admin.name }}</td>
                           <td>{{ admin.get_identity_display }}</td>
                           <td>{% if admin.academy %}{{ admin.academy }}{% else %}无{% endif %}</td>
                           <td>{% if admin.grade %}{{ admin.grade }}{% else %}无{% endif %}</td>

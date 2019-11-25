@@ -1,10 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView, \
-    PasswordResetDoneView
+    PasswordResetDoneView, PasswordChangeView, PasswordChangeDoneView, \
+    PasswordResetCompleteView
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import DetailView, UpdateView, DeleteView
 from django.views.generic.base import View
 
@@ -16,14 +19,16 @@ from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView
 
 User = get_user_model() # 惰性获取User对象
 
-def login_view(request):
-    """登录视图使用邮箱做为登录账号"""
-    next = request.GET.get('next', '')
-    if request.method == 'GET':
+
+@method_decorator(sensitive_post_parameters('password'), 'dispatch')
+class LoginView(View):
+    def get(self, request):
         form = LoginForm()
         return render(request, 'users/registration/login.html', {'form': form})
-    elif request.method == 'POST':
+
+    def post(self, request):
         form = LoginForm(request.POST)
+        next = request.GET.get('next', '')
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
@@ -40,27 +45,29 @@ def login_view(request):
 def logout_view(request):
     """注销视图，重定向到登录界面"""
     logout(request)
-    return redirect(reverse_lazy("users:login"))
+    return redirect(reverse("users:login"))
 
 
-def register_view(request):
+@method_decorator(sensitive_post_parameters('password', 'password2'), 'dispatch')
+class RegisterView(View):
     """注册为管理员
     注册后需要等待后台审核，审核成功后is_active置为True
     """
-    context = {'form': RegisterForm(),
-               "academies": Academy.objects.all(),
-               "grades": Grade.objects.all()
-               }
-    if request.method == "GET":
-        return render(request, 'users/registration/register.html', context)
-    elif request.method == 'POST':
+    context = {
+        'form': RegisterForm(),
+         "academies": Academy.objects.all(),
+         "grades": Grade.objects.all()
+    }
+    def get(self, request):
+        return render(request, 'users/registration/register.html', self.context)
+    def post(self, request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = User(
                 username=form.cleaned_data['email'],
-                email = form.cleaned_data['email'],
-                name = form.cleaned_data['name'],
-                identity = form.cleaned_data['identity'],
+                email=form.cleaned_data['email'],
+                name=form.cleaned_data['name'],
+                identity=form.cleaned_data['identity'],
             )
             if form.cleaned_data['identity'] != 2:
                 user.academy = form.cleaned_data['academy']
@@ -70,7 +77,8 @@ def register_view(request):
             user.register()
             return render(request, 'users/registration/register_success.html')
 
-        return render(request, 'users/registration/register.html', context)
+        return render(request, 'users/registration/register.html', self.context)
+
 
 
 class MyPasswordResetView(PasswordResetView):
@@ -82,13 +90,31 @@ class MyPasswordResetView(PasswordResetView):
 
 
 class MyPasswordResetConfirmView(PasswordResetConfirmView):
-    """重置密码确认"""
-    template_name = 'users/registration/password_reset_confirm.html'
+    """重置密码页面，输入两次密码"""
+    template_name = 'users/registration/password_change_form.html'
+    success_url = reverse_lazy('users:password_reset_complete')
 
 
 class MyPasswordResetDoneView(PasswordResetDoneView):
-    """重置密码完成"""
+    """发送确认重置邮件"""
     template_name = 'users/registration/password_reset_done.html'
+
+
+class MyPasswordResetCompleteView(PasswordResetCompleteView):
+    """完成重置密码"""
+    template_name = 'users/registration/password_change_done.html'
+
+
+
+class MyPasswordChangeView(PasswordChangeView):
+    """更改密码页面"""
+    success_url = reverse_lazy('users:password_change_done')
+    template_name = 'users/registration/password_change_form.html'
+
+
+class MyPasswordChangeDoneView(PasswordChangeDoneView):
+    """更改密码完成"""
+    template_name = 'users/registration/password_change_done.html'
 
 
 class AdminApplyList(RoleRequiredMixin, PaginatorListView):
