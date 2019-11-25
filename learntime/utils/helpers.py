@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView
 from django.views.generic.base import View
 
+from users.enums import RoleEnum
 
 disable_csrf = method_decorator(csrf_exempt, "dispatch")
 
@@ -66,6 +67,10 @@ class RoleRequiredMixin(View):
         if not self.has_permission():
             raise PermissionDenied("没有权限")
         return super().dispatch(request, *args, **kwargs)
+
+
+class RootRequiredMixin(RoleRequiredMixin):
+    role_required = (RoleEnum.ROOT.value,)
 
 
 class PaginatorListView(ListView):

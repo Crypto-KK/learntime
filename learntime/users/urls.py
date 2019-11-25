@@ -5,7 +5,7 @@ from learntime.users.views import (
     logout_view, AdminApplyList, AdminList,
     AdminDetail, ApplyConfirmView, AdminUpdateView, AdminDeleteView, MyPasswordResetView,
     MyPasswordResetConfirmView, MyPasswordResetDoneView, LoginView, RegisterView,
-    MyPasswordResetCompleteView, MyPasswordChangeView, MyPasswordChangeDoneView)
+    MyPasswordResetCompleteView, MyPasswordChangeView, MyPasswordChangeDoneView, DontApplyConfirmView)
 
 app_name = "users"
 urlpatterns = [
@@ -30,5 +30,6 @@ urlpatterns = [
     path('admin-detail/<int:pk>/', view=AdminDetail.as_view(), name='admin_detail'),
     path('admin-delete/<int:pk>/', view=AdminDeleteView.as_view(), name='admin_delete'),
     path('admin-update/<int:pk>/', view=AdminUpdateView.as_view(), name='update_profile'),
-    path("apply_comfirm/", view=ApplyConfirmView.as_view(), name="apply_comfirm"),
+    path("apply_confirm/", view=ApplyConfirmView.as_view(), name="apply_comfirm"),
+    path("apply_no_confirm/", view=DontApplyConfirmView.as_view(), name="apply_no_comfirm"),
 ]

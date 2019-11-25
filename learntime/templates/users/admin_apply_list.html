@@ -31,9 +31,7 @@
                         <th>级别</th>
                         <th>学院</th>
                         <th>年级</th>
-
                         <th>操作</th>
-
                       </tr>
                     </thead>
                     <tbody>
@@ -42,16 +40,13 @@
                           <td>{{ admin.email }}</td>
                           <td>{{ admin.name }}</td>
                           <td>{{ admin.get_identity_display }}</td>
-                          <td>{% if admin.academy %}{{ admin.academy }}{% else %}无{% endif %}</td>
-                          <td>{% if admin.grade %}{{ admin.grade }}{% else %}无{% endif %}</td>
+                          <td>{% if admin.academy %}{{ admin.academy }}{% else %}-{% endif %}</td>
+                          <td>{% if admin.grade %}{{ admin.grade }}{% else %}-{% endif %}</td>
                           <td><button class="btn btn-success btn-sm confirmBtn" data-toggle="modal" data-target="#Modal" data-username="{{ admin.username }}">通过</button>
-                          <button class="btn btn-danger btn-sm">不通过</button>
+                          <button class="btn btn-danger btn-sm noConfirmBtn" data-toggle="modal" data-target="#noApplyModal" data-user-id="{{ admin.pk }}">不通过</button>
                           </td>
                           </tr>
                       {% endfor %}
-
-
-
                     </tbody>
                   </table>
                 </div>
@@ -75,12 +70,11 @@
       <div class="modal-body">
         <form>
           <div class="form-group">
-            <label for="recipient-name" class="col-form-label">组名：</label>
+            <label for="recipient-name" class="col-form-label">权限名：</label>
             <select class="custom-select" id="group-select">
-                <option value="2" >校级</option>
-                <option value="3" >学院级</option>
                 <option value="4" >干部级</option>
-
+                <option value="3" >学院级</option>
+                <option value="2" >校级</option>
             </select>
           </div>
 
@@ -93,6 +87,30 @@
     </div>
   </div>
 </div>
+  <div class="modal fade" id="noApplyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">温馨提示</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            确定不通过嘛？
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="no-apply-confirm-btn">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
 
     {% include 'pagination.html' %}
 {% endblock %}
@@ -101,24 +119,51 @@
   <script>
     $(function () {
         var username = "";
+        var user_id = "";
         $('.confirmBtn').click(function () {
             username = $(this).attr("data-username")
         });
+        $('.noConfirmBtn').click(function () {
+            user_id = $(this).attr("data-user-id")
+        });
 
+        // 分配权限
         $('#confirm-group').click(function () {
             $.ajax({
-                url: "/users/apply_comfirm/",
+                url: "/users/apply_confirm/",
                 cache: false,
-                type: "post",
-                contentType: "application/json",
+                method: "POST",
                 data: {
-                    id: $('#group-select').val(),
+                    role_id: $('#group-select').val(),
                     username: username
                 },
                 success: res => {
                     if (res.err === 0) {
+                        alert("操作成功")
                         window.location.reload()
+                    } else {
+                        alert("未知错误")
+                    }
+                },
+                fail: err => {
+                    alert(err)
+                }
+            })
+        });
 
+        // 不通过
+        $('#no-apply-confirm-btn').click(function () {
+            $.ajax({
+                url: "/users/apply_no_confirm/",
+                cache: false,
+                method: "POST",
+                data: {
+                    user_id
+                },
+                success: res => {
+                    if (res.err === 0) {
+                        alert("操作成功");
+                        window.location.reload()
                     } else {
                         alert("未知错误")
                     }
@@ -128,6 +173,7 @@
                 }
             })
         })
+
     })
 
 
