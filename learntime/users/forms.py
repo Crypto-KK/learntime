@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django import forms
+from django.contrib.auth.forms import PasswordResetForm
 
 from learntime.users.models import Academy, Grade
 
@@ -47,8 +48,7 @@ class UserForm(forms.ModelForm):
         model = User
 
 
-class ForgetForm(forms.Form):
-    email=forms.EmailField(required=True)
+class ForgetForm(PasswordResetForm):
 
     def clean_email(self):
         email = self.cleaned_data['email']

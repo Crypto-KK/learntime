@@ -1,7 +1,7 @@
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model, authenticate, login, logout
-from django.core.mail import send_mail
+from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView, \
+    PasswordResetDoneView
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
@@ -21,7 +21,7 @@ def login_view(request):
     next = request.GET.get('next', '')
     if request.method == 'GET':
         form = LoginForm()
-        return render(request, 'users/login.html', {'form': form})
+        return render(request, 'users/registration/login.html', {'form': form})
     elif request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -34,7 +34,7 @@ def login_view(request):
                     return HttpResponseRedirect(reverse('index'))
                 else:
                     return HttpResponseRedirect(next)
-        return render(request, 'users/login.html', {'form': form, 'error': "账号名或密码错误"})
+        return render(request, 'users/registration/login.html', {'form': form, 'error': "账号名或密码错误"})
 
 
 def logout_view(request):
@@ -52,7 +52,7 @@ def register_view(request):
                "grades": Grade.objects.all()
                }
     if request.method == "GET":
-        return render(request, 'users/register.html', context)
+        return render(request, 'users/registration/register.html', context)
     elif request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -68,25 +68,27 @@ def register_view(request):
 
             user.set_password(form.cleaned_data['password'])
             user.register()
-            return render(request, 'users/register_success.html')
+            return render(request, 'users/registration/register_success.html')
 
-        return render(request, 'users/register.html', context)
+        return render(request, 'users/registration/register.html', context)
 
-class ForgetPwdView(View):
-    '''忘记密码'''
-    def get(self,request):
-        form = ForgetForm()
-        return render(request,'users/forget_pwd.html',{'form':form})
-    def post(self,request):
-        form = ForgetForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            send_mail("TEST", message="", from_email=settings.DEFAULT_FROM_EMAIL,
-                      recipient_list=[email])
-            return render(request,'users/send_success.html')
-        else:
-            return render(request,'users/forget_pwd.html',{'form':form})
 
+class MyPasswordResetView(PasswordResetView):
+    """重置密码视图"""
+    template_name = 'users/registration/forget_pwd.html'
+    form_class = ForgetForm
+    success_url = reverse_lazy("users:password_reset_done")
+    email_template_name = 'users/registration/password_reset_email.html'
+
+
+class MyPasswordResetConfirmView(PasswordResetConfirmView):
+    """重置密码确认"""
+    template_name = 'users/registration/password_reset_confirm.html'
+
+
+class MyPasswordResetDoneView(PasswordResetDoneView):
+    """重置密码完成"""
+    template_name = 'users/registration/password_reset_done.html'
 
 
 class AdminApplyList(RoleRequiredMixin, PaginatorListView):
@@ -135,7 +137,7 @@ class AdminUpdateView(RoleRequiredMixin, UpdateView):
     role_required = (RoleEnum.ROOT.value, )
     model = User
     context_object_name = "user"
-    template_name = "users/change_profile.html"
+    template_name = "users/admin_edit.html"
     form_class = UserForm
 
     def get_success_url(self):
