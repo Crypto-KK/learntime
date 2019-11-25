@@ -156,7 +156,7 @@ class AdminDetail(RootRequiredMixin, DetailView):
     model = User
 
 
-class AdminUpdateView(RoleRequiredMixin, UpdateView):
+class AdminUpdateView(RootRequiredMixin, UpdateView):
     """修改资料"""
     model = User
     context_object_name = "user"
