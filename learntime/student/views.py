@@ -15,7 +15,8 @@ from learntime.student.forms import StudentExcelForm, StudentCreateForm, Student
 from learntime.student.models import Student, StudentFile
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy, Grade
-from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, disable_csrf, FormInitialMixin
+from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, disable_csrf, FormInitialMixin, \
+    RootRequiredMixin
 
 success = JsonResponse({"status": "ok"})
 fail = JsonResponse({"status": "fail"})
@@ -68,16 +69,14 @@ class StudentList(RoleRequiredMixin, PaginatorListView):
 
 class StudentDetail(RoleRequiredMixin, DetailView):
     """学生详情"""
-
     role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value)
     context_object_name = "student"
     template_name = "students/student_detail.html"
     model = Student
 
 
-class StudentCreate(RoleRequiredMixin, CreateView):
+class StudentCreate(RootRequiredMixin, CreateView):
     """添加学生"""
-    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
     model = Student
     template_name = "students/student_create.html"
     form_class = StudentCreateForm
@@ -95,9 +94,8 @@ class StudentCreate(RoleRequiredMixin, CreateView):
         return reverse_lazy("students:students")
 
 
-class StudentUpdate(RoleRequiredMixin, FormInitialMixin, UpdateView):
+class StudentUpdate(RootRequiredMixin, FormInitialMixin, UpdateView):
     """修改学生"""
-    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
     model = Student
     form_class = StudentEditForm
     template_name = "students/student_update.html"
@@ -116,9 +114,8 @@ class StudentUpdate(RoleRequiredMixin, FormInitialMixin, UpdateView):
         return reverse_lazy("students:students")
 
 
-class StudentDelete(RoleRequiredMixin, DeleteView):
+class StudentDelete(RootRequiredMixin, DeleteView):
     """删除学生"""
-    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
     model = Student
     template_name = "students/student_delete.html"
     context_object_name = "student"
@@ -128,9 +125,8 @@ class StudentDelete(RoleRequiredMixin, DeleteView):
         return reverse_lazy("students:students")
 
 
-class StudentExcelImportView(RoleRequiredMixin, View):
+class StudentExcelImportView(RootRequiredMixin, View):
     """学生excel导入视图"""
-    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
 
     def post(self, request):
         form = StudentExcelForm(request.POST, request.FILES) # 获取提交后的表单
@@ -168,9 +164,8 @@ class StudentExcelImportView(RoleRequiredMixin, View):
             return JsonResponse({"status": "fail", "reason": "必须为xls或xlsx格式！"})
 
 
-class StudentExcelExportView(RoleRequiredMixin, View):
+class StudentExcelExportView(RootRequiredMixin, View):
     """学生excel导出视图"""
-    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
 
     def get(self, request):
         import xlwt
@@ -223,9 +218,8 @@ class StudentExcelExportView(RoleRequiredMixin, View):
         return response
 
 
-class StudentBulkDeleteView(RoleRequiredMixin, View):
+class StudentBulkDeleteView(RootRequiredMixin, View):
     """学生批量删除"""
-    role_required = (RoleEnum.ROOT.value, )
 
     def post(self, request):
         try:
@@ -242,9 +236,8 @@ class StudentBulkDeleteView(RoleRequiredMixin, View):
             return JsonResponse({"status": "fail"})
 
 
-class StudentAllDeleteView(RoleRequiredMixin, View):
+class StudentAllDeleteView(RootRequiredMixin, View):
     """学生全部删除"""
-    role_required = (RoleEnum.ROOT.value, )
     def post(self, request):
         try:
             Student.objects.all().delete()

@@ -36,21 +36,20 @@
                           学号
                         </button>
                         <div class="dropdown-menu">
-                      <a class="dropdown-item" href="#" id="select-uid">学号</a>
-                      <a class="dropdown-item" href="#" id="select-name">姓名</a>
-                      {% if role != 3 %}
-                      <a class="dropdown-item" href="#" id="select-academy">学院</a>
-                      <a class="dropdown-item" href="#" id="select-grade">年级</a>
-                      {% endif %}
-                      <a class="dropdown-item" href="#" id="select-clazz">班级</a>
-                    </div>
+                          <a class="dropdown-item" href="#" id="select-uid">学号</a>
+                          <a class="dropdown-item" href="#" id="select-name">姓名</a>
+                          {% if role != 3 %}
+                          <a class="dropdown-item" href="#" id="select-academy">学院</a>
+                          <a class="dropdown-item" href="#" id="select-grade">年级</a>
+                          {% endif %}
+                          <a class="dropdown-item" href="#" id="select-clazz">班级</a>
+                        </div>
                       </div>
                       <div class="btn-group">
                         <div class="form-group">
-                        <label for="inlineFormInput" class="sr-only">搜索学号或姓名</label>
                           <div class="input-group">
                             <input id="inlineFormInput" name="uid" type="text" placeholder="搜索学号" class="mr-3 form-control">
-                            <div class="input-group-append">
+                            <div class="input-group-prepend">
                               <button type="submit" class="btn btn-primary">搜索</button>
                               <button type="button" class="btn btn-blue" id="reset-select">重置</button>
                             </div>
@@ -123,10 +122,11 @@
                       {% endfor %}
                     </div>
                   </div>
-
 {#                &nbsp;<a href="#" class="btn btn-danger" id="bulk-delete-btn">删除所选学生</a>#}
-                &nbsp;<a href="{% url 'students:student_export' %}" class="btn btn-danger" id="delete-all-btn">删除所有学生</a>
-                  <a href="{% url 'students:student_create' %}" class="btn btn-outline-success pull-right">添加学生</a>
+                {% if role == 1 %}
+                   <a href="{% url 'students:student_create' %}" class="btn btn-outline-success">添加学生</a>
+                   <a href="{% url 'students:student_export' %}" class="btn btn-danger pull-right" id="delete-all-btn">删除所有学生</a>
+                  {% endif %}
               {% endif %}
               </div>
               <div class="card-body">
@@ -148,7 +148,7 @@
                         <th>心理</th>
                         <th>创新创业</th>
                         <th>思想道德</th>
-                        {% if role == 1 or role == 2 %}
+                        {% if role == 1%}
                           <th>操作</th>
                         {% endif %}
                       </tr>
@@ -157,9 +157,9 @@
 
                       {% for student in students %}
                           <tr data-uid="{{ student.uid }}">
-                          {% if role == 1 or role == 2 %}
+{#                          {% if role == 1 or role == 2 %}#}
 {#                          <td><input type="checkbox" name="student-checkbox" value="{{ student.uid }}"></td>#}
-                          {% endif %}
+{#                          {% endif %}#}
                           <td style="font-weight: bold">{{ student.uid }}</td>
                           <td>{{ student.name }}</td>
                           <td>{{ student.academy }}</td>
@@ -171,7 +171,7 @@
                           <td style="color: blue">{{ student.xl_credit }}</td>
                           <td style="color: blue">{{ student.cxcy_credit }}</td>
                           <td style="color: blue">{{ student.sxdd_credit }}</td>
-                          {% if role == 1 or role == 2 %}
+                          {% if role == 1%}
                           <td>
 {#                              <a href="{% url 'students:student_detail' student.pk %}" class="btn btn-success btn-sm">查看</a>#}
                               <a href="{% url 'students:student_update' student.pk %}" class="btn btn-success btn-sm">编辑</a>
