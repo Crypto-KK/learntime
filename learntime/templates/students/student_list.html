@@ -174,8 +174,8 @@
                           {% if role == 1 or role == 2 %}
                           <td>
 {#                              <a href="{% url 'students:student_detail' student.pk %}" class="btn btn-success btn-sm">查看</a>#}
-                              <a href="{% url 'students:student_update' student.pk %}" class="btn btn-success btn-sm"><i class="fa fa-edit"></i>编辑</a>
-                              <a href="{% url 'students:student_delete' student.pk %}" class="btn btn-danger btn-sm "><i class="fa fa-eraser"></i>删除</a>
+                              <a href="{% url 'students:student_update' student.pk %}" class="btn btn-success btn-sm">编辑</a>
+                              <a href="{% url 'students:student_delete' student.pk %}" class="btn btn-danger btn-sm ">删除</a>
                           </td>
                           {% endif %}
                           </tr>

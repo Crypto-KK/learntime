@@ -14,8 +14,8 @@ from learntime.operation.models import Log
 from learntime.student.forms import StudentExcelForm, StudentCreateForm, StudentEditForm
 from learntime.student.models import Student, StudentFile
 from learntime.users.enums import RoleEnum
-from learntime.users.models import Academy
-from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, disable_csrf
+from learntime.users.models import Academy, Grade
+from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, disable_csrf, FormInitialMixin
 
 success = JsonResponse({"status": "ok"})
 fail = JsonResponse({"status": "fail"})
@@ -95,7 +95,7 @@ class StudentCreate(RoleRequiredMixin, CreateView):
         return reverse_lazy("students:students")
 
 
-class StudentUpdate(RoleRequiredMixin, UpdateView):
+class StudentUpdate(RoleRequiredMixin, FormInitialMixin, UpdateView):
     """修改学生"""
     role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
     model = Student

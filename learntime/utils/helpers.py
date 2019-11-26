@@ -6,10 +6,11 @@ from django.core.exceptions import PermissionDenied, ImproperlyConfigured
 from django.http import HttpResponseBadRequest
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView
+from django.views.generic import ListView, UpdateView
 from django.views.generic.base import View
 
-from users.enums import RoleEnum
+from learntime.users.enums import RoleEnum
+from learntime.users.models import Grade, Academy
 
 disable_csrf = method_decorator(csrf_exempt, "dispatch")
 
@@ -94,3 +95,17 @@ class PaginatorListView(ListView):
         context['page_range'] = page_range
         context['count'] = self.get_queryset().count()
         return context
+
+
+class FormInitialMixin(UpdateView):
+    def get_initial(self):
+        """获取学院和年级下拉列表的初始值"""
+        obj = self.get_object()
+        initial = super().get_initial()
+        grade = Grade.objects.filter(name=obj.grade)
+        academy = Academy.objects.filter(name=obj.academy)
+        if len(grade):
+            initial.update(grade=grade.get().pk)
+        if len(academy):
+            initial.update(academy=academy.get().pk)
+        return initial.copy()

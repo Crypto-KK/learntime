@@ -15,7 +15,7 @@ from learntime.users.enums import RoleEnum
 from learntime.users.forms import LoginForm, RegisterForm, UserForm, ForgetForm
 from learntime.users.models import Academy, Grade
 from learntime.utils.factories import CrudViewFactory
-from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, RootRequiredMixin
+from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, RootRequiredMixin, FormInitialMixin
 from learntime.operation.models import Log
 
 User = get_user_model() # 惰性获取User对象
@@ -156,12 +156,16 @@ class AdminDetail(RootRequiredMixin, DetailView):
     model = User
 
 
-class AdminUpdateView(RootRequiredMixin, UpdateView):
+class AdminUpdateView(RootRequiredMixin, FormInitialMixin, UpdateView):
     """修改资料"""
     model = User
     context_object_name = "user"
     template_name = "users/admin_edit.html"
     form_class = UserForm
+
+    def get_form(self, form_class=None):
+        print(self.get_form_kwargs())
+        return super(AdminUpdateView, self).get_form()
 
     def get_success_url(self):
         messages.success(self.request, "修改资料成功")

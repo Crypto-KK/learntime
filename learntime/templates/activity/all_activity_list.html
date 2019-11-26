@@ -67,7 +67,7 @@
                     {% with role=request.user.role %}
                       {% for activity in activities %}
                           <tr data-uid="{{ activity.uid }}">
-                          <td style="font-weight: bold"><a href="{% url 'activities:activity_detail' activity.pk %}">{{ activity.name }}</a></td>
+                          <td style="font-weight: bold"><a href="{% url 'activities:activity_detail' activity.pk %}">{{ activity.name|truncatechars:15 }}</a></td>
                           <td>{{ activity.updated_at }}</td>
                           <td>{{ activity.sponsor }}</td>
                           <td>{{ activity.get_credit_type_display }}</td>
@@ -90,13 +90,16 @@
                           </td>
                           <td>
                             {% if activity.is_verifying %}
+{#                              {% if activity.to_school %}#}
+{#                                等待{{ activity.to_school.name }}审核#}
+{#                              {% endif %}#}
 {#                                <a href="{% url 'activities:activity_update' activity.pk %}" class="btn btn-warning btn-sm">编辑</a>#}
 {#                                <a href="#" class="btn btn-danger btn-sm">删除</a>#}
                             {% else %}
                               {% if activity.is_verify %}
-                                <a href="{% url 'activities:activity_detail' activity.pk %}" class="btn btn-primary btn-sm">查看详情</a>
+                                <a href="{% url 'activities:activity_detail' activity.pk %}" class="btn btn-primary btn-sm">详情</a>
                                 {% else %}
-                                <a href="#" class="btn btn-warning btn-sm showReasonBtn" data-toggle="modal" data-target="#showReason" data-reason="{{ activity.reason }}">查看原因</a>
+                                <a href="#" class="btn btn-warning btn-sm showReasonBtn" data-toggle="modal" data-target="#showReason" data-reason="{{ activity.reason }}">原因</a>
                               {% endif %}
                             {% endif %}
 
