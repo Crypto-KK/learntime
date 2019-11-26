@@ -3,6 +3,9 @@
 {% block title %}
     学生管理
 {% endblock %}
+{% block css %}
+{#  <link href="https://cdn.bootcss.com/bootstrap-table/1.15.4/bootstrap-table.min.css" rel="stylesheet">#}
+{% endblock %}
 {% block header_name %}
     学生管理
 {% endblock %}
@@ -21,7 +24,6 @@
 
     <section class="tables">
       <div class="container-fluid">
-
         <div class="row">
            <!-- Inline Form-->
           {% if role == 1 or role == 2 or role == 3 %}
@@ -131,7 +133,7 @@
               </div>
               <div class="card-body">
                 <div class="table-responsive">
-                  <table class="table table-striped table-hover table-bordered">
+                  <table id="studentTable" data-reorderable-columns="true" class="table table-striped table-hover table-bordered">
                     <thead>
                       <tr>
 {#                        {% if role == 1 or role == 2 %}#}
@@ -198,5 +200,22 @@
 {% block js %}
   <script src="{% static 'js/jquery-form.js' %}"></script>
   <script src="{% static 'js/student.js' %}"></script>
+  <script src="https://cdn.bootcss.com/bootstrap-table/1.15.4/bootstrap-table.min.js"></script>
+  <script src="https://cdn.bootcss.com/bootstrap-table/1.15.4/extensions/resizable/bootstrap-table-resizable.min.js"></script>
+  <script src="{% static 'js/colResizable-1.6.min.js' %}"></script>
+  <script>
+    $(function () {
+        $("#studentTable").colResizable({
+        liveDrag: true,//实时显示滑动位置
+        gripInnerHtml: "<div class='grip'></div>",
+        draggingClass: "dragging",
+        postbackSafe: true,//刷新后保留之前的拖拽宽度
+        headerOnly:true,
+        resizeMode:"overflow",
+        //onResize: onSampleResized
+    });
+
+    })
+  </script>
 {% endblock %}
 
