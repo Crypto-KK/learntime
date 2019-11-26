@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}
     用户管理
 {% endblock %}
@@ -40,7 +41,7 @@
               <div class="card-body">
 
                 <div class="table-responsive">
-                  <table class="table table-striped table-hover table-bordered">
+                  <table id="adminTable" class="table table-striped table-hover table-bordered">
                     <thead>
                       <tr>
                         <th>姓名</th>
@@ -87,8 +88,22 @@
     {% include 'pagination.html' %}
 {% endblock %}
 {% block js %}
+  <script src="https://cdn.bootcss.com/bootstrap-table/1.15.4/bootstrap-table.min.js"></script>
+  <script src="https://cdn.bootcss.com/bootstrap-table/1.15.4/extensions/resizable/bootstrap-table-resizable.min.js"></script>
+  <script src="{% static 'js/colResizable-1.6.min.js' %}"></script>
   <script>
     $(function () {
+        $("#adminTable").colResizable({
+          liveDrag: true,//实时显示滑动位置
+          gripInnerHtml: "<div class='grip'></div>",
+          draggingClass: "dragging",
+          postbackSafe: true,//刷新后保留之前的拖拽宽度
+          headerOnly:true,
+          resizeMode:"overflow",
+          //onResize: onSampleResized
+        });
+
+
         function getQueryVariable(variable) {
           var query = window.location.search.substring(1);
           var vars = query.split("&");
