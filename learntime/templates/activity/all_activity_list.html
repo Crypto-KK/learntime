@@ -47,7 +47,7 @@
                   </div>
                 </div>
                 <div class="table-responsive">
-                  <table class="table table-striped table-hover table-bordered">
+                  <table id="activityTable" class="table table-striped table-hover table-bordered">
                     <thead>
                       <tr>
                         <th>活动名称</th>
@@ -122,12 +122,25 @@
 
 
 {% block js %}
+  <script src="https://cdn.bootcss.com/bootstrap-table/1.15.4/bootstrap-table.min.js"></script>
+  <script src="https://cdn.bootcss.com/bootstrap-table/1.15.4/extensions/resizable/bootstrap-table-resizable.min.js"></script>
+  <script src="{% static 'js/colResizable-1.6.min.js' %}"></script>
   <script>
     $(function () {
         var reason = "";
         $('.showReasonBtn').click(function () {
             reason = $(this).attr("data-reason");
             $('#reason').text(reason)
+        });
+
+        $('#activityTable').colResizable({
+            liveDrag: true,//实时显示滑动位置
+            gripInnerHtml: "<div class='grip'></div>",
+            draggingClass: "dragging",
+            postbackSafe: true,//刷新后保留之前的拖拽宽度
+            headerOnly:true,
+            resizeMode:"overflow",
+            //onResize: onSampleResized
         });
     })
 
