@@ -6,51 +6,49 @@
     活动详情
 {% endblock %}
 {% block body %}
-      <!-- Breadcrumb-->
-    <div class="breadcrumb-holder container-fluid">
-    <ul class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
-      <li class="breadcrumb-item"><a href="{% url 'activities:activities' %}">活动管理</a></li>
-      <li class="breadcrumb-item active">活动详情</li>
-    </ul>
-    </div>
 
   <br>
 
   <div class="container">
     <div class="row">
       <div class="offset-md-1 col-md-10 offset-md-1">
-          <div class="card">
-            <div class="card-body">
-              <div class="text-center">
-                <h1 class="card-title text-center">{{ activity.name }}</h1>
-                  <span class="badge badge-dark">{{ activity.get_credit_type_display }}</span>
-                  <span class="badge badge-primary">参与者学时：{{ activity.score_player }}</span>
-                  <span class="badge badge-success">工作人员学时：{{ activity.score_staff }}</span>
-                  <span class="badge badge-info">观众学时：{{ activity.score_viewer }}</span>
+        <div class="card">
+          <div class="card-body">
+            <div class="text-center">
+              <h1 class="card-title text-center">{{ activity.name }}</h1>
+                <span class="badge badge-primary">{{ activity.get_credit_type_display }}</span>
+                <span class="badge badge-success">参与者学时：{{ activity.score_player }}</span>
+                <span class="badge badge-success">工作人员学时：{{ activity.score_staff }}</span>
+                <span class="badge badge-success">观众学时：{{ activity.score_viewer }}</span>
                 <br>
-                  <span>活动时间：{{ activity.time }}</span><br>
-
-                  <p>策划书：{{ activity.file }} <button class="btn btn-primary btn-sm">下载</button> </p>
-                <hr>
+                <span>活动时间：{{ activity.time }}</span> / 报名截止：{{ activity.deadline }} / 发布者：{{ activity.user.name }}<br>
+              <hr>
+            </div>
+            <div class="row">
+              <div class="col-md-8 offset-md-2">
+                 <div class="">{{ activity.desc | safe }}</div>
               </div>
-                  <div class="row">
-                    <div class="col-md-8 offset-md-4">
-                       <div class="center-align">{{ activity.desc | safe }}</div>
-                    </div>
-                  </div>
+            </div>
 
-
-                </div>
-              </div>
+            {% if activity.file %}
+              <hr>
+            <button id="download" data-file-name="{{ activity.file }}" class="btn btn-primary btn-sm pull-right">下载策划书</button>
+            {% endif %}
+          </div>
+        </div>
       </div>
-
-
     </div>
   </div>
+{% endblock %}
 
-
-
-
+{% block js %}
+  <script>
+    $(function () {
+        $('#download').click(function () {
+            var filename = $(this).attr("data-file-name");
+            window.open("http://39.108.181.193:8000/media/" + filename)
+        })
+    })
+  </script>
 {% endblock %}
 
