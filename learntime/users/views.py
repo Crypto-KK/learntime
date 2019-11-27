@@ -15,7 +15,7 @@ from learntime.users.enums import RoleEnum
 from learntime.users.forms import LoginForm, RegisterForm, UserForm, ForgetForm
 from learntime.users.models import Academy, Grade
 from learntime.utils.factories import CrudViewFactory
-from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, RootRequiredMixin, FormInitialMixin
+from learntime.utils.helpers import PaginatorListView, RootRequiredMixin, FormInitialMixin
 from learntime.operation.models import Log
 
 User = get_user_model() # 惰性获取User对象

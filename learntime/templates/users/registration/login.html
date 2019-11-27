@@ -1,5 +1,5 @@
 {% extends 'users/user_base.html' %}
-{% load static %}
+{% load static crispy_forms_tags %}
 {% block title %}
     登录
 {% endblock %}
@@ -10,7 +10,7 @@
         <div class="content">
           <form method="post" class="form-validate" action="{% url 'users:login' %}">
             <div class="form-group">
-              <input id="login-username" type="text" name="email" required data-msg="请输入您的邮箱" class="input-material">
+              <input id="login-username" type="email" name="email" required data-msg="请输入您的邮箱" class="input-material">
               <label for="login-username" class="label-material">邮箱</label>
             </div>
             <div class="form-group">
@@ -19,9 +19,8 @@
               {% if error %}
                 <div style="color: red">邮箱或密码错误</div>
               {% endif %}
-
             </div>
-
+{#              {% crispy form %}#}
               {% csrf_token %}
               <button type="submit" id="login" href="#" class="btn btn-primary">登录</button>
             <!-- This should be submit button but I replaced it with <a> for demo purposes-->

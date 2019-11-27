@@ -1,3 +1,5 @@
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Field
 from django.contrib.auth import get_user_model
 from django import forms
 from django.contrib.auth.forms import PasswordResetForm
@@ -6,12 +8,24 @@ from learntime.users.models import Academy, Grade
 
 User = get_user_model()
 
-
 class LoginForm(forms.ModelForm):
+    # @property
+    # def helper(self):
+    #     helper = FormHelper()
+    #     helper.label_class = 'label-material'
+    #     helper.layout = Layout(
+    #         Field('email', css_class='input-material'),
+    #         Field('password', css_class='input-material')
+    #     )
+    #     return helper
 
     class Meta:
         fields = ['email', 'password']
         model = User
+        # widgets = {
+        #     'email': forms.EmailInput(attrs={'class': 'input-material'}),
+        #     'password': forms.PasswordInput(attrs={'class': 'input-material'})
+        # }
 
 
 class RegisterForm(forms.ModelForm):

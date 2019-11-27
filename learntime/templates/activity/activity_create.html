@@ -8,21 +8,6 @@
 {% endblock %}
 {% block css %}
     <link href="https://cdn.bootcss.com/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" rel="stylesheet">
-  <style>
-  #loading {
-    position: fixed;
-    z-index: 400;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0%;
-    text-align: center;
-    font-size: 0.9rem;
-    color: #595758;
-    background-color: black;
-}
-
-  </style>
 {% endblock %}
 {% block body %}
       <!-- Breadcrumb-->
@@ -41,7 +26,7 @@
       <div class="col-md-8 offset-md-2">
         <form id="activity_form" action="{% url 'activities:activity_create' %}" method="post" enctype="multipart/form-data">
           {% csrf_token %}
-          {{ form|crispy }}
+          {% crispy form %}
           {{ form.media }}
           <div class="form-group">
             <label for="select_academy">选择学院*</label>
