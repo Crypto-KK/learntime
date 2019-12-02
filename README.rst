@@ -1,77 +1,45 @@
-learntime
+学时通后台管理系统
 =========
 
-learntime
-
-.. image:: https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg
-     :target: https://github.com/pydanny/cookiecutter-django/
-     :alt: Built with Cookiecutter Django
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-     :target: https://github.com/ambv/black
-     :alt: Black code style
+学时通后台管理系统
 
 
-Settings
---------
-
-Moved to settings_.
-
-.. _settings: http://cookiecutter-django.readthedocs.io/en/latest/settings.html
-
-Basic Commands
---------------
-
-Setting Up Your Users
+项目运行
 ^^^^^^^^^^^^^^^^^^^^^
 
-* To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
+* 版本要求：Python3.6及以上版本、Django2.2.0以上版本
+* 依赖说明：使用Pipenv虚拟环境，使用如下命令安装依赖::
 
-* To create an **superuser account**, use this command::
+    $ pipenv install --skip-lock
+
+* 使用以下命令创建 **空数据表**::
+
+    $ python manage.py migrate
+
+* 使用以下命令创建 **超级管理员账号**::
 
     $ python manage.py createsuperuser
 
-For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
+* 使用以下命令在开发机中运行项目::
 
-Type checks
+    $ python manage.py runserver 0.0.0.0:8000
+
+* 如需编辑项目中的敏感配置，请在项目目录下编辑.env文件
+
+类型检查
 ^^^^^^^^^^^
 
-Running type checks with mypy:
+使用mypy运行如下命令:
 
 ::
 
   $ mypy learntime
 
-Test coverage
-^^^^^^^^^^^^^
 
-To run the tests, check your test coverage, and generate an HTML coverage report::
-
-    $ coverage run -m pytest
-    $ coverage html
-    $ open htmlcov/index.html
-
-Running tests with py.test
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-  $ pytest
-
-Live reloading and Sass CSS compilation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Moved to `Live reloading and SASS compilation`_.
-
-.. _`Live reloading and SASS compilation`: http://cookiecutter-django.readthedocs.io/en/latest/live-reloading-and-sass-compilation.html
-
-
-
-
-
-Deployment
+部署
 ----------
 
-The following details how to deploy this application.
+本项目使用Nginx+uWSGI+supervisor部署在CentOS系统中
 
 
 
