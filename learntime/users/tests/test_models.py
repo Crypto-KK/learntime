@@ -1,8 +1,12 @@
-import pytest
-from django.conf import settings
-
-pytestmark = pytest.mark.django_db
+from test_plus.test import TestCase
 
 
-def test_user_get_absolute_url(user: settings.AUTH_USER_MODEL):
-    assert user.get_absolute_url() == f"/users/{user.username}/"
+class TestUser(TestCase):
+
+    def setUp(self) -> None:
+        self.user = self.make_user()
+        self.user.name = "user01"
+        self.user.save()
+
+    def test__str__(self):
+        self.assertEqual(self.user.__str__(), "user01")
