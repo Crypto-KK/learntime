@@ -34,11 +34,24 @@ class IndexView(LoginRequiredMixin, View):
     def get(self, request):
         context = {
             "student_nums": Student.objects.count(),
-            "activity_nums": Activity.objects.count(),
-            "admin_nums": User.objects.filter(is_active=True).count(),
-            "verifying_admin_nums": User.objects.filter(is_active=False).count(),
+            "activity_nums": Activity.objects.count()
         }
-        if request.user.role == RoleEnum.ROOT.value or request.user.role == RoleEnum.SCHOOL.value:
-            return render(request, "stat/index.html", context=context)
-        else:
-            return render(request, "stat/index.html")
+        role = request.user.role
+        if role == RoleEnum.ROOT.value:
+            # root能看到管理员数量和等待审核的管理员数量
+            context.update({
+                "admin_nums": User.objects.filter(is_active=True).count(),
+                "verifying_admin_nums": User.objects.filter(is_active=False).count()
+            })
+        elif role == RoleEnum.SCHOOL.value:
+            # 学校级管理员能看到等待自己审核的活动数量
+            context.update({
+                "verifying_activities_nums": request.user.school_waiting_for_verify_activities.count()
+            })
+
+        elif role == RoleEnum.ACADEMY.value:
+            # 学院管理员能看到等待自己审核的活动数量
+            context.update({
+                "verifying_activities_nums": request.user.waiting_for_verify_activities.count()
+            })
+        return render(request, "stat/index.html", context=context)
