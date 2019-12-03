@@ -10,7 +10,7 @@ class User(AbstractUser):
         (1, '超级管理员'), #最高权限
         (2, '校级'), #校级
         (3, '院级'), #院级
-        (4, '干部级'), #干部级
+        (4, '学生干部级'), #干部级
     )
 
     name = CharField(verbose_name="姓名", max_length=20)
@@ -21,7 +21,7 @@ class User(AbstractUser):
                       help_text="填写格式按照 <软件工程1班> 填写")
     identity = IntegerField(verbose_name='请求的身份', choices=IDENTITY, default=1)
 
-    role = IntegerField(verbose_name="分配的身份", choices=IDENTITY, default=4)
+    role = IntegerField(verbose_name="权限", choices=IDENTITY, default=4)
 
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"username": self.username})

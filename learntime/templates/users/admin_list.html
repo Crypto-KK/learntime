@@ -35,11 +35,11 @@
                     <a class="dropdown-item" href="?academy={{ academy }}" id="auto-select-academy">{{ academy }}</a>
                   {% endfor %}
                 </div>
-              </div>
 
+              </div>
+                                <a href="{% url 'users:admin_create' %}" class="btn btn-outline-success pull-right">新增管理员</a>
               </div>
               <div class="card-body">
-
                 <div class="table-responsive">
                   <table id="adminTable" class="table table-striped table-hover table-bordered">
                     <thead>

@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
-from django.views.generic import DetailView, UpdateView, DeleteView
+from django.views.generic import DetailView, UpdateView, DeleteView, CreateView
 from django.views.generic.base import View
 
 from learntime.users.enums import RoleEnum
@@ -149,11 +149,17 @@ class AdminList(RootRequiredMixin, PaginatorListView):
         return User.objects.filter(is_active=True)
 
 
-class AdminDetail(RootRequiredMixin, DetailView):
-    """管理员详情页需要ROOT权限"""
-    context_object_name = 'admin'
-    template_name = "users/admin_detail.html"
+
+class AdminCreateView(RootRequiredMixin, CreateView):
+    """新增管理员"""
     model = User
+    context_object_name = "user"
+    template_name = "users/admin_create.html"
+    form_class = UserForm
+
+    def get_success_url(self):
+        messages.success(self.request, "新增管理员成功")
+        return reverse("users:admins")
 
 
 class AdminUpdateView(RootRequiredMixin, FormInitialMixin, UpdateView):
