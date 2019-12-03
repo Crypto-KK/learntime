@@ -26,7 +26,7 @@
       <div class="col-md-8 offset-md-2">
         <form id="activity_form" action="{% url 'activities:activity_create' %}" method="post" enctype="multipart/form-data">
           {% csrf_token %}
-          {% crispy form %}
+          {{ form|crispy }}
           {{ form.media }}
           <div class="form-group">
             <label for="select_academy">选择学院*</label>

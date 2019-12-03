@@ -6,6 +6,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.views.generic.base import View
 
+from activity.tasks import send_activity_verify_email
 from learntime.activity.forms import ActivityForm
 from learntime.activity.models import Activity
 from learntime.users.enums import RoleEnum
@@ -106,6 +107,9 @@ class ActivityCreate(RoleRequiredMixin, CreateView):
         to_admin = get_user_model().objects.get(pk=self.request.POST['to'])
         form.instance.to = to_admin
         form.instance.user = self.request.user
+
+        # 发送异步邮件给指定的审核者 to_admin
+        send_activity_verify_email(to_admin.email)
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -163,10 +167,9 @@ class ActivityVerifyView(RoleRequiredMixin, View):
             activity.is_verify = True
             activity.is_verifying = False
             activity.save()
-
             # 此处写入到activity表
-
-        except Exception:
+        except Exception as e:
+            print(e)
             return JsonResponse({"status": "fail"})
         else:
             return JsonResponse({"status": "ok"})

@@ -54,9 +54,8 @@
                         <th>发布时间</th>
                         <th>主办方</th>
                         <th>类别</th>
-                        <th>参与者学时</th>
-                        <th>工作人员学时</th>
-                        <th>观众学时</th>
+                        <th>报名身份</th>
+                        <th>学时</th>
                         <th>审核者</th>
                         <th>上级审核者</th>
                         <th>状态</th>
@@ -72,9 +71,8 @@
                           <td>{{ activity.sponsor }}</td>
                           <td>{{ activity.get_credit_type_display }}</td>
 
-                          <td style="color: blue">{{ activity.score_player }}</td>
-                          <td style="color: blue">{{ activity.score_staff }}</td>
-                          <td style="color: blue">{{ activity.score_viewer }}</td>
+                          <td>{{ activity.get_credit_type_display }}</td>
+                          <td>{{ activity.get_join_type_display }}</td>
                           <td>{{ activity.to.name }}</td>
                           <td>{{ activity.to_school.name }}</td>
                           <td>

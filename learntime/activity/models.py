@@ -42,7 +42,7 @@ class Activity(CreatedUpdatedMixin, models.Model):
     desc = RichTextUploadingField(verbose_name="活动描述")
     join_type = models.SmallIntegerField(default=0, verbose_name="参与身份", choices=JOIN_TYPE)
     score = models.FloatField(default=0, verbose_name="学时")
-
+    nums = models.IntegerField(verbose_name="人数上限", null=True, blank=True, help_text="可不填写")
     is_verify = models.BooleanField(verbose_name="是否通过审核", default=False)
     is_verifying = models.BooleanField(verbose_name="是否正在进行审核", default=True)
     reason = models.CharField(max_length=255, verbose_name="审核失败原因", default="")
@@ -83,8 +83,7 @@ class SimpleActivity(models.Model):
                             null=True, blank=True)
     stop = models.BooleanField(verbose_name="是否截止", default=False,
                                null=True, blank=True)
-    nums = models.IntegerField(default=0, verbose_name="参加人数",
-                               null=True, blank=True)
+    nums = models.IntegerField(verbose_name="参加人数", null=True, blank=True)
     place = models.CharField(max_length=255, verbose_name="活动地点", default="",
                              null=True, blank=True)
     logo = models.CharField(verbose_name="活动图标", max_length=255, null=True, blank=True)

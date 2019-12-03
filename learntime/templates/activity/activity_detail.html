@@ -17,9 +17,8 @@
             <div class="text-center">
               <h1 class="card-title text-center">{{ activity.name }}</h1>
                 <span class="badge badge-primary">{{ activity.get_credit_type_display }}</span>
-                <span class="badge badge-success">参与者学时：{{ activity.score_player }}</span>
-                <span class="badge badge-success">工作人员学时：{{ activity.score_staff }}</span>
-                <span class="badge badge-success">观众学时：{{ activity.score_viewer }}</span>
+                <span class="badge badge-info">{{ activity.score }}学时</span>
+                <span class="badge badge-success">{{ activity.place }}</span>
                 <br>
                 <span>活动时间：{{ activity.time }}</span> / 报名截止：{{ activity.deadline }} / 发布者：{{ activity.user.name }}<br>
               <hr>
