@@ -22,3 +22,10 @@ class ActivityForm(forms.ModelForm):
         if credit_type == "n":
             raise forms.ValidationError("请选择学时类别")
         return credit_type
+
+
+    def clean_file(self):
+        file = self.cleaned_data['file']
+        if file.name.split('.')[1] not in ("doc", "docx", ):
+            raise forms.ValidationError("后缀必须为doc或docx")
+        return file

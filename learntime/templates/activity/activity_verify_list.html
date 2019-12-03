@@ -155,22 +155,17 @@
                 },
                 success: res => {
                   if (res.status === "ok") {
-                      alert("审核通过！");
+                      alert("操作成功！");
                       window.location.reload();
                   } else {
-                      alert("系统错误！");
+                      alert("系统错误！请联系管理员root");
                   }
                 }
               });
            } else {
                alert("err")
            }
-
-
         });
-
-
-
     })
 
   </script>

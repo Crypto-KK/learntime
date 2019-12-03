@@ -25,6 +25,7 @@ django-celery-email = "*"
 celery = "==4.3.0"
 msgpack-python = "*"
 msgpack = "*"
+raven = "*"
 
 [requires]
 python_version = "3.7"

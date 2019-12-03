@@ -7,14 +7,19 @@ from learntime.student.models import Student
 
 
 class StudentActivity(models.Model):
-
+    JOIN_TYPE = (
+        (1, '参赛者'),
+        (2, '观众'),
+        (3, '工作人员'),
+    )
     student = models.ForeignKey(Student, on_delete=models.DO_NOTHING,
                                 verbose_name="学生")
     activity = models.ForeignKey(Activity, on_delete=models.DO_NOTHING,
                                  verbose_name="活动")
     create_time = DateTimeField(db_index=True, auto_now_add=True,
                                 verbose_name='创建时间')
-    join_type = models.CharField(max_length=255, verbose_name="参与类型")
+    join_type = models.SmallIntegerField(verbose_name="参与类型", choices=JOIN_TYPE)
+    status = models.BooleanField(verbose_name="状态", default=False)
 
 
     class Meta:

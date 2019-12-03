@@ -31,8 +31,8 @@ class Activity(CreatedUpdatedMixin, models.Model):
     # desc = UEditorField(verbose_name='活动内容', imagePath='activity/images/%Y/%m/%d/', width=800, height=350,
     #                     filePath='activity/files/%Y/%m/%d/', default='')
     logo = models.ImageField(upload_to="activity/logo/%Y/%m/%d/", default="", verbose_name="活动图标")
-    file = models.FileField(upload_to="activity/files/%Y/%m/%d/", verbose_name="活动策划表",
-                            null=True, blank=True)
+    file = models.FileField(upload_to="activity/files/%Y/%m/%d/", verbose_name="活动策划书",
+                            null=True, blank=True, help_text="请上传.doc或者.docx后缀的文档")
     sponsor = models.CharField(verbose_name="主办方", max_length=255)
     credit_type = models.CharField(choices=TYPE, max_length=20, verbose_name="学时类别",
                                    default="n")
@@ -40,7 +40,7 @@ class Activity(CreatedUpdatedMixin, models.Model):
     time = models.CharField(verbose_name="活动时间", max_length=255)
     deadline = models.DateTimeField(null=True, blank=True, verbose_name="报名截止日期")
     desc = RichTextUploadingField(verbose_name="活动描述")
-    join_type = models.SmallIntegerField(default=0, verbose_name="参与身份", choices=JOIN_TYPE)
+    join_type = models.SmallIntegerField(default=2, verbose_name="参与身份", choices=JOIN_TYPE)
     score = models.FloatField(default=0, verbose_name="学时")
     nums = models.IntegerField(verbose_name="人数上限", null=True, blank=True, help_text="可不填写")
     is_verify = models.BooleanField(verbose_name="是否通过审核", default=False)
@@ -75,7 +75,7 @@ class SimpleActivity(models.Model):
     name = models.CharField(max_length=255, verbose_name="活动名称",
                             null=True, blank=True)
     description = models.TextField(verbose_name="描述", null=True, blank=True)
-    join_type = models.SmallIntegerField(default=0, verbose_name="参与身份", choices=JOIN_TYPE)
+    join_type = models.SmallIntegerField(default=2, verbose_name="参与身份", choices=JOIN_TYPE)
     score = models.FloatField(default=0, verbose_name="学时")
     sponsor = models.CharField(verbose_name="主办方", max_length=255,
                                null=True, blank=True)
