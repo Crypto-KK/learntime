@@ -6,7 +6,7 @@ from django.views import defaults as default_views
 from learntime.student.views import find_student_by_uid_and_name
 from learntime.users.views import AcademyList, AcademyCreate, AcademyUpdate, AcademyDelete, GradeList, \
     GradeCreate, GradeDelete, GradeUpdate
-from statistic.views import IndexView, chart_view
+from learntime.statistic.views import IndexView, chart_view
 
 urlpatterns = [
     path("",  IndexView.as_view(), name='index'),

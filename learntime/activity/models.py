@@ -6,6 +6,12 @@ from django.db import models
 
 from learntime.utils.models import CreatedUpdatedMixin
 
+JOIN_TYPE = (
+    (1, '参赛者'),
+    (2, '观众'),
+    (3, '工作人员'),
+)
+
 
 class Activity(CreatedUpdatedMixin, models.Model):
     """后台活动表"""
@@ -34,9 +40,8 @@ class Activity(CreatedUpdatedMixin, models.Model):
     time = models.CharField(verbose_name="活动时间", max_length=255)
     deadline = models.DateTimeField(null=True, blank=True, verbose_name="报名截止日期")
     desc = RichTextUploadingField(verbose_name="活动描述")
-    score_player = models.FloatField(default=0, verbose_name="参与者学时")
-    score_staff = models.FloatField(default=0, verbose_name="工作人员学时")
-    score_viewer = models.FloatField(default=0, verbose_name="观众学时")
+    join_type = models.SmallIntegerField(default=0, verbose_name="参与身份", choices=JOIN_TYPE)
+    score = models.FloatField(default=0, verbose_name="学时")
 
     is_verify = models.BooleanField(verbose_name="是否通过审核", default=False)
     is_verifying = models.BooleanField(verbose_name="是否正在进行审核", default=True)
@@ -65,16 +70,13 @@ class Activity(CreatedUpdatedMixin, models.Model):
 
 class SimpleActivity(models.Model):
     """活动表"""
+
     uid = models.UUIDField(primary_key=True, verbose_name="活动id")
     name = models.CharField(max_length=255, verbose_name="活动名称",
                             null=True, blank=True)
     description = models.TextField(verbose_name="描述", null=True, blank=True)
-    score_player = models.FloatField(default=0, verbose_name="参与者学时",
-                                     null=True, blank=True)
-    score_staff = models.FloatField(default=0, verbose_name="工作人员学时",
-                                    null=True, blank=True)
-    score_viewer = models.FloatField(default=0, verbose_name="观众学时",
-                                     null=True, blank=True)
+    join_type = models.SmallIntegerField(default=0, verbose_name="参与身份", choices=JOIN_TYPE)
+    score = models.FloatField(default=0, verbose_name="学时")
     sponsor = models.CharField(verbose_name="主办方", max_length=255,
                                null=True, blank=True)
     time = models.CharField(verbose_name="活动时间", max_length=255,
