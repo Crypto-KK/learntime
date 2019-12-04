@@ -24,8 +24,8 @@ class ActivityForm(forms.ModelForm):
         return credit_type
 
 
-    def clean_file(self):
-        file = self.cleaned_data['file']
-        if file.name.split('.')[1] not in ("doc", "docx", ):
-            raise forms.ValidationError("后缀必须为doc或docx")
-        return file
+    # def clean_file(self):
+    #     file = self.cleaned_data['file']
+    #     if file.name.split('.')[1] not in ("doc", "docx", ):
+    #         raise forms.ValidationError("后缀必须为doc或docx")
+    #     return file

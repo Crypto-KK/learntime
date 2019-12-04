@@ -1,6 +1,10 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 
 from learntime.utils.models import CreatedUpdatedMixin
+
+
+User = get_user_model()
 
 
 class Student(CreatedUpdatedMixin, models.Model):
@@ -39,6 +43,7 @@ class Student(CreatedUpdatedMixin, models.Model):
 
 
 class StudentFile(models.Model):
+    """学生导入的文件表"""
     excel_file = models.FileField(upload_to="student/%Y/%m/%d/", verbose_name="学生文件")
 
     class Meta:
@@ -82,3 +87,39 @@ class SimpleStudent(models.Model):
     def __str__(self):
         return self.uid
 
+
+class StudentCreditVerify(models.Model):
+    """使用excel表格导入需要批量加学时的学时名单
+    例如：
+        学号   姓名   加学时数
+        001   测试      2
+        002   儿子      2
+    """
+    CREDIT_TYPE = (
+        (0, '未选择'),
+        (1, '法律学时'),
+        (2, '文体学时'),
+        (3, '心理学时'),
+        (4, '创新创业学时'),
+        (5, '思想道德学时'),
+    )
+    uid = models.CharField(max_length=20, verbose_name="学号")
+    name = models.CharField(max_length=20, verbose_name="姓名")
+    credit = models.FloatField(default=0, verbose_name="增加学时")
+    credit_type = models.IntegerField(choices=CREDIT_TYPE, verbose_name='学时类别', default=0)
+    user = models.ForeignKey(User, verbose_name="请求加学时者", on_delete=models.DO_NOTHING,
+                           related_name="applying_to_verify_credits")
+    to = models.ForeignKey(User, verbose_name="审核者", on_delete=models.DO_NOTHING,
+                           related_name="waiting_to_verify_credits")
+    verify = models.BooleanField(default=False, verbose_name="是否审核")
+
+    created_at = models.DateTimeField(db_index=True, auto_now_add=True, verbose_name='创建时间')
+
+    def __str__(self):
+        return f'{self.user.name}向{self.to.name}请求给学生{self.uid}加学时'
+
+    class Meta:
+        verbose_name = "请求加学时"
+        verbose_name_plural = verbose_name
+        db_table = "student_credit_verify"
+        ordering = ('-created_at',)

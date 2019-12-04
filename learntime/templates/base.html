@@ -86,7 +86,11 @@
             </div>
             <div class="title">
               <h1 class="h4">{{ request.user.name }}</h1>
+              {% if role == 3 and request.user.academy == "学生组织" %}
+              <p>学生组织</p>
+              {% else %}
               <p>{{ request.user.get_role_display }}</p>
+              {% endif %}
 
 {#              <p><a href="{% url 'users:update_profile' request.user.pk %}">修改资料</a></p>#}
             </div>
@@ -119,9 +123,11 @@
           <ul>
             {% if role == 2 or role == 3 %}
               <li class="left-link activity-verify-page"><a href="{% url 'activities:activity_unverify' %}"> <i class="fa fa-bullhorn"></i>活动审批 </a></li>
+              <li class="left-link credit-verify-page"><a href="#"> <i class="fa fa-bullhorn"></i>学时审批 </a></li>
             {% endif %}
             {% if role == 4 %}
             <li class="left-link activity-page" ><a href="{% url 'activities:activities' %}"> <i class="fa fa-pencil-square-o"></i>我的活动</a></li>
+            <li class="left-link credit-page" ><a href="{% url 'students:student_credit_apply' %}"> <i class="fa fa-pencil-square-o"></i>申请增加学时</a></li>
             {% endif %}
             {% if role == 1 %}
             <li class="left-link activity-all-page"><a href="{% url 'activities:activity_all' %}"> <i class="fa fa-bullhorn"></i>全部活动 </a></li>

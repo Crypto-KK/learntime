@@ -2,6 +2,7 @@ import json
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
@@ -12,7 +13,7 @@ from io import BytesIO
 
 from learntime.operation.models import Log
 from learntime.student.forms import StudentExcelForm, StudentCreateForm, StudentEditForm
-from learntime.student.models import Student, StudentFile
+from learntime.student.models import Student, StudentFile, StudentCreditVerify
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy, Grade
 from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, disable_csrf, FormInitialMixin, \
@@ -20,7 +21,7 @@ from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, disabl
 
 success = JsonResponse({"status": "ok"})
 fail = JsonResponse({"status": "fail"})
-
+User = get_user_model()
 
 class StudentList(RoleRequiredMixin, PaginatorListView):
     """学生列表页
@@ -252,7 +253,9 @@ class StudentAllDeleteView(RootRequiredMixin, View):
 
 
 class StudentCreditView(RoleRequiredMixin, PaginatorListView):
-    """学生学时列表页"""
+    """学生学时列表页
+    权限：root和学院
+    """
     role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)
     template_name = 'students/student_credit.html'
     paginate_by = 20
@@ -285,7 +288,9 @@ class StudentCreditView(RoleRequiredMixin, PaginatorListView):
 
 
 class StudentEditCreditView(RoleRequiredMixin, View):
-    """根据学号查询和修改某个学生的学时"""
+    """根据学号查询和修改某个学生的学时
+    权限：root和院级
+    """
     role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)
 
     def get(self, request):
@@ -345,7 +350,9 @@ class StudentEditCreditView(RoleRequiredMixin, View):
 
 
 class StudentBulkAddCreditView(RoleRequiredMixin, View):
-    """批量增加某个班级所有学生的学时"""
+    """批量增加某个班级所有学生的学时
+    权限：root和院级
+    """
     role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)
     def post(self, request):
         _get = request.POST.get
@@ -375,6 +382,71 @@ class StudentBulkAddCreditView(RoleRequiredMixin, View):
         except Exception:
             return fail
         return success
+
+
+class StudentCreditApplyListView(RoleRequiredMixin, PaginatorListView):
+    """请求批量增加学时的列表页
+    权限：学生干部级
+    """
+    role_required = (RoleEnum.STUDENT.value,)
+    model = StudentCreditVerify
+    paginate_by = 30
+    context_object_name = "students"
+    template_name = "students/student_credit_apply_list.html"
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=None, **kwargs)
+        tos = User.objects.filter(role=RoleEnum.ACADEMY.value) # 院级审核者
+        context['tos'] = tos
+        context['form'] = StudentExcelForm()
+        return context
+
+
+class StudentCreditExcelImportView(RoleRequiredMixin, View):
+    """导入需要增加学时的学生文件接口"""
+    role_required = (RoleEnum.STUDENT.value,)
+    def post(self, request):
+        form = StudentExcelForm(request.POST, request.FILES) # 获取提交后的表单
+        if form.is_valid(): # 表单校验通过
+            excel_file = form.cleaned_data['excel_file'] # 获取excel文件字段
+            to_id = request.POST.get("to_id")
+            to = User.objects.get(pk=to_id)
+            if not to: # 如果查询不到审核者，直接报错
+                return JsonResponse({"status": "fail", "reason": "必须选择审核者！"})
+
+            file_obj = StudentFile.objects.create(excel_file=excel_file) # 获取数据库记录
+
+            import xlrd
+            excel_file_name = settings.MEDIA_ROOT + "/" + str(file_obj.excel_file) # 生成文件路径
+            try:
+                workbook = xlrd.open_workbook(excel_file_name) # 使用xlrd打开excel文件
+                table = workbook.sheets()[0] # 获取第一个工作薄
+                nrows = table.nrows # 获取总行数
+                for _ in range(1, nrows): # 从第二行开始导入数据
+                    row = table.row_values(_) # 获取一条记录
+                    print(row)
+                    s = StudentCreditVerify.objects.create(
+                        uid=row[0], name=row[1], credit_type=row[2],
+                        credit=row[3], to=to, user=request.user
+                    )
+                    s.save() # 保存
+                    print('保存成功')
+
+            except Exception as e: # 文件内容有误
+                print(e)
+                return JsonResponse({"status": "fail", "reason": "导入失败！"})
+
+            # 写入日志中
+            Log.objects.create(
+                user=self.request.user,
+                content=f"导入了{nrows - 1}条需要增加学时的学生记录，等待审核中"
+            )
+            return JsonResponse({"status": "ok"})
+
+        else: # 文件格式错误
+            return JsonResponse({"status": "fail", "reason": "必须为xls或xlsx格式！"})
+
+
 
 @csrf_exempt
 def find_student_by_uid_and_name(request):

@@ -256,6 +256,11 @@ $(document).ready(function () {
             $('.activity-verify-page').addClass("active")
         }
 
+        if (pathname === "/students/student-credit-apply/") {
+            removeMenuHighLight();
+            $('.credit-page').addClass("active")
+        }
+
 
     }
 

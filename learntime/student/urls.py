@@ -2,7 +2,8 @@ from django.urls import path
 
 from learntime.student import views
 from learntime.student.views import (StudentExcelImportView, StudentExcelExportView, StudentBulkDeleteView, \
-    StudentAllDeleteView, StudentCreditView, StudentEditCreditView, StudentBulkAddCreditView)
+                                     StudentAllDeleteView, StudentCreditView, StudentEditCreditView,
+                                     StudentBulkAddCreditView, StudentCreditApplyListView, StudentCreditExcelImportView)
 
 app_name = "students"
 urlpatterns = [
@@ -29,4 +30,9 @@ urlpatterns = [
     path("edit-credit/", view=StudentEditCreditView.as_view(), name='student_credit_edit'),
     # 学时批量增加接口
     path("bulk-add-credit/", view=StudentBulkAddCreditView.as_view(), name='student_credit_add'),
+
+    # 申请增加学时列表页
+    path('student-credit-apply/', view=StudentCreditApplyListView.as_view(), name='student_credit_apply'),
+    # 导入需要增加学时的学生文件接口
+    path("student-credit-import/", view=StudentCreditExcelImportView.as_view(), name='student_credit_import'),
 ]
