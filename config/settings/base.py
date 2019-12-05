@@ -187,6 +187,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "learntime.utils.context_processors.settings_context",
+                "learntime.utils.oss_processor.ali_media"
             ],
         },
     }
@@ -285,6 +286,21 @@ EMAIL_HOST_PASSWORD = env('DJANGO_EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = env('DJANGO_DEFAULT_FROM_EMAIL')
 EMAIL_RECIPIENT_LIST = ['705555262@qq.com']
 
+# aliyun
+PREFIX_URL = 'http://'
+ACCESS_KEY_ID = env('ACCESS_KEY_ID')
+ACCESS_KEY_SECRET = env('ACCESS_KEY_SECRET')
+END_POINT = env('END_POINT')
+BUCKET_NAME = env('BUCKET_NAME')
+#ALIYUN_OSS_CNAME = "" # 自定义域名，如果不需要可以不填写
+BUCKET_ACL_TYPE = env('BUCKET_ACL_TYPE') # private, public-read, public-read-write
+# mediafile将自动上传
+DEFAULT_FILE_STORAGE = 'learntime.aliyun_oss2_storage.backends.AliyunMediaStorage'
+# staticfile将自动上传
+#STATICFILES_STORAGE = 'learntime.aliyun_oss2_storage.backends.AliyunStaticStorage'
+ALI_MEDIA_URL = PREFIX_URL + BUCKET_NAME + "." + END_POINT + '/media/'
+
+
 # ckeditor配置
 CKEDITOR_CONFIGS = {
     'default': {
@@ -304,4 +320,4 @@ CKEDITOR_CONFIGS = {
     },
 }
 CKEDITOR_UPLOAD_PATH = 'activity/images/'
-CKEDITOR_IMAGE_BACKEND = 'pillow'
+#CKEDITOR_IMAGE_BACKEND = 'pillow'

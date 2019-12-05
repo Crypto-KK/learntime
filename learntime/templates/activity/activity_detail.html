@@ -16,6 +16,7 @@
           <div class="card-body">
             <div class="text-center">
               <h1 class="card-title text-center">{{ activity.name }}</h1>
+{#                <img src="{{ ALI_MEDIA_URL }}{{ activity.logo }}"  />#}
                 <span class="badge badge-primary">{{ activity.get_credit_type_display }}</span>
                 <span class="badge badge-info">{{ activity.score }}学时</span>
                 <span class="badge badge-success">{{ activity.place }}</span>
@@ -31,7 +32,7 @@
 
             {% if activity.file %}
               <hr>
-            <button id="download" data-file-name="{{ activity.file }}" class="btn btn-primary btn-sm pull-right">下载策划书</button>
+            <button id="download" data-prefix="{{ ALI_MEDIA_URL }}" data-file-name="{{ activity.file }}" class="btn btn-primary btn-sm pull-right">下载策划书</button>
             {% endif %}
           </div>
         </div>
@@ -45,7 +46,8 @@
     $(function () {
         $('#download').click(function () {
             var filename = $(this).attr("data-file-name");
-            window.open("http://39.108.181.193:8000/media/" + filename)
+            var prefix = $(this).attr('data-prefix');
+            window.open(prefix + filename)
         })
     })
   </script>

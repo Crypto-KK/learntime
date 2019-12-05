@@ -1,6 +1,5 @@
 import json
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse, HttpResponse
@@ -10,13 +9,14 @@ from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
 from django.views.generic.base import View
 
 from io import BytesIO
+import xlrd
 
 from learntime.operation.models import Log
 from learntime.student.forms import StudentExcelForm, StudentCreateForm, StudentEditForm
-from learntime.student.models import Student, StudentFile, StudentCreditVerify
+from learntime.student.models import Student, StudentCreditVerify
 from learntime.users.enums import RoleEnum
-from learntime.users.models import Academy, Grade
-from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, disable_csrf, FormInitialMixin, \
+from learntime.users.models import Academy
+from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, FormInitialMixin, \
     RootRequiredMixin
 
 success = JsonResponse({"status": "ok"})
@@ -132,13 +132,11 @@ class StudentExcelImportView(RootRequiredMixin, View):
     def post(self, request):
         form = StudentExcelForm(request.POST, request.FILES) # 获取提交后的表单
         if form.is_valid(): # 表单校验通过
-            excel_file = form.cleaned_data['excel_file'] # 获取excel文件字段
-            file_obj = StudentFile.objects.create(excel_file=excel_file) # 获取数据库记录
-
-            import xlrd
-            excel_file_name = settings.MEDIA_ROOT + "/" + str(file_obj.excel_file) # 生成文件路径
+            #StudentFile.objects.create(excel_file=form.cleaned_data['excel_file'])
+            file_obj = request.FILES['excel_file'].read()
             try:
-                workbook = xlrd.open_workbook(excel_file_name) # 使用xlrd打开excel文件
+                workbook = xlrd.open_workbook(file_contents=file_obj) # 使用xlrd打开excel文件
+                print(workbook)
                 table = workbook.sheets()[0] # 获取第一个工作薄
                 nrows = table.nrows # 获取总行数
                 for _ in range(1, nrows): # 从第二行开始导入数据
@@ -152,6 +150,7 @@ class StudentExcelImportView(RootRequiredMixin, View):
                     student.save() # 保存
 
             except Exception as e: # 文件内容有误
+                print(e)
                 return JsonResponse({"status": "fail", "reason": "导入失败！"})
 
             # 写入日志中
@@ -408,30 +407,21 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
     def post(self, request):
         form = StudentExcelForm(request.POST, request.FILES) # 获取提交后的表单
         if form.is_valid(): # 表单校验通过
-            excel_file = form.cleaned_data['excel_file'] # 获取excel文件字段
             to_id = request.POST.get("to_id")
             to = User.objects.get(pk=to_id)
             if not to: # 如果查询不到审核者，直接报错
                 return JsonResponse({"status": "fail", "reason": "必须选择审核者！"})
-
-            file_obj = StudentFile.objects.create(excel_file=excel_file) # 获取数据库记录
-
-            import xlrd
-            excel_file_name = settings.MEDIA_ROOT + "/" + str(file_obj.excel_file) # 生成文件路径
             try:
-                workbook = xlrd.open_workbook(excel_file_name) # 使用xlrd打开excel文件
+                workbook = xlrd.open_workbook(file_contents=request.FILES['excel_file'].read()) # 使用xlrd打开excel文件
                 table = workbook.sheets()[0] # 获取第一个工作薄
                 nrows = table.nrows # 获取总行数
                 for _ in range(1, nrows): # 从第二行开始导入数据
                     row = table.row_values(_) # 获取一条记录
-                    print(row)
                     s = StudentCreditVerify.objects.create(
                         uid=row[0], name=row[1], credit_type=row[2],
                         credit=row[3], to=to, user=request.user
                     )
                     s.save() # 保存
-                    print('保存成功')
-
             except Exception as e: # 文件内容有误
                 print(e)
                 return JsonResponse({"status": "fail", "reason": "导入失败！"})
