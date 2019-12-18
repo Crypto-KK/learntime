@@ -1,0 +1,40 @@
+version: '3'
+services:
+  redis:
+    image: redis
+    command: redis-server
+    volumes:
+    - ./deployment/redis:/data
+    ports:
+    - 6379:6379
+    restart: always
+
+  web:
+    build: .
+    expose:
+      - 8000
+    volumes:
+      - .:/learntime
+      - /tmp/logs:/tmp
+    command: bash start.sh
+    links:
+      - redis
+    depends_on:
+      - redis
+    restart: always
+
+  nginx:
+    build: deployment/nginx
+    ports:
+    - 80:80
+    expose:
+      - 8000
+    volumes:
+    - ./staticfiles:/usr/share/nginx/html/static
+    - ./learntime/media:/usr/share/nginx/html/media
+    - ./deployment/nginx/ssl:/usr/share/nginx/ssl
+    links:
+      - web
+    depends_on:
+      - web
+    restart: always

@@ -63,13 +63,8 @@ DJANGO_APPS = [
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
-    # "allauth",
-    # "allauth.account",
-    # "allauth.socialaccount",
-    # "sorl.thumbnail",
     "ckeditor",
     "ckeditor_uploader",
-    "rest_framework",
     "djcelery_email",
     "django_celery_beat"
     #"channels"
@@ -229,13 +224,13 @@ FIXTURE_DIRS = (str(APPS_DIR.path("fixtures")),)
 # SECURITY
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
-SESSION_COOKIE_HTTPONLY = True
+#SESSION_COOKIE_HTTPONLY = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
-CSRF_COOKIE_HTTPONLY = False
+#CSRF_COOKIE_HTTPONLY = False
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
-SECURE_BROWSER_XSS_FILTER = True
+#SECURE_BROWSER_XSS_FILTER = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
-X_FRAME_OPTIONS = "DENY"
+#X_FRAME_OPTIONS = "DENY"
 
 # EMAIL
 # ------------------------------------------------------------------------------

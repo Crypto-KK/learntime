@@ -401,6 +401,19 @@ class StudentCreditApplyListView(RoleRequiredMixin, PaginatorListView):
         return context
 
 
+class StudentCreditVerifyListView(RoleRequiredMixin, PaginatorListView):
+    """请求批量增加学时的列表页
+    权限：院级和学生组织
+    """
+    role_required = (RoleEnum.ACADEMY.value,)
+    paginate_by = 30
+    context_object_name = "students"
+    template_name = "students/student_credit_verify_list.html"
+
+    def get_queryset(self):
+        return self.request.user.waiting_to_verify_credits.all()
+
+
 class StudentCreditExcelImportView(RoleRequiredMixin, View):
     """导入需要增加学时的学生文件接口"""
     role_required = (RoleEnum.STUDENT.value,)

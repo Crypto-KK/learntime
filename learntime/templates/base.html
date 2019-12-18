@@ -123,7 +123,7 @@
           <ul>
             {% if role == 2 or role == 3 %}
               <li class="left-link activity-verify-page"><a href="{% url 'activities:activity_unverify' %}"> <i class="fa fa-bullhorn"></i>活动审批 </a></li>
-              <li class="left-link credit-verify-page"><a href="#"> <i class="fa fa-bullhorn"></i>学时审批 </a></li>
+              <li class="left-link credit-verify-page"><a href="{% url 'students:student_credit_verify' %}"> <i class="fa fa-bullhorn"></i>学时审批 </a></li>
             {% endif %}
             {% if role == 4 %}
             <li class="left-link activity-page" ><a href="{% url 'activities:activities' %}"> <i class="fa fa-pencil-square-o"></i>我的活动</a></li>
