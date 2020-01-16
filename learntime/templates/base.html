@@ -94,6 +94,7 @@
 
 {#              <p><a href="{% url 'users:update_profile' request.user.pk %}">修改资料</a></p>#}
             </div>
+
           </div>
           <!-- Sidebar Navidation Menus-->
           <span class="heading">学生管理</span>
@@ -104,7 +105,9 @@
               <li class="left-link academy-page"><a href="{% url 'academy' %}"> <i class="fa fa-database"></i>学院管理 </a></li>
               <li class="left-link grade-page"><a href="{% url 'grade' %}"> <i class="fa fa-cube"></i>年级管理 </a></li>
             {% endif %}
+            {% if role != 4 %}
             <li class="left-link student-page" ><a href="{% url 'students:students' %}"> <i class="fa fa-users"></i>学生管理 </a></li>
+            {% endif %}
             {% if role == 1 or role == 3 %}
 
               <li class="left-link credit-page"><a href="{% url 'students:student_credit' %}"> <i class="fa fa-wrench"></i>学时变更 </a></li>
@@ -127,7 +130,8 @@
             {% endif %}
             {% if role == 4 %}
             <li class="left-link activity-page" ><a href="{% url 'activities:activities' %}"> <i class="fa fa-pencil-square-o"></i>我的活动</a></li>
-            <li class="left-link credit-page" ><a href="{% url 'students:student_credit_apply' %}"> <i class="fa fa-pencil-square-o"></i>申请增加学时</a></li>
+            <li class="left-link activity-page" ><a href="{% url 'activities:activity_create' %}"> <i class="fa fa-pencil-square-o"></i>发布活动</a></li>
+            <li class="left-link credit-page" ><a href="{% url 'students:student_credit_apply' %}"> <i class="fa fa-pencil-square-o"></i>补录学时</a></li>
             {% endif %}
             {% if role == 1 %}
             <li class="left-link activity-all-page"><a href="{% url 'activities:activity_all' %}"> <i class="fa fa-bullhorn"></i>全部活动 </a></li>

@@ -70,7 +70,7 @@
                     <thead>
                       <tr>
                         <th>活动名称</th>
-                        <th>发布时间</th>
+{#                        <th>发布时间</th>#}
                         <th>主办方</th>
                         <th>类别</th>
                         <th>报名身份</th>
@@ -86,7 +86,7 @@
                       {% for activity in activities %}
                           <tr data-uid="{{ activity.uid }}">
                           <td style="font-weight: bold"><a href="{% url 'activities:activity_detail' activity.pk %}">{{ activity.name }}</a></td>
-                          <td>{{ activity.updated_at }}</td>
+{#                          <td>{{ activity.updated_at }}</td>#}
                           <td>{{ activity.sponsor }}</td>
                           <td>{{ activity.get_credit_type_display }}</td>
 

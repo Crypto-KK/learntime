@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}
-    申请增加学时
+    补录学时
 {% endblock %}
 {% block header_name %}
-    申请增加学时
+    补录学时
 {% endblock %}
 {% block bread %}
       <!-- Breadcrumb-->
   <div class="breadcrumb-holder container-fluid">
     <ul class="breadcrumb">
       <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
-      <li class="breadcrumb-item active">申请增加学时</li>
+      <li class="breadcrumb-item active">补录学时</li>
     </ul>
   </div>
 {% endblock %}
@@ -23,7 +23,7 @@
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                   <h5 class="modal-title">导入学生数据</h5>
+                   <h5 class="modal-title">导入补录数据</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span></button>
 
@@ -31,12 +31,14 @@
                 <div class="modal-body">
                   <form id="student-import-form" class="form-group" enctype="multipart/form-data" method="post" action="{% url 'students:student_credit_import' %}">
 
-                    <p class="help-block">按照(学号,姓名,学时类别,增加学时)顺序</p>
-                    <p class="help-block">学时类别：1：法律学时，2：文体学时，3：心理学时，4：创新创业学时，5：思想道德学时</p>
+                    <p class="help-block">请严格根据表格内容填写</p>
+                    <p class="help-block"><a href="#">点击此处下载模板文件</a></p>
+
                     {% csrf_token %}
                     {{ form.as_p }}
                     <label for="select-tos">选择审核者</label>
                     <select name="to_id" id="select-tos">
+                      <option value='0'>请选择</option>
                       {% for to in tos %}
                         <option value="{{ to.pk }}">{{ to.name }}({{ to.academy }})</option>
                       {% endfor %}
@@ -53,34 +55,41 @@
           <div class="col-lg-12">
             <div class="card">
               <div class="card-header">
-                 <a href="{% url 'students:student_create' %}" class="btn btn-outline-success">添加数据</a>
-
-                  <a href="{% url 'students:student_export' %}" class="btn btn-danger pull-right" id="delete-all-btn">删除所有数据</a>&nbsp;
-                  <button class="btn btn-blue pull-right" data-toggle="modal" data-target="#modal-in-class">
+                <h1 style="display: inline-block">共{{ count }}条补录数据</h1>
+                <button class="btn btn-blue pull-right" data-toggle="modal" data-target="#modal-in-class">
                   <i class="fa fa-caret-square-o-right" > 导入</i>
-                  </button>
+                </button>
+                <a href="{% url 'students:student_credit_apply_create' %}" class="btn btn-outline-success pull-right">添加补录数据</a>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
                   <table id="studentTable" data-reorderable-columns="true" class="table table-striped table-hover table-bordered">
                     <thead>
                       <tr>
+                        <th>活动名称</th>
+                        <th>主办方</th>
                         <th>学号</th>
                         <th>姓名</th>
-                        <th>增加学时</th>
+                        <th>班级</th>
+                        <th>认定项目</th>
+                        <th>认定活动时</th>
                         <th>审核者</th>
-                        <th>是否审核</th>
+                        <th>状态</th>
                       </tr>
                     </thead>
                     <tbody>
 
                       {% for student in students %}
                           <tr>
-                          <td style="font-weight: bold">{{ student.uid }}</td>
+                          <td style="font-weight: bold">{{ student.activity_name }}</td>
+                          <td>{{ student.sponsor }}</td>
+                          <td>{{ student.uid }}</td>
                           <td>{{ student.name }}</td>
+                          <td>{{ student.clazz }}</td>
+                          <td>{{ student.credit_type }}</td>
                           <td>{{ student.credit }}</td>
                           <td>{{ student.to }}</td>
-                          <td>{% if student.verify %}是{% else %}否{% endif %}</td>
+                          <td>{% if student.verify %}<i class="fa fa-check" style="color: green"></i>{% else %}<i class="fa fa-remove" style="color: red"></i>{% endif %}</td>
                           </tr>
                       {% endfor %}
                     </tbody>

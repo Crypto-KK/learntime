@@ -1,6 +1,7 @@
 from django import forms
+from django.contrib.auth import get_user_model
 
-from learntime.student.models import Student, StudentFile
+from learntime.student.models import Student, StudentFile, StudentCreditVerify
 from learntime.users.models import Academy, Grade
 
 
@@ -24,6 +25,7 @@ class StudentEditForm(forms.ModelForm):
 
 
 class StudentExcelForm(forms.ModelForm):
+    """导入学生excel表单"""
     class Meta:
         fields = "__all__"
         model = StudentFile
@@ -35,3 +37,27 @@ class StudentExcelForm(forms.ModelForm):
         return excel_file
 
 
+class StudentCreditCreateForm(forms.ModelForm):
+    """补录数据表单"""
+    to = forms.ModelChoiceField(queryset=get_user_model().objects.filter(role=3),
+                                help_text='选择审核者')
+    class Meta:
+        exclude = ('verify', 'user')
+        model = StudentCreditVerify
+
+    def clean_uid(self):
+        uid = self.cleaned_data['uid']
+        try:
+            Student.objects.get(pk=uid)
+        except Student.DoesNotExist:
+            raise forms.ValidationError("该学号不存在")
+        return uid
+
+    def clean(self):
+        uid = self.cleaned_data.get("uid")
+        name = self.cleaned_data.get("name")
+        try:
+            Student.objects.filter(uid=uid, name=name)[0]
+        except IndexError:
+            raise forms.ValidationError("学号和姓名不匹配")
+        return super().clean()

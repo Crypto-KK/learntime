@@ -12,7 +12,7 @@ from io import BytesIO
 import xlrd
 
 from learntime.operation.models import Log
-from learntime.student.forms import StudentExcelForm, StudentCreateForm, StudentEditForm
+from learntime.student.forms import StudentExcelForm, StudentCreateForm, StudentEditForm, StudentCreditCreateForm
 from learntime.student.models import Student, StudentCreditVerify
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
@@ -384,7 +384,7 @@ class StudentBulkAddCreditView(RoleRequiredMixin, View):
 
 
 class StudentCreditApplyListView(RoleRequiredMixin, PaginatorListView):
-    """请求批量增加学时的列表页
+    """学时补录申请列表页
     权限：学生干部级
     """
     role_required = (RoleEnum.STUDENT.value,)
@@ -401,6 +401,70 @@ class StudentCreditApplyListView(RoleRequiredMixin, PaginatorListView):
         return context
 
 
+class StudentCreditApplyCreateView(RoleRequiredMixin, CreateView):
+    """添加补录数据
+        权限：学生干部级
+    """
+    model = Student
+    template_name = "students/student_credit_apply_create.html"
+    form_class = StudentCreditCreateForm
+    role_required = (RoleEnum.STUDENT.value,)
+
+    def form_valid(self, form):
+        # 添加日志
+        Log.objects.create(
+            user=self.request.user,
+            content=f"学时补录<{form.instance.uid} - {form.instance.name} 增加{form.instance.credit}学时>已提交<{form.instance.to.name}>审核"
+        )
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, "添加补录数据成功")
+        return reverse_lazy("students:student_credit_apply")
+
+
+class StudentCreditExcelImportView(RoleRequiredMixin, View):
+    """导入学时补录数据接口"""
+    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value)
+    def post(self, request):
+        form = StudentExcelForm(request.POST, request.FILES) # 获取提交后的表单
+        if form.is_valid(): # 表单校验通过
+            to_id = request.POST.get("to_id")
+            try:
+                to = User.objects.get(pk=to_id)
+            except User.DoesNotExist:# 如果查询不到审核者，直接报错
+                return JsonResponse({"status": "fail", "reason": "请选择审核者"})
+
+            try:
+                workbook = xlrd.open_workbook(file_contents=request.FILES['excel_file'].read()) # 使用xlrd打开excel文件
+                table = workbook.sheets()[0] # 获取第一个工作薄
+                nrows = table.nrows # 获取总行数
+                for _ in range(2, nrows): # 从第3行开始导入数据
+                    row = table.row_values(_) # 获取一条记录
+                    StudentCreditVerify.objects.create(
+                        activity_name=row[0], sponsor=row[1], name=row[2],
+                        uid=row[3], academy=row[4], clazz=row[5],
+                        join_type=row[6], award=row[7], credit_type=row[8],
+                        credit=row[9], contact=row[10], to_name=row[11],
+                        to=to, user=request.user
+                    )
+
+            except Exception as e: # 文件内容有误
+                print(e)
+                return JsonResponse({"status": "fail", "reason": e.__str__()})
+
+            # 写入日志中
+            Log.objects.create(
+                user=self.request.user,
+                content=f"导入了{nrows - 1}条需要增加学时的学生记录，等待审核中"
+            )
+            return JsonResponse({"status": "ok"})
+
+        else: # 文件格式错误
+            return JsonResponse({"status": "fail", "reason": "必须为xls或xlsx格式！"})
+
+
 class StudentCreditVerifyListView(RoleRequiredMixin, PaginatorListView):
     """请求批量增加学时的列表页
     权限：院级和学生组织
@@ -414,40 +478,7 @@ class StudentCreditVerifyListView(RoleRequiredMixin, PaginatorListView):
         return self.request.user.waiting_to_verify_credits.all()
 
 
-class StudentCreditExcelImportView(RoleRequiredMixin, View):
-    """导入需要增加学时的学生文件接口"""
-    role_required = (RoleEnum.STUDENT.value,)
-    def post(self, request):
-        form = StudentExcelForm(request.POST, request.FILES) # 获取提交后的表单
-        if form.is_valid(): # 表单校验通过
-            to_id = request.POST.get("to_id")
-            to = User.objects.get(pk=to_id)
-            if not to: # 如果查询不到审核者，直接报错
-                return JsonResponse({"status": "fail", "reason": "必须选择审核者！"})
-            try:
-                workbook = xlrd.open_workbook(file_contents=request.FILES['excel_file'].read()) # 使用xlrd打开excel文件
-                table = workbook.sheets()[0] # 获取第一个工作薄
-                nrows = table.nrows # 获取总行数
-                for _ in range(1, nrows): # 从第二行开始导入数据
-                    row = table.row_values(_) # 获取一条记录
-                    s = StudentCreditVerify.objects.create(
-                        uid=row[0], name=row[1], credit_type=row[2],
-                        credit=row[3], to=to, user=request.user
-                    )
-                    s.save() # 保存
-            except Exception as e: # 文件内容有误
-                print(e)
-                return JsonResponse({"status": "fail", "reason": "导入失败！"})
 
-            # 写入日志中
-            Log.objects.create(
-                user=self.request.user,
-                content=f"导入了{nrows - 1}条需要增加学时的学生记录，等待审核中"
-            )
-            return JsonResponse({"status": "ok"})
-
-        else: # 文件格式错误
-            return JsonResponse({"status": "fail", "reason": "必须为xls或xlsx格式！"})
 
 
 

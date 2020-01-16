@@ -44,7 +44,7 @@ class Student(CreatedUpdatedMixin, models.Model):
 
 class StudentFile(models.Model):
     """学生导入的文件表"""
-    excel_file = models.FileField(upload_to="student/%Y/%m/%d/", verbose_name="学生文件")
+    excel_file = models.FileField(upload_to="student/%Y/%m/%d/", verbose_name="请选择文件")
 
     class Meta:
         verbose_name = "学生excel文件"
@@ -103,23 +103,31 @@ class StudentCreditVerify(models.Model):
         (4, '创新创业学时'),
         (5, '思想道德学时'),
     )
+    activity_name = models.CharField(max_length=50, verbose_name="活动名称")
+    sponsor = models.CharField(max_length=20, verbose_name="主办方")
     uid = models.CharField(max_length=20, verbose_name="学号")
     name = models.CharField(max_length=20, verbose_name="姓名")
-    credit = models.FloatField(default=0, verbose_name="增加学时")
-    credit_type = models.IntegerField(choices=CREDIT_TYPE, verbose_name='学时类别', default=0)
-    user = models.ForeignKey(User, verbose_name="请求加学时者", on_delete=models.DO_NOTHING,
+    academy = models.CharField(max_length=20, verbose_name="学院")
+    clazz = models.CharField(max_length=20, verbose_name="班级")
+    join_type = models.CharField(max_length=20, verbose_name="参加类型")
+    award = models.CharField(max_length=20, verbose_name="获奖情况")
+    credit_type = models.CharField(max_length=20, verbose_name='认定项目')
+    credit = models.FloatField(default=0, verbose_name="认定活动时")
+    contact = models.CharField(max_length=50, verbose_name='填报人及联系方式')
+    to_name = models.CharField(max_length=20, verbose_name='审核人')
+    remark = models.CharField(max_length=50, verbose_name='备注', null=True, blank=True)
+    user = models.ForeignKey(User, verbose_name="填写学时补录的管理员", on_delete=models.CASCADE,
                            related_name="applying_to_verify_credits")
-    to = models.ForeignKey(User, verbose_name="审核者", on_delete=models.DO_NOTHING,
+    to = models.ForeignKey(User, verbose_name="审核者", on_delete=models.CASCADE,
                            related_name="waiting_to_verify_credits")
     verify = models.BooleanField(default=False, verbose_name="是否审核")
-
     created_at = models.DateTimeField(db_index=True, auto_now_add=True, verbose_name='创建时间')
 
     def __str__(self):
-        return f'{self.user.name}向{self.to.name}请求给学生{self.uid}加学时'
+        return f'{self.user.name}请求给学生{self.uid}补录学时'
 
     class Meta:
         verbose_name = "请求加学时"
         verbose_name_plural = verbose_name
         db_table = "student_credit_verify"
-        ordering = ('-created_at',)
+        ordering = ('created_at',)
