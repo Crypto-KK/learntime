@@ -389,7 +389,7 @@ class StudentCreditApplyListView(RoleRequiredMixin, PaginatorListView):
     """
     role_required = (RoleEnum.STUDENT.value,)
     model = StudentCreditVerify
-    paginate_by = 30
+    paginate_by = 50
     context_object_name = "students"
     template_name = "students/student_credit_apply_list.html"
 
@@ -463,6 +463,20 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
 
         else: # 文件格式错误
             return JsonResponse({"status": "fail", "reason": "必须为xls或xlsx格式！"})
+
+
+class StudentCreditDeleteView(RoleRequiredMixin, View):
+    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value)
+    def post(self, request):
+        try:
+            pks = json.loads(request.POST.get("pks"))
+            for pk in pks:
+                obj = StudentCreditVerify.objects.get(pk=pk)
+                obj.delete()
+        except Exception as e:
+            print(e)
+            return JsonResponse({"status": "fail"})
+        return JsonResponse({"status": "ok"})
 
 
 class StudentCreditVerifyListView(RoleRequiredMixin, PaginatorListView):

@@ -63,9 +63,10 @@
               </div>
               <div class="card-body">
                 <div class="table-responsive">
-                  <table id="studentTable" data-reorderable-columns="true" class="table table-striped table-hover table-bordered">
+                  <table id="studentTable" data-reorderable-columns="true" class="table table-sm table-striped table-hover table-bordered">
                     <thead>
                       <tr>
+                        <th><input type="checkbox" id="all"></th>
                         <th>活动名称</th>
                         <th>主办方</th>
                         <th>学号</th>
@@ -75,25 +76,35 @@
                         <th>认定活动时</th>
                         <th>审核者</th>
                         <th>状态</th>
+                        <th>操作</th>
                       </tr>
                     </thead>
                     <tbody>
 
                       {% for student in students %}
                           <tr>
-                          <td style="font-weight: bold">{{ student.activity_name }}</td>
-                          <td>{{ student.sponsor }}</td>
-                          <td>{{ student.uid }}</td>
-                          <td>{{ student.name }}</td>
-                          <td>{{ student.clazz }}</td>
-                          <td>{{ student.credit_type }}</td>
-                          <td>{{ student.credit }}</td>
-                          <td>{{ student.to }}</td>
-                          <td>{% if student.verify %}<i class="fa fa-check" style="color: green"></i>{% else %}<i class="fa fa-remove" style="color: red"></i>{% endif %}</td>
+                          <td style='vertical-align: middle;'>
+                            <input type="checkbox" name="sub" data-pk="{{ student.pk }}">
+                          </td>
+                          <td style="font-weight: bold; vertical-align: middle;">{{ student.activity_name }}</td>
+                          <td style='vertical-align: middle;'>{{ student.sponsor }}</td>
+                          <td style='vertical-align: middle;'>{{ student.uid }}</td>
+                          <td style='vertical-align: middle;'>{{ student.name }}</td>
+                          <td style='vertical-align: middle;'>{{ student.clazz }}</td>
+                          <td style='vertical-align: middle;'>{{ student.credit_type }}</td>
+                          <td style='vertical-align: middle;'>{{ student.credit }}</td>
+                          <td style='vertical-align: middle;'>{{ student.to }}</td>
+                          <td style='vertical-align: middle;'>{% if student.verify %}<i class="fa fa-check" style="color: green"></i>{% else %}<i class="fa fa-remove" style="color: red"></i>{% endif %}</td>
+                          <td style='vertical-align: middle;'>
+                            <button class="btn btn-danger btn-sm" onclick="deleteTr(this)" data-pk="{{ student.pk }}">
+                              <i class="fa fa-trash"></i>
+                            </button>
+                          </td>
                           </tr>
                       {% endfor %}
                     </tbody>
                   </table>
+                  <button class="btn btn-danger" id="deleteSelected" style="display: none">删除所选</button>
                 </div>
               </div>
             </div>
@@ -108,6 +119,72 @@
 {% block js %}
   <script src="{% static 'js/jquery-form.js' %}"></script>
   <script src="{% static 'js/student.js' %}"></script>
+  <script>
+    function deleteTr(obj) { // 删除单条记录
+      if (window.confirm("您确定删除该记录吗？")) {
+        $.ajax({
+          method: "POST",
+          url: '/students/credit-delete/',
+          traditional: true,
+          data: {
+            pks: JSON.stringify([$(obj).attr("data-pk")])
+          },
+          success: res => {
+            if (res.status === "fail") {
+              alert("删除失败！")
+            }
+          }
+        });
+        obj.parentNode.parentNode.remove();
+      }
+    }
 
+    $('#all').click(function () {
+      // 全选or全不选
+      $('input[name="sub"]').prop("checked", this.checked);
+      if (this.checked) {
+        $('#deleteSelected').show()
+      } else {
+        $('#deleteSelected').hide()
+      }
+    });
+
+    $('input[name="sub"]').click(function () { // 选择监听
+      var $sub = $('input[name="sub"]');
+      var checkedCount = $sub.filter(":checked").length; // 选中的数量
+      $('#all').prop("checked", $sub.length == checkedCount ? true: false);
+      if (checkedCount > 0) {
+        $('#deleteSelected').show()
+      } else {
+        $('#deleteSelected').hide()
+      }
+    });
+
+    $('#deleteSelected').click(function () {
+      if (window.confirm("确定删除所选补录数据吗？")) {
+        let $subs = $('input[name="sub"]').filter(":checked");
+        let pks = [];
+        for (let i = 0; i < $subs.length; i ++) {
+          pks.push($($subs[i]).attr("data-pk"));
+          $subs[i].parentNode.parentNode.remove();
+        }
+
+        $.ajax({
+          method: "POST",
+          url: '/students/credit-delete/',
+          traditional: true,
+          data: {
+            pks: JSON.stringify(pks)
+          },
+          success: res => {
+            if (res.status === "fail") {
+              alert("删除失败！")
+            }
+          }
+        });
+
+      }
+    })
+  </script>
 {% endblock %}
 
