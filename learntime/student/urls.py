@@ -4,7 +4,8 @@ from learntime.student import views
 from learntime.student.views import (StudentExcelImportView, StudentExcelExportView, StudentBulkDeleteView, \
                                      StudentAllDeleteView, StudentCreditView, StudentEditCreditView,
                                      StudentBulkAddCreditView, StudentCreditApplyListView, StudentCreditExcelImportView,
-                                     StudentCreditVerifyListView, StudentCreditApplyCreateView, StudentCreditDeleteView)
+                                     StudentCreditVerifyListView, StudentCreditApplyCreateView, StudentCreditDeleteView,
+                                     StudentCreditApplyConfirmListView)
 
 app_name = "students"
 urlpatterns = [
@@ -32,8 +33,10 @@ urlpatterns = [
     # 学时批量增加接口
     path("bulk-add-credit/", view=StudentBulkAddCreditView.as_view(), name='student_credit_add'),
 
-    # 补录学时列表页
+    # 补录学时申请列表页
     path('credit-apply/', view=StudentCreditApplyListView.as_view(), name='student_credit_apply'),
+    # 补录申请成功列表页
+    path('credit-confirm/', view=StudentCreditApplyConfirmListView.as_view(), name='student_credit_confirm'),
     # 添加补录学时数据
     path('credit-apply-create/', view=StudentCreditApplyCreateView.as_view(), name='student_credit_apply_create'),
     # 审核补录学时

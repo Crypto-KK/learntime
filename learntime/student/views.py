@@ -388,7 +388,7 @@ class StudentCreditApplyListView(RoleRequiredMixin, PaginatorListView):
     权限：学生干部级
     """
     role_required = (RoleEnum.STUDENT.value,)
-    model = StudentCreditVerify
+    queryset = StudentCreditVerify.objects.filter(verify=False)
     paginate_by = 50
     context_object_name = "students"
     template_name = "students/student_credit_apply_list.html"
@@ -399,6 +399,17 @@ class StudentCreditApplyListView(RoleRequiredMixin, PaginatorListView):
         context['tos'] = tos
         context['form'] = StudentExcelForm()
         return context
+
+
+class StudentCreditApplyConfirmListView(RoleRequiredMixin, PaginatorListView):
+    """学时补录审核成功列表页
+    权限：学生干部级
+    """
+    role_required = (RoleEnum.STUDENT.value,)
+    paginate_by = 50
+    context_object_name = "students"
+    template_name = "students/student_credit_confirm_list.html"
+    queryset = StudentCreditVerify.objects.filter(verify=True)
 
 
 class StudentCreditApplyCreateView(RoleRequiredMixin, CreateView):
