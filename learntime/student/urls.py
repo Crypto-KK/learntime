@@ -46,5 +46,5 @@ urlpatterns = [
     # 删除学时补录申请接口
     path("credit-delete/", view=StudentCreditDeleteView.as_view(), name='student_credit_delete'),
     # 审核通过学时补录申请接口
-    path("credit-confirm/", view=StudentCreditConfirmView.as_view(), name='student_credit_confirm'),
+    path("credit-confirmation/", view=StudentCreditConfirmView.as_view(), name='student_credit_confirmation'),
 ]

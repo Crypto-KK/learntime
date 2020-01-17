@@ -7,17 +7,19 @@ from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
 from django.views.generic.base import View
+from django.db.models import Q
 
 from io import BytesIO
 import xlrd
 
+from config.settings.base import CREDIT_TYPE
 from learntime.operation.models import Log
 from learntime.student.forms import StudentExcelForm, StudentCreateForm, StudentEditForm, StudentCreditCreateForm
 from learntime.student.models import Student, StudentCreditVerify
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
 from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, FormInitialMixin, \
-    RootRequiredMixin
+    RootRequiredMixin, add_credit
 
 success = JsonResponse({"status": "ok"})
 fail = JsonResponse({"status": "fail"})
@@ -413,7 +415,10 @@ class StudentCreditApplyConfirmListView(RoleRequiredMixin, PaginatorListView):
     template_name = "students/student_credit_confirm_list.html"
 
     def get_queryset(self):
-        return StudentCreditVerify.objects.filter(verify=True, user=self.request.user)
+        # 显示自己提交并且审核通过的补录申请或者自己审核通过的申请
+        return StudentCreditVerify.objects.filter(verify=True).filter(Q(user=self.request.user) | Q(to=self.request.user))
+
+
 
 
 class StudentCreditApplyCreateView(RoleRequiredMixin, CreateView):
@@ -505,6 +510,8 @@ class StudentCreditConfirmView(RoleRequiredMixin, View):
                 obj = StudentCreditVerify.objects.get(pk=pk)
                 obj.verify = True
                 obj.save()
+                if add_credit(CREDIT_TYPE, obj.uid, obj.credit_type, obj.credit):
+                    return JsonResponse({"status": "fail", "reason": "增加学时失败"})
         except Exception as e:
             print(e)
             return JsonResponse({"status": "fail"})
@@ -521,7 +528,7 @@ class StudentCreditVerifyListView(RoleRequiredMixin, PaginatorListView):
     template_name = "students/student_credit_verify_list.html"
 
     def get_queryset(self):
-        return self.request.user.waiting_to_verify_credits.all()
+        return self.request.user.waiting_to_verify_credits.filter(verify=False)
 
 
 @csrf_exempt

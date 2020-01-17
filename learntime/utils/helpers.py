@@ -11,6 +11,7 @@ from django.views.generic.base import View
 
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Grade, Academy
+from learntime.student.models import Student
 
 disable_csrf = method_decorator(csrf_exempt, "dispatch")
 
@@ -109,3 +110,24 @@ class FormInitialMixin(UpdateView):
         if len(academy):
             initial.update(academy=academy.get().pk)
         return initial.copy()
+
+
+
+def add_credit(mappings, student_pk, credit_type, mount):
+    """增加学时
+    :param mappings: 映射
+    :param student_pk: 学号
+    :param credit_type: 学时类别，例如思想品德素质
+    :param mount: 增加的学时
+    :return 0 success
+    """
+    try:
+        student = Student.objects.get(pk=student_pk)
+        credit_type_attr = mappings[credit_type]
+        old_credit = getattr(student, credit_type_attr)
+        setattr(student, credit_type_attr, old_credit + mount)
+        student.save()
+    except Exception as e:
+        return 1
+    else:
+        return 0

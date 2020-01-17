@@ -316,3 +316,12 @@ CKEDITOR_CONFIGS = {
 }
 CKEDITOR_UPLOAD_PATH = 'activity/images/'
 #CKEDITOR_IMAGE_BACKEND = 'pillow'
+
+# 学时类型属性名和中文名匹配
+CREDIT_TYPE = {
+                    "心理素质": "xl_credit",
+                    "法律素质": "fl_credit",
+                    "文体素质": "wt_credit",
+                    "思想品德素质": "sxdd_credit",
+                    "创新创业素质": "cxcy_credit",
+                }

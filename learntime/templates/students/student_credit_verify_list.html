@@ -20,13 +20,13 @@
       <div class="container-fluid">
         <ul class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link active" href="{% url 'students:student_credit_verify' %}">审核学时补录申请</a>
+            <a class="nav-link active" href="{% url 'students:student_credit_verify' %}">审核申请</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'students:student_credit_apply' %}">提交补录学时申请</a>
+            <a class="nav-link" href="{% url 'students:student_credit_apply' %}">提交申请</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'students:student_credit_confirm' %}">查看已审核的申请</a>
+            <a class="nav-link" href="{% url 'students:student_credit_confirm' %}">审核通过的申请</a>
           </li>
 
         </ul>
@@ -52,6 +52,7 @@
                         <th>认定项目</th>
                         <th>参与身份</th>
                         <th>学时</th>
+                        <th>填写人</th>
                         <th>审核者</th>
                         <th>状态</th>
                         <th>操作</th>
@@ -72,12 +73,13 @@
                           <td style='vertical-align: middle;'>{{ student.credit_type }}</td>
                           <td style='vertical-align: middle;'>{{ student.join_type }}</td>
                           <td style='vertical-align: middle;'>{{ student.credit }}</td>
+                          <td style='vertical-align: middle;'>{{ student.user }}</td>
                           <td style='vertical-align: middle;'>{{ student.to }}</td>
                           <td style='vertical-align: middle;'>
                             <i class="fa fa-remove" style="color: red"></i>
                           </td>
                           <td style='vertical-align: middle;'>
-                            <button class="btn btn-success btn-sm" onclick="comfirmTr(this)" data-pk="{{ student.pk }}">
+                            <button class="btn btn-success btn-sm" onclick="confirmTr(this)" data-pk="{{ student.pk }}">
                               <i class="fa fa-check-circle"></i>
                             </button>
                             <button class="btn btn-danger btn-sm" onclick="deleteTr(this)" data-pk="{{ student.pk }}">
@@ -125,6 +127,28 @@
       }
     }
 
+    function confirmTr(obj) {
+      if (window.confirm("您确定审核通过吗？")) {
+        $.ajax({
+          method: "POST",
+          url: '/students/credit-confirmation/',
+          traditional: true,
+          data: {
+            pks: JSON.stringify([$(obj).attr("data-pk")])
+          },
+          success: res => {
+            if (res.status === "fail") {
+              alert("审核失败！")
+            } else {
+              alert("操作成功")
+            }
+          }
+        });
+        obj.parentNode.parentNode.remove();
+      }
+    }
+
+
     $('#all').click(function () {
       // 全选or全不选
       $('input[name="sub"]').prop("checked", this.checked);
@@ -169,6 +193,34 @@
           success: res => {
             if (res.status === "fail") {
               alert("删除失败！")
+            }
+          }
+        });
+
+      }
+    })
+
+    $('#confirmSelected').click(function () {
+      if (window.confirm("确定审核通过所选记录吗？")) {
+        let $subs = $('input[name="sub"]').filter(":checked");
+        let pks = [];
+        for (let i = 0; i < $subs.length; i ++) {
+          pks.push($($subs[i]).attr("data-pk"));
+          $subs[i].parentNode.parentNode.remove();
+        }
+
+        $.ajax({
+          method: "POST",
+          url: '/students/credit-confirmation/',
+          traditional: true,
+          data: {
+            pks: JSON.stringify(pks)
+          },
+          success: res => {
+            if (res.status === "fail") {
+              alert("审核失败！")
+            } else {
+              alert("操作成功")
             }
           }
         });

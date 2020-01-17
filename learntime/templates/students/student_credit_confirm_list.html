@@ -21,14 +21,14 @@
         <ul class="nav nav-tabs">
           {% if request.user.role == 3 %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'students:student_credit_verify' %}">审核学时补录申请</a>
+              <a class="nav-link" href="{% url 'students:student_credit_verify' %}">审核申请</a>
             </li>
           {% endif %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'students:student_credit_apply' %}">提交补录学时申请</a>
+            <a class="nav-link" href="{% url 'students:student_credit_apply' %}">提交申请</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="{% url 'students:student_credit_confirm' %}">查看已审核的申请</a>
+            <a class="nav-link active" href="{% url 'students:student_credit_confirm' %}">审核通过的申请</a>
           </li>
 
         </ul>
@@ -37,7 +37,7 @@
 
             <div class="card">
               <div class="card-header">
-                <h1 style="display: inline-block;">共{{ count }}条学时补录</h1>
+                <h1 style="display: inline-block;">共{{ count }}条审核通过的记录</h1>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
