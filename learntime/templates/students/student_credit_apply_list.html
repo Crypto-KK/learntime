@@ -19,6 +19,11 @@
     <section class="tables">
       <div class="container-fluid">
         <ul class="nav nav-tabs">
+          {% if request.user.role == 3 %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'students:student_credit_verify' %}">审核学时补录申请</a>
+            </li>
+          {% endif %}
           <li class="nav-item">
             <a class="nav-link active" href="{% url 'students:student_credit_apply' %}">提交补录学时申请</a>
           </li>

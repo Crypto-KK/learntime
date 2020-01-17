@@ -387,8 +387,7 @@ class StudentCreditApplyListView(RoleRequiredMixin, PaginatorListView):
     """学时补录申请列表页
     权限：学生干部级
     """
-    role_required = (RoleEnum.STUDENT.value,)
-    queryset = StudentCreditVerify.objects.filter(verify=False)
+    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value)
     paginate_by = 50
     context_object_name = "students"
     template_name = "students/student_credit_apply_list.html"
@@ -400,16 +399,21 @@ class StudentCreditApplyListView(RoleRequiredMixin, PaginatorListView):
         context['form'] = StudentExcelForm()
         return context
 
+    def get_queryset(self):
+        return StudentCreditVerify.objects.filter(verify=False, user=self.request.user)
+
 
 class StudentCreditApplyConfirmListView(RoleRequiredMixin, PaginatorListView):
     """学时补录审核成功列表页
     权限：学生干部级
     """
-    role_required = (RoleEnum.STUDENT.value,)
+    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value)
     paginate_by = 50
     context_object_name = "students"
     template_name = "students/student_credit_confirm_list.html"
-    queryset = StudentCreditVerify.objects.filter(verify=True)
+
+    def get_queryset(self):
+        return StudentCreditVerify.objects.filter(verify=True, user=self.request.user)
 
 
 class StudentCreditApplyCreateView(RoleRequiredMixin, CreateView):
@@ -477,6 +481,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
 
 
 class StudentCreditDeleteView(RoleRequiredMixin, View):
+    """学时补录申请删除"""
     role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value)
     def post(self, request):
         try:
@@ -490,21 +495,33 @@ class StudentCreditDeleteView(RoleRequiredMixin, View):
         return JsonResponse({"status": "ok"})
 
 
+class StudentCreditConfirmView(RoleRequiredMixin, View):
+    """学时补录申请审核通过，需要院级权限"""
+    role_required = (RoleEnum.ACADEMY.value,)
+    def post(self, request):
+        try:
+            pks = json.loads(request.POST.get("pks"))
+            for pk in pks:
+                obj = StudentCreditVerify.objects.get(pk=pk)
+                obj.verify = True
+                obj.save()
+        except Exception as e:
+            print(e)
+            return JsonResponse({"status": "fail"})
+        return JsonResponse({"status": "ok"})
+
+
 class StudentCreditVerifyListView(RoleRequiredMixin, PaginatorListView):
-    """请求批量增加学时的列表页
+    """学生组织审核学时列表页
     权限：院级和学生组织
     """
     role_required = (RoleEnum.ACADEMY.value,)
-    paginate_by = 30
+    paginate_by = 50
     context_object_name = "students"
     template_name = "students/student_credit_verify_list.html"
 
     def get_queryset(self):
         return self.request.user.waiting_to_verify_credits.all()
-
-
-
-
 
 
 @csrf_exempt

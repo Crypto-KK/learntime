@@ -261,6 +261,10 @@ $(document).ready(function () {
             $('.credit-page').addClass("active")
         }
 
+        if (pathname === "/students/credit-verify/") {
+            removeMenuHighLight();
+            $('.credit-verify-page').addClass("active")
+        }
 
     }
 
