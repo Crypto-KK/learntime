@@ -325,3 +325,5 @@ CREDIT_TYPE = {
                     "思想品德素质": "sxdd_credit",
                     "创新创业素质": "cxcy_credit",
                 }
+
+

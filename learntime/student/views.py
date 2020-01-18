@@ -19,7 +19,7 @@ from learntime.student.models import Student, StudentCreditVerify
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
 from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, FormInitialMixin, \
-    RootRequiredMixin, add_credit
+    RootRequiredMixin, add_credit, add_student_activity
 
 success = JsonResponse({"status": "ok"})
 fail = JsonResponse({"status": "fail"})
@@ -475,7 +475,13 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
                     )
                     if obj.to == obj.user: # 审核者和申请者相同,增加学时
                         obj.verify = True
-                        add_credit(CREDIT_TYPE, obj.uid, obj.credit_type, obj.credit)
+                        if not add_credit(CREDIT_TYPE, obj.uid, obj.credit_type, obj.credit):
+                            return JsonResponse({"status": "fail", "reason": "增加学时失败"})
+                        if not add_student_activity(obj.uid, obj.join_type,
+                                                    activity_name=obj.activity_name,
+                                                    credit=obj.credit,
+                                                    credit_type=obj.credit_type):
+                            return JsonResponse({"status": "fail", "reason": "学生活动关联失败"})
                         obj.save()
 
             except Exception as e: # 文件内容有误
@@ -518,8 +524,13 @@ class StudentCreditConfirmView(RoleRequiredMixin, View):
                 obj = StudentCreditVerify.objects.get(pk=pk)
                 obj.verify = True
                 obj.save()
-                if add_credit(CREDIT_TYPE, obj.uid, obj.credit_type, obj.credit):
+                if not add_credit(CREDIT_TYPE, obj.uid, obj.credit_type, obj.credit):
                     return JsonResponse({"status": "fail", "reason": "增加学时失败"})
+                if not add_student_activity(obj.uid, obj.join_type,
+                                            activity_name=obj.activity_name,
+                                            credit=obj.credit,
+                                            credit_type=obj.credit_type):
+                    return JsonResponse({"status": "fail", "reason": "学生与活动关联失败"})
         except Exception as e:
             print(e)
             return JsonResponse({"status": "fail"})

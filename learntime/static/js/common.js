@@ -266,6 +266,12 @@ $(document).ready(function () {
             $('.credit-verify-page').addClass("active")
         }
 
+        if (pathname === "/operations/join_list") {
+            removeMenuHighLight();
+            $('.join-list').addClass("active")
+        }
+
+
     }
 
     function removeMenuHighLight() {

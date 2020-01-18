@@ -2,7 +2,8 @@ from django.urls import path
 
 from learntime.operation import views
 
-app_name = "logs"
+app_name = "operations"
 urlpatterns = [
-    path('', view=views.LogList.as_view(), name='list'),
+    path('logs', view=views.LogList.as_view(), name='log_list'),
+    path('join_list', view=views.StudentActivityListView.as_view(), name='join_list'),
 ]

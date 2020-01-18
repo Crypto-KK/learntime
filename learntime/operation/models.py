@@ -7,19 +7,31 @@ from learntime.student.models import Student
 
 
 class StudentActivity(models.Model):
+    """
+    学生活动关联表
+    """
     JOIN_TYPE = (
         (1, '参赛者'),
         (2, '观众'),
         (3, '工作人员'),
     )
     student = models.ForeignKey(Student, on_delete=models.DO_NOTHING,
-                                verbose_name="学生")
+                                verbose_name="学生", related_name="join_activities")
+    student_name = models.CharField(max_length=20, verbose_name="姓名", null=True, blank=True)
+    academy = models.CharField(max_length=20, verbose_name="学院", null=True, blank=True)
+    grade = models.CharField(max_length=20, verbose_name="年级", null=True, blank=True)
+    clazz = models.CharField(max_length=20, verbose_name="班级", null=True, blank=True)
+
+    activity_name = models.CharField(max_length=50, verbose_name="活动名称", null=True, blank=True)
     activity = models.ForeignKey(Activity, on_delete=models.DO_NOTHING,
-                                 verbose_name="活动")
+                                 verbose_name="活动", null=True, blank=True,
+                                 related_name="join_students")
+    credit = models.FloatField(default=0, verbose_name="获得学时")
+    credit_type = models.CharField(max_length=20, verbose_name="学时类别", default="")
     create_time = DateTimeField(db_index=True, auto_now_add=True,
                                 verbose_name='创建时间')
     join_type = models.SmallIntegerField(verbose_name="参与类型", choices=JOIN_TYPE)
-    status = models.BooleanField(verbose_name="状态", default=False)
+    status = models.BooleanField(verbose_name="是否签到签退成功", default=False)
 
 
     class Meta:
