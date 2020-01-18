@@ -454,7 +454,11 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             try:
                 to = User.objects.get(pk=to_id)
             except User.DoesNotExist:# 如果查询不到审核者，直接报错
-                return JsonResponse({"status": "fail", "reason": "请选择审核者"})
+                if request.user.role == RoleEnum.ACADEMY.value:
+                    to = request.user
+                    print(to)
+                else:
+                    return JsonResponse({"status": "fail", "reason": "请选择审核者"})
 
             try:
                 workbook = xlrd.open_workbook(file_contents=request.FILES['excel_file'].read()) # 使用xlrd打开excel文件
@@ -462,13 +466,17 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
                 nrows = table.nrows # 获取总行数
                 for _ in range(2, nrows): # 从第3行开始导入数据
                     row = table.row_values(_) # 获取一条记录
-                    StudentCreditVerify.objects.create(
+                    obj = StudentCreditVerify.objects.create(
                         activity_name=row[0], sponsor=row[1], name=row[2],
                         uid=row[3], academy=row[4], clazz=row[5],
                         join_type=row[6], award=row[7], credit_type=row[8],
                         credit=row[9], contact=row[10], to_name=row[11],
                         to=to, user=request.user
                     )
+                    if obj.to == obj.user: # 审核者和申请者相同,增加学时
+                        obj.verify = True
+                        add_credit(CREDIT_TYPE, obj.uid, obj.credit_type, obj.credit)
+                        obj.save()
 
             except Exception as e: # 文件内容有误
                 print(e)
