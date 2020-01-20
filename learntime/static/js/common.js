@@ -241,7 +241,7 @@ $(document).ready(function () {
             $('.activity-all-page').addClass("active")
         }
 
-        if (pathname === '/logs/') {
+        if (pathname === '/operations/logs/') {
             removeMenuHighLight();
             $('.log-page').addClass("active")
         }
@@ -266,7 +266,7 @@ $(document).ready(function () {
             $('.credit-verify-page').addClass("active")
         }
 
-        if (pathname === "/operations/join_list") {
+        if (pathname === "/operations/join_list/") {
             removeMenuHighLight();
             $('.join-list').addClass("active")
         }

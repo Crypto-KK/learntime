@@ -37,7 +37,7 @@ class StudentActivityListView(RoleRequiredMixin, PaginatorListView):
             # 干部级能够查看参加自己发布活动的学生名单
             my_activity_pks = []
             my_activities = self.request.user.my_activities
-            for my_activity in my_activities:
+            for my_activity in my_activities.all():
                 my_activity_pks.append(my_activity.pk)
             return StudentActivity.objects.filter(
-                activity_id__in=[my_activity_pks]).select_related("student", "activity")
+                activity_id__in=my_activity_pks).select_related("student", "activity")

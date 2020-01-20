@@ -112,7 +112,7 @@
 
               <li class="left-link credit-page"><a href="{% url 'students:student_credit' %}"> <i class="fa fa-wrench"></i>学时变更 </a></li>
             {% endif %}
-              <li class="left-link log-page"><a href="{% url 'operations:log_list' %}"><i class="fa fa-play-circle-o"></i>操作记录</a></li>
+              <li class="left-link log-page"><a href="{% url 'operations:log_list' %}"><i class="fa fa-play-circle-o"></i>&nbsp;操作记录</a></li>
           </ul>
             {% if role == 1 %}
               <span class="heading">系统管理</span>
@@ -129,14 +129,15 @@
               <li class="left-link credit-verify-page"><a href="{% url 'students:student_credit_verify' %}"> <i class="fa fa-bullhorn"></i>补录学时 </a></li>
             {% endif %}
             {% if role == 4 %}
-            <li class="left-link activity-page" ><a href="{% url 'activities:activities' %}"> <i class="fa fa-pencil-square-o"></i>我的活动</a></li>
+            <li class="left-link activity-page" ><a href="{% url 'activities:activities' %}"> <i class="fa fa-send-o"></i>我的活动</a></li>
             <li class="left-link activity-page" ><a href="{% url 'activities:activity_create' %}"> <i class="fa fa-pencil-square-o"></i>发布活动</a></li>
-            <li class="left-link credit-page" ><a href="{% url 'students:student_credit_apply' %}"> <i class="fa fa-pencil-square-o"></i>补录学时</a></li>
+            <li class="left-link activity-page" ><a href="#"> <i class="fa fa-qrcode"></i>&nbsp;签到签退</a></li>
+            <li class="left-link credit-page" ><a href="{% url 'students:student_credit_apply' %}"> <i class="fa fa-pencil"></i>&nbsp;补录学时</a></li>
             {% endif %}
             {% if role == 1 %}
             <li class="left-link activity-all-page"><a href="{% url 'activities:activity_all' %}"> <i class="fa fa-bullhorn"></i>全部活动 </a></li>
             {% endif %}
-            <li class="left-link join-list" ><a href="{% url 'operations:join_list' %}"> <i class="fa fa-pencil-square-o"></i>活动参加记录</a></li>
+            <li class="left-link join-list" ><a href="{% url 'operations:join_list' %}"> <i class="fa fa-database"></i>&nbsp;活动参加记录</a></li>
 
           </ul>
           <span class="heading">统计模块</span>

@@ -15,6 +15,11 @@ class StudentActivity(models.Model):
         (2, '观众'),
         (3, '工作人员'),
     )
+    STATUS = (
+        (1, '报名'),
+        (2, '签到成功'),
+        (3, '签退成功'),
+    )
     student = models.ForeignKey(Student, on_delete=models.DO_NOTHING,
                                 verbose_name="学生", related_name="join_activities")
     student_name = models.CharField(max_length=20, verbose_name="姓名", null=True, blank=True)
@@ -31,13 +36,14 @@ class StudentActivity(models.Model):
     create_time = DateTimeField(db_index=True, auto_now_add=True,
                                 verbose_name='创建时间')
     join_type = models.SmallIntegerField(verbose_name="参与类型", choices=JOIN_TYPE)
-    status = models.BooleanField(verbose_name="是否签到签退成功", default=False)
+    status = models.SmallIntegerField(verbose_name="参与状态", default=1, choices=STATUS)
 
 
     class Meta:
         verbose_name = "学生活动表"
         verbose_name_plural = verbose_name
         db_table = "student_activities"
+        ordering = ("-create_time", )
 
 
 class Log(models.Model):

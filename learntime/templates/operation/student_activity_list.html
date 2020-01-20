@@ -55,12 +55,8 @@
                           <td>{{ object.credit_type }}</td>
                           <td>{{ object.get_join_type_display }}</td>
                           <td>{{ object.credit }}</td>
-                          <td>
-                            {% if object.status %}
-                              <i class="fa fa-check" style="color:green;"></i>
-                            {% else %}
-                              <i class="fa fa-remove" style="color: red"></i>
-                            {% endif %}
+                          <td style="color: blue;">
+                            {{ object.get_status_display }}
                           </td>
                           </tr>
                       {% endfor %}
