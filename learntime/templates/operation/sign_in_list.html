@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}
     活动签到
 {% endblock %}
@@ -18,17 +19,75 @@
       <div class="container-fluid">
         <div class="row">
           <!-- Modal -->
-          <div class="modal fade bd-example-modal-lg" id="signInModal" tabindex="-1" role="dialog" aria-labelledby="signInTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+          <div class="modal fade bd-example-modal" id="signInModal" tabindex="-1" role="dialog" aria-labelledby="signInTitle" aria-hidden="true">
+
+            <div class="modal-dialog modal-dialog-centered" role="document">
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title" id="signInTitle">签到</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
                 </div>
                 <div class="modal-body">
-                  <img id="sign-in-img" src="/operations/qrcode/" alt="">
+                  <h1>请使用学时通小程序扫描二维码签到</h1><br>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="input-group">
+                        <label for="sign-in-select">刷新频率:</label>
+                        <select class="form-control form-control-sm" name="sign-in-frequency" id="sign-in-select">
+                          <option value="1">1分钟</option>
+                          <option value="2">2分钟</option>
+                          <option value="5">5分钟</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="text-center">
+                    <img id="sign-in-img" class="img-fluid" src="{% static 'img/loading.gif' %}" alt="">
+                  </p>
+                  <p class="text-center" style="font-size: 20px">
+                    <span class="text-center">已签到
+                      <span style="color: blue;" class="font-weight-bold" id="sign-in-count">20</span>人
+                    </span>
+                  </p>
+
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-modal">关闭</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal fade bd-example-modal" id="personListModal" tabindex="-1" role="dialog" aria-labelledby="personListTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="personListTitle">查看活动名单</h5>
+                </div>
+                <div class="modal-body">
+                  <h2>总人数：</h2><br>
+                  <table class="table table-sm">
+                    <thead>
+                      <tr>
+                        <th scope="col">学号</th>
+                        <th scope="col">姓名</th>
+                        <th scope="col">参与情况</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>201606120001</td>
+                        <td>李沅锟</td>
+                        <td>报名</td>
+                      </tr>
+                      <tr>
+                        <td>201606120001</td>
+                        <td>李沅锟</td>
+                        <td>报名</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
@@ -59,13 +118,14 @@
                     <tbody>
                       {% for activity in activities %}
                           <tr>
-                          <td style="font-weight: bold"><a href="{% url 'activities:activity_detail' activity.pk %}">{{ activity.name }}</a></td>
+                          <td style="font-weight: bold"><a href="{% url 'activities:activity_detail' activity.pk %}">{{ activity.name | truncatechars:15 }}</a></td>
                           <td>{{ activity.time }}</td>
                           <td>{{ activity.place }}</td>
                           <td>{{ activity.get_credit_type_display }}</td>
                           <td>{{ activity.get_join_type_display }}</td>
                           <td>{{ activity.score }}</td>
                           <td data-pk="{{ activity.pk }}">
+                            <button class="btn btn-primary btn-sm btn-blue" data-toggle="modal" data-target="#personListModal">名单</button>
                             <button class="btn btn-primary btn-sm sign-in-btn" data-toggle="modal" data-target="#signInModal">签到</button>
                             <button class="btn btn-warning btn-sm">签退</button>
                           </td>
@@ -88,21 +148,34 @@
 {% block js %}
   <script>
     $(function () {
+      var signInCounter = ""; // 定时器
+      var frequency = 1;
+      var pk = ""; // uuid
       $('.sign-in-btn').click(function () {
-        let pk = $(this).parent().attr("data-pk");
-        {#$.ajax({#}
-        {#  url: "/operations/qrcode/",#}
-        {#  method: "POST",#}
-        {#  cache: false,#}
-        {#  data: {pk},#}
-        {#  responseType: "blob",#}
-        {#  success: res => {#}
-            {#let src = window.URL.createObjectURL(res);#}
-            {#console.log(src)#}
-            {#$('#sign-in-img').attr("src", src)#}
-        {#  }#}
+        pk = $(this).parent().attr("data-pk");
+        refreshInterval();
+      });
 
-      })
+      $('#close-modal').click(function () {
+        clearInterval(signInCounter);
+        $('#sign-in-img').attr("src", "/static/img/loading.gif")
+      });
+
+      $('#sign-in-select').change(function () {
+        frequency = $(this).val();
+        $(this).val(frequency);
+        refreshInterval()
+      });
+
+      function refreshInterval() {
+        if (signInCounter) {
+          clearInterval(signInCounter)
+        }
+        signInCounter = setInterval(() => {
+          $('#sign-in-img').attr("src", "/operations/qrcode/" + pk + "/" + Math.ceil(Math.random() * 100) +"/");
+        }, frequency * 1000);
+      }
+
     })
   </script>
 {% endblock %}

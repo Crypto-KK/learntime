@@ -63,17 +63,14 @@ class SignInListView(RoleRequiredMixin, PaginatorListView):
 
 
 class QRCodeAPIView(RoleRequiredMixin, View):
-    """生成二维码接口"""
+    """生成二维码链接"""
     role_required = (RoleEnum.STUDENT.value,)
 
-    def get(self, request):
+    def get(self, request, pk, nonce):
         """
         :return: activity_id
         """
-        #activity_pk = request.POST.get("pk")
-        import time
-        return self.generate_qrcode(str(int(time.time())))
-
+        return self.generate_qrcode(pk + " " + str(int(time.time())))
 
     def generate_qrcode(self, data):
         img = qrcode.make(data)
@@ -82,3 +79,13 @@ class QRCodeAPIView(RoleRequiredMixin, View):
         image_stream = buf.getvalue()
         response = HttpResponse(image_stream, content_type="image/png")
         return response
+
+
+class PersonListAPIView(RoleRequiredMixin, View):
+    """查看报名活动的人员情况"""
+    role_required = (RoleEnum.STUDENT.value,)
+    def get(self, pk):
+        """
+        :param pk: 活动uuid
+        """
+        pass
