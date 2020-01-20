@@ -1,5 +1,12 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+import time
 
+import qrcode
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
+from django.utils.six import BytesIO
+from django.views.generic.base import View
+
+from learntime.activity.models import Activity
 from learntime.operation.models import Log, StudentActivity
 from learntime.utils.helpers import PaginatorListView, RoleRequiredMixin
 from learntime.users.enums import RoleEnum
@@ -9,7 +16,7 @@ class LogList(LoginRequiredMixin, PaginatorListView):
     """日志列表页"""
     template_name = "operation/log_list.html"
     context_object_name = "logs"
-    paginate_by = 20
+    paginate_by = 50
 
     def get_queryset(self):
         if self.request.user.role == 1:
@@ -41,3 +48,37 @@ class StudentActivityListView(RoleRequiredMixin, PaginatorListView):
                 my_activity_pks.append(my_activity.pk)
             return StudentActivity.objects.filter(
                 activity_id__in=my_activity_pks).select_related("student", "activity")
+
+
+class SignInListView(RoleRequiredMixin, PaginatorListView):
+    """签到签退列表页"""
+    role_required = (RoleEnum.STUDENT.value,)
+    template_name = "operation/sign_in_list.html"
+    context_object_name = "activities"
+    paginate_by = 20
+
+    def get_queryset(self):
+        return Activity.objects.filter(user=self.request.user)\
+            .select_related("user", "to", "to_school")
+
+
+class QRCodeAPIView(RoleRequiredMixin, View):
+    """生成二维码接口"""
+    role_required = (RoleEnum.STUDENT.value,)
+
+    def get(self, request):
+        """
+        :return: activity_id
+        """
+        #activity_pk = request.POST.get("pk")
+        import time
+        return self.generate_qrcode(str(int(time.time())))
+
+
+    def generate_qrcode(self, data):
+        img = qrcode.make(data)
+        buf = BytesIO()
+        img.save(buf)
+        image_stream = buf.getvalue()
+        response = HttpResponse(image_stream, content_type="image/png")
+        return response

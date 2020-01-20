@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}
+    活动签到
+{% endblock %}
+{% block header_name %}
+    活动签到
+{% endblock %}
+{% block body %}
+      <!-- Breadcrumb-->
+    <div class="breadcrumb-holder container-fluid">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+      <li class="breadcrumb-item active">活动签到</li>
+    </ul>
+    </div>
+
+    <section class="tables">
+      <div class="container-fluid">
+        <div class="row">
+          <!-- Modal -->
+          <div class="modal fade bd-example-modal-lg" id="signInModal" tabindex="-1" role="dialog" aria-labelledby="signInTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="signInTitle">签到</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <img id="sign-in-img" src="/operations/qrcode/" alt="">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="page-header">
+                  <h1>共有{{ count }}条活动</h1>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  {% with request.user.role as role %}
+                  <table class="table table-striped table-hover table-bordered ">
+                    <thead>
+                      <tr>
+                        <th>活动名</th>
+                        <th>活动时间</th>
+                        <th>活动地点</th>
+                        <th>类别</th>
+                        <th>报名身份</th>
+                        <th>学时</th>
+                        <th>操作</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for activity in activities %}
+                          <tr>
+                          <td style="font-weight: bold"><a href="{% url 'activities:activity_detail' activity.pk %}">{{ activity.name }}</a></td>
+                          <td>{{ activity.time }}</td>
+                          <td>{{ activity.place }}</td>
+                          <td>{{ activity.get_credit_type_display }}</td>
+                          <td>{{ activity.get_join_type_display }}</td>
+                          <td>{{ activity.score }}</td>
+                          <td data-pk="{{ activity.pk }}">
+                            <button class="btn btn-primary btn-sm sign-in-btn" data-toggle="modal" data-target="#signInModal">签到</button>
+                            <button class="btn btn-warning btn-sm">签退</button>
+                          </td>
+                          </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+                {% endwith %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {% include 'pagination.html' %}
+{% endblock %}
+
+{% block js %}
+  <script>
+    $(function () {
+      $('.sign-in-btn').click(function () {
+        let pk = $(this).parent().attr("data-pk");
+        {#$.ajax({#}
+        {#  url: "/operations/qrcode/",#}
+        {#  method: "POST",#}
+        {#  cache: false,#}
+        {#  data: {pk},#}
+        {#  responseType: "blob",#}
+        {#  success: res => {#}
+            {#let src = window.URL.createObjectURL(res);#}
+            {#console.log(src)#}
+            {#$('#sign-in-img').attr("src", src)#}
+        {#  }#}
+
+      })
+    })
+  </script>
+{% endblock %}
