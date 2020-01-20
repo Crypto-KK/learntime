@@ -2,7 +2,7 @@ import time
 
 import qrcode
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.utils.six import BytesIO
 from django.views.generic.base import View
 
@@ -84,8 +84,23 @@ class QRCodeAPIView(RoleRequiredMixin, View):
 class PersonListAPIView(RoleRequiredMixin, View):
     """查看报名活动的人员情况"""
     role_required = (RoleEnum.STUDENT.value,)
-    def get(self, pk):
+    def get(self, request, pk):
         """
         :param pk: 活动uuid
         """
-        pass
+        return_data = []
+        try:
+            activity = Activity.objects.get(pk=pk)
+        except Activity.DoesNotExist:
+            return JsonResponse({"status": "fail", "reason": "活动不存在"})
+
+        student_activities = activity.join_students.all()
+        for obj in student_activities:
+            return_data.append({
+                "uid": obj.student_id,
+                "name": obj.student_name,
+                "clazz": obj.clazz,
+                "status": obj.get_status_display()
+            })
+
+        return JsonResponse({"status": "ok", "count": len(return_data), "data": return_data})

@@ -65,26 +65,17 @@
                   <h5 class="modal-title" id="personListTitle">查看活动名单</h5>
                 </div>
                 <div class="modal-body">
-                  <h2>总人数：</h2><br>
+                  <h2 id="person-count-label">总人数：</h2><br>
                   <table class="table table-sm">
                     <thead>
                       <tr>
                         <th scope="col">学号</th>
                         <th scope="col">姓名</th>
+                        <th scope="col">班级</th>
                         <th scope="col">参与情况</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr>
-                        <td>201606120001</td>
-                        <td>李沅锟</td>
-                        <td>报名</td>
-                      </tr>
-                      <tr>
-                        <td>201606120001</td>
-                        <td>李沅锟</td>
-                        <td>报名</td>
-                      </tr>
+                    <tbody id="person-list-table">
                     </tbody>
                   </table>
 
@@ -125,7 +116,7 @@
                           <td>{{ activity.get_join_type_display }}</td>
                           <td>{{ activity.score }}</td>
                           <td data-pk="{{ activity.pk }}">
-                            <button class="btn btn-primary btn-sm btn-blue" data-toggle="modal" data-target="#personListModal">名单</button>
+                            <button class="btn btn-primary btn-sm btn-blue person-list-btn" data-toggle="modal" data-target="#personListModal">名单</button>
                             <button class="btn btn-primary btn-sm sign-in-btn" data-toggle="modal" data-target="#signInModal">签到</button>
                             <button class="btn btn-warning btn-sm">签退</button>
                           </td>
@@ -157,17 +148,43 @@
       });
 
       $('#close-modal').click(function () {
+        // 关闭模态框
         clearInterval(signInCounter);
         $('#sign-in-img').attr("src", "/static/img/loading.gif")
       });
 
+      $('.person-list-btn').click(function () {
+        // 查看活动名单
+        pk = $(this).parent().attr("data-pk");
+        $('#person-list-table').empty();
+        $.ajax({
+          url: "/operations/person-list/" + pk + "/",
+          success: res => {
+            if (res.status === "fail") {
+              alert(res.reason);
+            } else {
+              let data = res.data;
+              $('#person-count-label').text("总人数：" + res.count);
+              for (let i = 0; i < data.length; i ++) {
+                $('#person-list-table').append(
+                      `<tr><td>${data[i].uid}</td><td>${data[i].name}</td><td>${data[i].clazz}</td><td>${data[i].status}</td></tr>`
+                )
+              }
+
+            }
+          }
+        })
+      });
+
       $('#sign-in-select').change(function () {
+        // 选择频率
         frequency = $(this).val();
         $(this).val(frequency);
         refreshInterval()
       });
 
       function refreshInterval() {
+        // 刷新频率
         if (signInCounter) {
           clearInterval(signInCounter)
         }
