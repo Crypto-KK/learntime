@@ -189,7 +189,7 @@
           clearInterval(signInCounter)
         }
         signInCounter = setInterval(() => {
-          $('#sign-in-img').attr("src", "/operations/qrcode/" + pk + "/" + Math.ceil(Math.random() * 100) +"/");
+          $('#sign-in-img').attr("src", "/operations/qrcode/" + pk + "/" + frequency + "/" + 1 + "/" + Math.ceil(Math.random() * 1999) +"/");
         }, frequency * 1000);
       }
 

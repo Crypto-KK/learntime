@@ -66,11 +66,15 @@ class QRCodeAPIView(RoleRequiredMixin, View):
     """生成二维码链接"""
     role_required = (RoleEnum.STUDENT.value,)
 
-    def get(self, request, pk, nonce):
+    def get(self, request, pk, frequency, signInOrSignOut, nonce):
         """
-        :return: activity_id
+        :param pk: 活动id
+        :param frequency: 频率秒
+        :param signInOrSignOut: 1为签到，2为签退
+        :param nonce: 随机串
         """
-        return self.generate_qrcode(pk + " " + str(int(time.time())))
+        timestamp = int(time.time()) # 秒级时间戳
+        return self.generate_qrcode(f"{pk}.{timestamp}.{frequency}.{signInOrSignOut}")
 
     def generate_qrcode(self, data):
         img = qrcode.make(data)
