@@ -73,7 +73,7 @@
             <div class="card">
               <div class="card-header">
                 {% if request.user.role == 4 %}
-                  <h1 style="display: inline-block;">共{{ count }}条申请，等待审核中</h1>
+                  <h1 style="display: inline-block;">已提交{{ count }}条学时补录申请，等待审核中</h1>
                 {% endif %}
                 {% if request.user.role == 3 %}
                   <h1 style="display: inline-block;">请导入Excel表格，提交后自动审核通过</h1>

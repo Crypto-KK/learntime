@@ -1,4 +1,4 @@
-{% load static %}
+{% load static compress %}
 <!DOCTYPE html>
 <html>
   <head>
@@ -14,18 +14,21 @@
     <!-- Font Awesome CSS-->
 {#    <link rel="stylesheet" href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}">#}
     <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <!-- Fontastic Custom icon font-->
-    <link rel="stylesheet" href="{% static 'css/fontastic.css' %}">
+
     <!-- Google fonts - Poppins -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
-    <!-- theme stylesheet-->
-    <link rel="stylesheet" href="{% static 'css/style.default.css' %}" id="theme-stylesheet">
+
     <!-- Favicon-->
     <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
-    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
-    {% block css %}
 
-    {% endblock %}
+      {% compress css %}
+        <!-- theme stylesheet-->
+        <link rel="stylesheet" href="{% static 'css/style.default.css' %}" id="theme-stylesheet">
+        <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+        <!-- Fontastic Custom icon font-->
+        <link rel="stylesheet" href="{% static 'css/fontastic.css' %}">
+      {% endcompress %}
+    {% block css %}{% endblock %}
     <!-- Tweaks for older IEs--><!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
@@ -195,10 +198,11 @@
 {#    <script src="{% static 'vendor/layer/layer.js' %}"></script>#}
 {#    <script src={% static 'js/charts-home.js' %}></script>#}
     <!-- Main File-->
-    <script src="{% static 'js/common.js' %}"></script>
 
-    {% block js %}
+    {% compress js %}
+      <script src="{% static 'js/common.js' %}"></script>
+    {% endcompress %}
 
-    {% endblock %}
+    {% block js %}{% endblock %}
   </body>
 </html>

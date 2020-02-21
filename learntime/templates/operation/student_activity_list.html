@@ -24,7 +24,8 @@
                   <h1>共有{{ count }}条记录({{ request.user.academy }}{{ request.user.grade }})</h1>
                 {% endif %}
                 {% if request.user.role == 4 %}
-                  <h1>共有{{ count }}条记录</h1>
+{#                  <h1>共有{{ count }}条记录</h1>#}
+                  <p>以下的表格为参加您发布活动的所有学生名单，签退成功表示参加成功，系统会增加学时</p>
                 {% endif %}
               </div>
               <div class="card-body">
@@ -42,6 +43,7 @@
                         <th>参加身份</th>
                         <th>获得学时</th>
                         <th>参与情况</th>
+                        <th>变更状态</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -58,6 +60,11 @@
                           <td style="color: blue;">
                             {{ object.get_status_display }}
                           </td>
+                          <td>
+                            {% if object.status == 1 or object.status == 2 %}
+                              <button class="btn btn-sm btn-primary alter-status" data-record-pk="{{ object.pk }}">变更</button>
+                            {% endif %}
+                          </td>
                           </tr>
                       {% endfor %}
                     </tbody>
@@ -73,4 +80,28 @@
 
     {% include 'pagination.html' %}
 {% endblock %}
+{% block js %}
+  <script>
+    $(function () {
+      $('.alter-status').click(function () {
+        if (window.confirm("是否变更为签退成功？")) {
+          let record_pk = $(this).attr("data-record-pk");
+          $.post({
+            url: '/operations/alter-status/',
+            data: {
+              record_pk
+            },
+            success: res => {
+              if (res.status === "ok") {
+                alert("变更成功")
+              } else {
+                alert("变更失败")
+              }
+            }
+          });
 
+        }
+      })
+    })
+  </script>
+{% endblock %}
