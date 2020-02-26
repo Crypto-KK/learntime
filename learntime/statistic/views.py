@@ -7,6 +7,7 @@ from django.views.generic.base import View
 from pyecharts.charts import Bar
 from pyecharts.globals import ThemeType
 
+from learntime.globalconf.models import Configration
 from learntime.activity.models import Activity
 from learntime.student.models import Student
 from learntime.users.enums import RoleEnum
@@ -34,7 +35,8 @@ class IndexView(LoginRequiredMixin, View):
     def get(self, request):
         context = {
             "student_nums": Student.objects.count(),
-            "activity_nums": Activity.objects.count()
+            "activity_nums": Activity.objects.count(),
+            "notice": Configration.objects.first().notice
         }
         role = request.user.role
         if role == RoleEnum.ROOT.value:

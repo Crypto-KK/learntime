@@ -8,9 +8,10 @@ from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
-from django.views.generic import DetailView, UpdateView, DeleteView, CreateView
+from django.views.generic import UpdateView, DeleteView, CreateView
 from django.views.generic.base import View
 
+from learntime.globalconf.models import Configration
 from learntime.users.enums import RoleEnum
 from learntime.users.forms import LoginForm, RegisterForm, UserForm, ForgetForm
 from learntime.users.models import Academy, Grade
@@ -160,6 +161,15 @@ class AdminCreateView(RootRequiredMixin, CreateView):
     context_object_name = "user"
     template_name = "users/admin_create.html"
     form_class = UserForm
+
+    def form_valid(self, form):
+        """设置默认密码，用户名设置和邮箱相同"""
+        pwd = Configration.objects.first().default_password
+        form.instance.set_password(pwd)
+        form.instance.username = form.instance.email
+        form.instance.save()
+        return super(AdminCreateView, self).form_valid(form)
+
 
     def get_success_url(self):
         messages.success(self.request, "新增管理员成功")

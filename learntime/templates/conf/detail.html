@@ -25,6 +25,7 @@
               <p class="card-text">系统公告：{{ conf.notice }}</p>
               <p class="card-text">系统状态：{% if conf.is_maintenance %}维护中{% else %}运行中{% endif %}</p>
               <p class="card-text">学时基准：{{ conf.criterion }}</p>
+              <p class="card-text">默认密码：{{ conf.default_password }}</p>
               <a class="btn btn-warning" href="{% url 'conf:edit' conf.pk %}">配置</a>
             </div>
           </div>
