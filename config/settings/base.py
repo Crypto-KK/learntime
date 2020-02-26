@@ -66,7 +66,8 @@ THIRD_PARTY_APPS = [
     "ckeditor",
     "ckeditor_uploader",
     "djcelery_email",
-    "django_celery_beat"
+    "django_celery_beat",
+    "django_crontab"
     #"channels"
 ]
 
@@ -256,17 +257,36 @@ LOGGING = {
     "formatters": {
         "verbose": {
             "format": "%(levelname)s %(asctime)s %(module)s "
-            "%(process)d %(thread)d %(message)s"
-        }
+            "%(message)s"
+        },
+        'simple': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(funcName)s %(lineno)d %(message)s'
+        },  # 日志记录级别+时间日期+模块名称+函数名称+行号+记录消息
     },
     "handlers": {
         "console": {
-            "level": "DEBUG",
+            "level": "INFO",
             "class": "logging.StreamHandler",
-            "formatter": "verbose",
-        }
+            "formatter": "simple",
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': ROOT_DIR.path("logs").path("info.log"),
+            'maxBytes': 300 * 1024 * 1024,  # 300M大小
+            'backupCount': 5,
+            'formatter': 'simple',
+            'encoding': 'utf-8'
+        },
     },
-    "root": {"level": "INFO", "handlers": ["console"]},
+    "loggers": {
+        "django": {
+            "handlers": ["console", "file"],
+            "propagate": True,
+            "level": "INFO"
+        }
+    }
+    #"root": {"level": "INFO", "handlers": ["console", "file"]},
 }
 
 # django-compressor
@@ -324,11 +344,17 @@ CKEDITOR_UPLOAD_PATH = 'activity/images/'
 
 # 学时类型属性名和中文名匹配
 CREDIT_TYPE = {
-                    "心理素质": "xl_credit",
-                    "法律素质": "fl_credit",
-                    "文体素质": "wt_credit",
-                    "思想品德素质": "sxdd_credit",
-                    "创新创业素质": "cxcy_credit",
-                }
+    "心理素质": "xl_credit",
+    "法律素质": "fl_credit",
+    "文体素质": "wt_credit",
+    "思想品德素质": "sxdd_credit",
+    "创新创业素质": "cxcy_credit"
+}
 
 
+#统计模块
+# 每天凌晨12点30运行，首页显示昨日的概览。
+# 例如9月20的概览是指9月19日0：00 - 9月20日0：00,也就是9月20日前一天的概览
+CRONJOBS = (
+    ('*/1 * * * *', 'django.core.management.call_command', ['runstat', '--test']),
+)
