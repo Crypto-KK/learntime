@@ -7,7 +7,7 @@ verify_ssl = true
 
 [packages]
 django-environ = "*"
-django = "==2.2.6"
+django = "==2.2.10"
 django-redis = "*"
 django-crispy-forms = "==1.7.2"
 django-debug-toolbar = "==2.0"
