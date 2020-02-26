@@ -30,5 +30,6 @@ urlpatterns = [
     path("apply_no_confirm/", view=views.DontApplyConfirmView.as_view(), name="apply_no_comfirm"),
 
     # 冻结账号
-    path("freeze/", view=views.FreezeUserAPIView.as_view(), name='freeze')
+    path("freeze/", view=views.FreezeUserAPIView.as_view(), name='freeze'),
+    path("logs/<int:pk>/", view=views.UserLogListAPIView.as_view(), name='logs')
 ]

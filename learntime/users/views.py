@@ -232,6 +232,23 @@ class FreezeUserAPIView(RootRequiredMixin, View):
         return JsonResponse({"status": "ok"})
 
 
+class UserLogListAPIView(RootRequiredMixin, View):
+    """查看管理员操作记录"""
+    def get(self, request, pk):
+        """
+        :param pk: 用户pk
+        """
+        return_data = []
+        logs = Log.objects.filter(user_id=pk)
+
+        for log in logs:
+            return_data.append({
+                "time": log.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                "content": log.content,
+            })
+
+        return JsonResponse({"status": "ok", "count": len(return_data), "data": return_data})
+
 
 # =======学院的增删改查========
 academy_crud = CrudViewFactory('academy', 'academies', Academy,
