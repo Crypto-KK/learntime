@@ -20,7 +20,7 @@ class ConfEditView(RootRequiredMixin, UpdateView):
     template_name = "conf/edit.html"
     context_object_name = "conf"
     model = Configration
-    fields = ['notice', "is_maintenance", "criterion", "default_password"]
+    fields = ['notice', "maintenance_notice", "criterion", "default_password", "is_maintenance"]
 
     def get_success_url(self):
         messages.success(self.request, "编辑配置成功")
