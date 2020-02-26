@@ -353,8 +353,9 @@ CREDIT_TYPE = {
 
 
 #统计模块
-# 每天凌晨12点30运行，首页显示昨日的概览。
-# 例如9月20的概览是指9月19日0：00 - 9月20日0：00,也就是9月20日前一天的概览
 CRONJOBS = (
-    ('*/1 * * * *', 'django.core.management.call_command', ['runstat', '--test']),
+    # ('*/1 * * * *', 'django.core.management.call_command', ['runstat', '--test']),
+    # 每个月第一天执行一次 统计学时
+    ('0 1 1 * *', 'django.core.management.call_command', ['runstat', '--record']),
+
 )
