@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+    编辑系统配置
+{% endblock %}
+{% block header_name %}
+    编辑系统配置
+{% endblock %}
+{% block body %}
+      <!-- Breadcrumb-->
+    <div class="breadcrumb-holder container-fluid">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'conf:show' %}">查看配置</a></li>
+      <li class="breadcrumb-item active">编辑系统配置</li>
+    </ul>
+    </div>
+
+  <br>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <form action="{% url 'conf:edit' conf.pk %}" method="post" id="conf-form">
+          {% csrf_token %}
+          {{ form.media }}
+          {{ form|crispy }}
+        </form>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary button-submit">确认更改</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+{% block js %}
+    <script>
+        $(function () {
+            $('.button-submit').click(function () {
+                $('#conf-form').submit()
+            })
+        })
+  </script>
+{% endblock %}

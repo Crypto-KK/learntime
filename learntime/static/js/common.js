@@ -213,6 +213,11 @@ $(document).ready(function () {
             removeMenuHighLight();
             $('.admin-page').addClass("active")
         }
+
+        if (pathname.indexOf("/conf") > -1) {
+            removeMenuHighLight();
+            $('.conf-page').addClass("active")
+        }
         if (pathname === "/activities/") {
             removeMenuHighLight();
             $('.activity-page').addClass("active");

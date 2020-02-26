@@ -76,7 +76,8 @@ LOCAL_APPS = [
     "learntime.student.apps.StudentConfig",
     "learntime.activity.apps.ActivityConfig",
     "learntime.operation.apps.OperationConfig",
-    "learntime.statistic.apps.StatisticConfig"
+    "learntime.statistic.apps.StatisticConfig",
+    "learntime.globalconf.apps.GlobalconfConfig"
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

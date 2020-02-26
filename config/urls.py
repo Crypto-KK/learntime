@@ -28,6 +28,7 @@ urlpatterns = [
     path("students/", include("learntime.student.urls", namespace="students")),
     path("activities/", include("learntime.activity.urls", namespace="activities")),
     path("operations/", include("learntime.operation.urls", namespace="operations")),
+    path("conf/", include("learntime.globalconf.urls", namespace="conf")),
 
     path('ckeditor/', include('learntime.utils.ckeditor_urls')),
 

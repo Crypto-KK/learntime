@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}
+    系统配置
+{% endblock %}
+{% block header_name %}
+    系统配置
+{% endblock %}
+{% block body %}
+      <!-- Breadcrumb-->
+    <div class="breadcrumb-holder container-fluid">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+      <li class="breadcrumb-item active">系统配置</li>
+    </ul>
+    </div>
+
+  <br>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">详细信息</h4>
+              <p class="card-text">系统公告：{{ conf.notice }}</p>
+              <p class="card-text">系统状态：{% if conf.is_maintenance %}维护中{% else %}运行中{% endif %}</p>
+              <p class="card-text">学时基准：{{ conf.criterion }}</p>
+              <a class="btn btn-warning" href="{% url 'conf:edit' conf.pk %}">配置</a>
+            </div>
+          </div>
+      </div>
+
+
+    </div>
+  </div>
+
+
+
+
+{% endblock %}
