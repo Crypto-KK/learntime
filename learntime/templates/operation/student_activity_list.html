@@ -89,11 +89,13 @@
           $.post({
             url: '/operations/alter-status/',
             data: {
-              record_pk
+              record_pk,
+              alter_status: 3
             },
             success: res => {
               if (res.status === "ok") {
-                alert("变更成功")
+                alert("变更成功");
+                window.location.reload();
               } else {
                 alert("变更失败")
               }

@@ -50,14 +50,15 @@ class StudentActivityListView(RoleRequiredMixin, PaginatorListView):
                 activity_id__in=my_activity_pks).select_related("student", "activity")
 
 
-class AlterStatusAPIView(RoleRequiredMixin, View):
+class AlterStatusAPIView(View):
     """变更学生参加记录"""
-    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value, RoleEnum.STUDENT.value)
+    # role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value, RoleEnum.STUDENT.value)
     def post(self, request):
         record_pk = request.POST.get("record_pk")
+        alter_status = request.POST.get("alter_status")
         try:
             record = StudentActivity.objects.get(pk=record_pk)
-            record.status = 3
+            record.status = alter_status
             record.save()
         except Exception:
             return JsonResponse({"status": "fail", "reason": "找不到记录"})

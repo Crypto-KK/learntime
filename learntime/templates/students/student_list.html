@@ -200,22 +200,5 @@
 {% block js %}
   <script src="{% static 'js/jquery-form.js' %}"></script>
   <script src="{% static 'js/student.js' %}"></script>
-  <script src="https://cdn.bootcss.com/bootstrap-table/1.15.4/bootstrap-table.min.js"></script>
-  <script src="https://cdn.bootcss.com/bootstrap-table/1.15.4/extensions/resizable/bootstrap-table-resizable.min.js"></script>
-  <script src="{% static 'js/colResizable-1.6.min.js' %}"></script>
-  <script>
-    $(function () {
-        $("#studentTable").colResizable({
-        liveDrag: true,//实时显示滑动位置
-        gripInnerHtml: "<div class='grip'></div>",
-        draggingClass: "dragging",
-        postbackSafe: true,//刷新后保留之前的拖拽宽度
-        headerOnly:true,
-        resizeMode:"overflow",
-        //onResize: onSampleResized
-    });
-
-    })
-  </script>
 {% endblock %}
 
