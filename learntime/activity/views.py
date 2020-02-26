@@ -6,7 +6,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.views.generic.base import View
 
-from activity.tasks import send_activity_verify_email
+from learntime.activity.tasks import send_activity_verify_email
 from learntime.activity.forms import ActivityForm
 from learntime.activity.models import Activity
 from learntime.users.enums import RoleEnum

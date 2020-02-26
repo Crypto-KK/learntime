@@ -35,11 +35,15 @@ class LoginView(View):
             password = form.cleaned_data['password']
             user = authenticate(email=email, password=password)
             if user is not None:
-                login(request, user)
-                if next == "":
-                    return HttpResponseRedirect(reverse('index'))
+                if user.is_freeze:
+                    print("freeze")
+                    return render(request, 'users/registration/login.html', {'form': form, 'error': "该账号已被冻结，请联系管理员"})
                 else:
-                    return HttpResponseRedirect(next)
+                    login(request, user)
+                    if next == "":
+                        return HttpResponseRedirect(reverse('index'))
+                    else:
+                        return HttpResponseRedirect(next)
         return render(request, 'users/registration/login.html', {'form': form, 'error': "账号名或密码错误"})
 
 
@@ -216,6 +220,18 @@ class DontApplyConfirmView(RootRequiredMixin, View):
         except Exception as e:
             return JsonResponse({"err": 1})
         return JsonResponse({"err": 0})
+
+
+class FreezeUserAPIView(RootRequiredMixin, View):
+    """冻结或解冻账号"""
+    def post(self, request):
+        user_pk = request.POST.get("user_pk")
+        user = get_user_model().objects.get(pk=user_pk)
+        user.is_freeze = not user.is_freeze
+        user.save()
+        return JsonResponse({"status": "ok"})
+
+
 
 # =======学院的增删改查========
 academy_crud = CrudViewFactory('academy', 'academies', Academy,

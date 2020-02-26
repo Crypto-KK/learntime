@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AbstractUser
-from django.db.models import CharField, IntegerField, Model
+from django.db.models import CharField, IntegerField, Model, BooleanField
 from django.urls import reverse
 
 from learntime.utils.models import CreatedUpdatedMixin
@@ -22,6 +22,7 @@ class User(AbstractUser):
     identity = IntegerField(verbose_name='请求的身份', choices=IDENTITY, default=1)
 
     role = IntegerField(verbose_name="权限", choices=IDENTITY, default=4)
+    is_freeze = BooleanField(verbose_name="是否冻结", default=False)
 
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"username": self.username})

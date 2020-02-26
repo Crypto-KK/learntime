@@ -28,4 +28,7 @@ urlpatterns = [
     path('admin-update/<int:pk>/', view=views.AdminUpdateView.as_view(), name='update_profile'),
     path("apply_confirm/", view=views.ApplyConfirmView.as_view(), name="apply_comfirm"),
     path("apply_no_confirm/", view=views.DontApplyConfirmView.as_view(), name="apply_no_comfirm"),
+
+    # 冻结账号
+    path("freeze/", view=views.FreezeUserAPIView.as_view(), name='freeze')
 ]

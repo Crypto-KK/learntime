@@ -17,7 +17,7 @@
               <input id="login-password" type="password" name="password" required data-msg="请输入您的密码" class="input-material">
               <label for="login-password" class="label-material">密码</label>
               {% if error %}
-                <div style="color: red">邮箱或密码错误</div>
+                <div style="color: red">{{ error }}</div>
               {% endif %}
             </div>
 {#              {% crispy form %}#}
