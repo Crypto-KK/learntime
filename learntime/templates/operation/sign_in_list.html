@@ -24,30 +24,31 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="signInTitle">签到</h5>
+                  <h5 class="modal-title" id="signInTitle"></h5>
                 </div>
                 <div class="modal-body">
-                  <h1>请使用学时通小程序扫描二维码签到</h1><br>
+                  <h1 id="h1-sign-title"></h1><br>
                   <div class="row">
                     <div class="col-md-6">
                       <div class="input-group">
-                        <label for="sign-in-select">刷新频率:</label>
+                        <label for="sign-in-select" id="frequency-label">刷新频率:</label>
                         <select class="form-control form-control-sm" name="sign-in-frequency" id="sign-in-select">
                           <option value="1">1分钟</option>
                           <option value="2">2分钟</option>
                           <option value="5">5分钟</option>
-                        </select>
+                        </select>&nbsp;
+                        <button class="btn btn-outline-primary btn-sm" id="btn-hide">隐藏</button>
                       </div>
                     </div>
                   </div>
                   <p class="text-center">
                     <img id="sign-in-img" class="img-fluid" src="{% static 'img/loading.gif' %}" alt="">
                   </p>
-                  <p class="text-center" style="font-size: 20px">
-                    <span class="text-center">已签到
-                      <span style="color: blue;" class="font-weight-bold" id="sign-in-count">20</span>人
-                    </span>
-                  </p>
+{#                  <p class="text-center" style="font-size: 20px">#}
+{#                    <span class="text-center">已签到#}
+{#                      <span style="color: blue;" class="font-weight-bold" id="sign-in-count">20</span>人#}
+{#                    </span>#}
+{#                  </p>#}
 
 
                 </div>
@@ -115,10 +116,10 @@
                           <td>{{ activity.get_credit_type_display }}</td>
                           <td>{{ activity.get_join_type_display }}</td>
                           <td>{{ activity.score }}</td>
-                          <td data-pk="{{ activity.pk }}">
+                          <td data-pk="{{ activity.pk }}" data-title="{{ activity.name }}">
                             <button class="btn btn-primary btn-sm btn-blue person-list-btn" data-toggle="modal" data-target="#personListModal">名单</button>
                             <button class="btn btn-primary btn-sm sign-in-btn" data-toggle="modal" data-target="#signInModal">签到</button>
-                            <button class="btn btn-warning btn-sm">签退</button>
+                            <button class="btn btn-warning btn-sm sign-out-btn" data-toggle="modal" data-target="#signInModal">签退</button>
                           </td>
                           </tr>
                       {% endfor %}
@@ -140,11 +141,36 @@
   <script>
     $(function () {
       var signInCounter = ""; // 定时器
-      var frequency = 1;
+      var frequency = 1; //
       var pk = ""; // uuid
+
+      $('#btn-hide').click(function () {
+        // 隐藏刷新频率
+        if ($(this).text().trim() === "隐藏") {
+          $(this).text("显示");
+          $('#sign-in-select').hide();
+          $('#frequency-label').hide()
+        } else {
+          $(this).text("隐藏");
+          $('#sign-in-select').show();
+          $('#frequency-label').show()
+        }
+      });
+
       $('.sign-in-btn').click(function () {
+        // 点击签到按钮
         pk = $(this).parent().attr("data-pk");
-        refreshInterval();
+        $('#signInTitle').text($(this).parent().attr("data-title"));
+        $('#h1-sign-title').text("请使用学时通小程序扫描二维码签到");
+        refreshInterval(1);
+      });
+
+      $('.sign-out-btn').click(function () {
+        // 点击签退按钮
+        pk = $(this).parent().attr("data-pk");
+        $('#signInTitle').text($(this).parent().attr("data-title"));
+        $('#h1-sign-title').text("请使用学时通小程序扫描二维码签退");
+        refreshInterval(2);
       });
 
       $('#close-modal').click(function () {
@@ -183,14 +209,15 @@
         refreshInterval()
       });
 
-      function refreshInterval() {
+      function refreshInterval(signInOrSignOut) {
         // 刷新频率
         if (signInCounter) {
           clearInterval(signInCounter)
         }
+        $('#sign-in-img').attr("src", "/operations/qrcode/" + pk + "/" + frequency + "/" + signInOrSignOut + "/" + Math.ceil(Math.random() * 1999) +"/");
         signInCounter = setInterval(() => {
-          $('#sign-in-img').attr("src", "/operations/qrcode/" + pk + "/" + frequency + "/" + 1 + "/" + Math.ceil(Math.random() * 1999) +"/");
-        }, frequency * 1000);
+          $('#sign-in-img').attr("src", "/operations/qrcode/" + pk + "/" + frequency + "/" + signInOrSignOut + "/" + Math.ceil(Math.random() * 1999) +"/");
+        }, frequency * 1000 * 60);
       }
 
     })

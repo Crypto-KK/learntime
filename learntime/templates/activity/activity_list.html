@@ -78,6 +78,7 @@
                         <th>审核者</th>
                         <th>上级审核者</th>
                         <th>状态</th>
+                        <th>报名人数</th>
                         <th>操作</th>
                       </tr>
                     </thead>
@@ -105,6 +106,7 @@
                                   {% endif %}
                               {% endif %}
                           </td>
+                          <td>{{ activity.join_students.count }}</td>
                           <td>
                             {% if activity.is_verifying %}
                                 <a href="{% url 'activities:activity_update' activity.pk %}" class="btn btn-warning btn-sm">编辑</a>
