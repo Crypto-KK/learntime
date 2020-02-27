@@ -68,14 +68,15 @@ class RegisterView(View):
         return render(request, 'users/registration/register.html', self.context)
     def post(self, request):
         form = RegisterForm(request.POST)
+        print(form.errors)
         if form.is_valid():
             user = User(
                 username=form.cleaned_data['email'],
                 email=form.cleaned_data['email'],
                 name=form.cleaned_data['name'],
-                identity=form.cleaned_data['identity'],
+                role=form.cleaned_data['role'],
             )
-            if form.cleaned_data['identity'] != 2:
+            if form.cleaned_data['role'] != 2:
                 user.academy = form.cleaned_data['academy']
                 user.grade = form.cleaned_data['grade']
 

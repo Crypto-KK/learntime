@@ -19,8 +19,6 @@ class User(AbstractUser):
                       help_text="请按照格式填写，例如(2019级)")
     klass = CharField(verbose_name='班级', max_length=20, null=True, blank=True,
                       help_text="填写格式按照 <软件工程1班> 填写")
-    identity = IntegerField(verbose_name='请求的身份', choices=IDENTITY, default=1)
-
     role = IntegerField(verbose_name="权限", choices=IDENTITY, default=4)
     is_freeze = BooleanField(verbose_name="是否冻结", default=False)
 

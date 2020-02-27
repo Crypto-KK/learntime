@@ -5,5 +5,6 @@ from learntime.globalconf import views
 app_name = "conf"
 urlpatterns = [
     path("show/", view=views.ConfDetailView.as_view(), name="show"),
-    path("edit/<int:pk>/", view=views.ConfEditView.as_view(), name="edit")
+    path("edit/<int:pk>/", view=views.ConfEditView.as_view(), name="edit"),
+    path("remove-session/", view=views.RemoveSessionView.as_view(), name='remove_session')
 ]

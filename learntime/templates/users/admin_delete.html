@@ -9,6 +9,7 @@
       <div class="col-md-8">
 
         <h1>确定要删除管理员 {{ admin.name }} 吗？</h1>
+        <p>请注意：所有与该管理员有关的数据将全部删除！</p>
         <form method="post" action="{% url 'users:admin_delete' admin.pk %}">
             {% csrf_token %}
             <button class="btn-lg btn-danger" type="submit">删除</button>

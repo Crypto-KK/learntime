@@ -28,10 +28,10 @@
                       <tr>
                         <th>邮箱</th>
                         <th>姓名</th>
-                        <th>级别</th>
                         <th>学院</th>
                         <th>年级</th>
                         <th>操作</th>
+                        <th>申请的权限</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -39,10 +39,10 @@
                           <tr>
                           <td>{{ admin.email }}</td>
                           <td>{{ admin.name }}</td>
-                          <td>{{ admin.get_identity_display }}</td>
                           <td>{% if admin.academy %}{{ admin.academy }}{% else %}-{% endif %}</td>
                           <td>{% if admin.grade %}{{ admin.grade }}{% else %}-{% endif %}</td>
-                          <td><button class="btn btn-success btn-sm confirmBtn" data-toggle="modal" data-target="#Modal" data-username="{{ admin.username }}">通过</button>
+                          <td>{{ admin.get_role_display }}</td>
+                          <td><button class="btn btn-success btn-sm confirmBtn" data-toggle="modal" data-target="#Modal" data-username="{{ admin.username }}" data-current-role="{{ admin.role }}">通过</button>
                           <button class="btn btn-danger btn-sm noConfirmBtn" data-toggle="modal" data-target="#noApplyModal" data-user-id="{{ admin.pk }}">不通过</button>
                           </td>
                           </tr>
@@ -72,7 +72,7 @@
           <div class="form-group">
             <label for="recipient-name" class="col-form-label">权限名：</label>
             <select class="custom-select" id="group-select">
-                <option value="4" >干部级</option>
+                <option value="4" >学生干部级</option>
                 <option value="3" >学院级</option>
                 <option value="2" >校级</option>
             </select>
@@ -120,8 +120,11 @@
     $(function () {
         var username = "";
         var user_id = "";
+        var current_role = 4;
         $('.confirmBtn').click(function () {
-            username = $(this).attr("data-username")
+            username = $(this).attr("data-username");
+            current_role = $(this).attr("data-current-role");
+            $('#group-select').val(current_role);
         });
         $('.noConfirmBtn').click(function () {
             user_id = $(this).attr("data-user-id")

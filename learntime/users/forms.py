@@ -49,7 +49,7 @@ class RegisterForm(forms.ModelForm):
     password2 = forms.CharField()
 
     class Meta:
-        fields = ['name', 'email', 'password', 'identity']
+        fields = ['name', 'email', 'password', 'role']
         model = User
 
 

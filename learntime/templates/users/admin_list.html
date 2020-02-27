@@ -97,12 +97,13 @@
                           <td>
                             {% if role == 1 or role == 2 %}
 {#                              <a href="{% url 'users:admin_detail' admin.pk %}" class="btn btn-primary btn-sm">查看</a>#}
-                              <a href="{% url 'users:update_profile' admin.pk %}" class="btn btn-warning btn-sm">编辑</a>
+                              <a href="{% url 'users:update_profile' admin.pk %}" class="btn btn-warning btn-sm">修改</a>
                               {% if not admin.role == 1 %}
+                                <button type="button" class="btn btn-primary btn-sm btn-log" data-toggle="modal" data-target="#operationModal" data-user-pk="{{ admin.pk }}">日志</button>
                                 <button class="btn btn-blue btn-sm btn-freeze" data-user-pk="{{ admin.pk }}">
                                     {% if admin.is_freeze %}解冻{% else %}冻结{% endif %}
                                 </button>
-                                <button type="button" class="btn btn-primary btn-sm btn-log" data-toggle="modal" data-target="#operationModal" data-user-pk="{{ admin.pk }}">调取日志</button>
+                                <a href="{% url 'users:admin_delete' admin.pk %}" type="button" class="btn btn-danger btn-sm btn-log">删除</a>
                               {% endif %}
                             {% endif %}
                           </td>

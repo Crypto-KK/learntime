@@ -15,3 +15,7 @@ class Configration(models.Model):
     is_maintenance = models.BooleanField(default=False, verbose_name="维护")
     criterion = models.FloatField(default=30, verbose_name="学时计算基准分数")
     default_password = models.CharField(max_length=20, verbose_name="管理员默认密码", default="123456")
+
+    database_host = models.CharField(verbose_name="数据库地址", max_length=50, null=True, blank=True)
+    database_user = models.CharField(verbose_name="数据库用户", max_length=50, null=True, blank=True)
+    database_pass = models.CharField(verbose_name="数据库密码", max_length=50, null=True, blank=True)

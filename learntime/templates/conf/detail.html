@@ -27,7 +27,9 @@
               <p class="card-text">系统状态：{% if conf.is_maintenance %}维护中{% else %}运行中{% endif %}</p>
               <p class="card-text">学时基准：{{ conf.criterion }}</p>
               <p class="card-text">默认密码：{{ conf.default_password }}</p>
-              <a class="btn btn-warning" href="{% url 'conf:edit' conf.pk %}">配置</a>
+              <a class="btn btn-warning" href="{% url 'conf:edit' conf.pk %}">修改配置</a>
+              <button id="remove-session-btn" class="btn btn-danger">清除所有会话</button>
+
             </div>
           </div>
       </div>
@@ -36,7 +38,26 @@
     </div>
   </div>
 
+{% endblock %}
+{% block js %}
+  <script>
+    $(function () {
+      $('#remove-session-btn').click(function () {
+        if (window.confirm("确认移除所有会话？已登录的所有用户会强制注销")) {
+            $.post({
+            url: "/conf/remove-session/",
+            success: res => {
+              if (res.status === "ok") {
+                alert("操作成功");
+                window.location = "/"
+              } else {
+                alert("操作失败")
+              }
+            }
+          })
+        }
 
-
-
+      })
+    })
+  </script>
 {% endblock %}

@@ -29,7 +29,20 @@
               <input id="register-name" type="text" name="name" required data-msg="请输入您的姓名" class="input-material">
               <label for="register-name" class="label-material">姓名</label>
             </div>
-
+            <div class="form-group terms-conditions">
+              <div class="form-check form-check-inline">
+                <input id="register-school" name="role" type="radio" required value="2" data-msg="" class="checkbox-template">
+                <label for="register-school" class="form-check-label" >校级</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input id="register-academy" name="role" type="radio" required value="3" data-msg="" class="checkbox-template">
+                <label for="register-academy" class="form-check-label" >学院级</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input id="register-student" name="role" type="radio" required value="4" data-msg="" class="checkbox-template" checked>
+                <label for="register-student" class="form-check-label" >学生干部级</label>
+              </div>
+            </div>
             <div class="form-group" id="choose-academy">
               <label for="inputState">选择所属学院</label>
               <select id="inputState" class="form-control" name="academy">
@@ -46,20 +59,7 @@
                 {% endfor %}
               </select>
             </div>
-            <div class="form-group terms-conditions">
-              <div class="form-check form-check-inline">
-                <input id="register-school" name="identity" type="radio" required value="2" data-msg="" class="checkbox-template">
-                <label for="register-school" class="form-check-label" >校级</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input id="register-academy" name="identity" type="radio" required value="3" data-msg="" class="checkbox-template">
-                <label for="register-academy" class="form-check-label" >学院级</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input id="register-student" name="identity" type="radio" required value="4" data-msg="" class="checkbox-template" checked>
-                <label for="register-student" class="form-check-label" >干部级</label>
-              </div>
-            </div>
+
               {% csrf_token %}
             <div class="form-group">
                 {% for err in form.errors.values %}
