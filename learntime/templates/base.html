@@ -134,7 +134,7 @@
             {% endif %}
             {% if role == 4 %}
             <li class="left-link activity-page" ><a href="{% url 'activities:activities' %}"> <i class="fa fa-send-o"></i>我的活动</a></li>
-            <li class="left-link activity-page" ><a href="{% url 'activities:activity_create' %}"> <i class="fa fa-pencil-square-o"></i>发布活动</a></li>
+            <li class="left-link create-activity-page" ><a href="{% url 'activities:activity_create' %}"> <i class="fa fa-pencil-square-o"></i>发布活动</a></li>
             <li class="left-link activity-sign" ><a href="{% url 'operations:sign_in_list' %}"> <i class="fa fa-qrcode"></i>&nbsp;签到签退</a></li>
             <li class="left-link credit-page" ><a href="{% url 'students:student_credit_apply' %}"> <i class="fa fa-pencil"></i>&nbsp;补录学时</a></li>
             {% endif %}

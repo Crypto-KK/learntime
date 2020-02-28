@@ -102,11 +102,13 @@
                 lang: 'zh',
                 format: 'Y-m-d H:i',//格式化显示
             };
-            $('#id_deadline').datetimepicker(params);
+            $('#id_deadline').datetimepicker(params).attr("autocomplete", "off");
             $('#id_time').datetimepicker(params);
 
         };
 
+
+        $('#id_time').attr("autocomplete", "off");
         $('#id_logo').removeClass('custom-file-input form-control')
             .parent().removeClass('custom-file')
         $('#id_file').removeClass('custom-file-input form-control')

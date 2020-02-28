@@ -222,6 +222,10 @@ $(document).ready(function () {
             removeMenuHighLight();
             $('.activity-page').addClass("active");
         }
+        if (pathname === "/activities/create/") {
+            removeMenuHighLight();
+            $('.create-activity-page').addClass("active");
+        }
         if (pathname === "/academy/") {
             removeMenuHighLight();
             $('.academy-page').addClass("active");

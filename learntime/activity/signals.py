@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from django.dispatch import receiver
-from django.db.models.signals import post_save, post_delete, pre_delete
+from django.db.models.signals import post_save, pre_delete
+from django.core.cache import cache
 
 from learntime.activity.models import Activity, SimpleActivity
 from learntime.operation.models import Log
@@ -28,8 +31,16 @@ def after_create_activity(sender, instance=None, created=False, **kwargs):
                 place=instance.place,
                 logo=instance.logo,
                 credit_type=instance.credit_type,
-                deadline=instance.deadline
+                deadline=instance.deadline,
+                score=instance.score
             )
+
+            now = datetime.now() # 当前时间
+            time_delta = instance.deadline - now
+            expires = int(time_delta.total_seconds())
+            if expires > 0:
+                # 将活动id写入到redis缓存中，过期时间为expire
+                cache.set("activity:" + str(instance.uid), 1, expires)
 
             if not instance.to_school:
                 # 院级审核通过
