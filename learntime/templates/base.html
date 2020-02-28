@@ -132,7 +132,7 @@
           <ul>
             <li class="left-link change-password-page" ><a href="{% url 'users:password_change' %}"> <i class="fa fa-pencil fa-fw"></i>修改密码 </a></li>
             <li class="left-link my-detail-page" ><a href="{% url 'users:my_detail' %}"> <i class="fa fa-cog fa-fw"></i>我的信息 </a></li>
-            <li class="left-link " ><a href="#"> <i class="fa fa-question-circle fa-fw"></i>查看帮助 </a></li>
+            <li class="left-link help-page" ><a href="{% url 'conf:help_list' %}"> <i class="fa fa-question-circle fa-fw"></i>查看帮助 </a></li>
           </ul>
         {% endwith %}
         </nav>

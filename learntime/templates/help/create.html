@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+    创建帮助文档
+{% endblock %}
+{% block header_name %}
+    创建帮助文档
+{% endblock %}
+{% block body %}
+      <!-- Breadcrumb-->
+    <div class="breadcrumb-holder container-fluid">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'conf:help_list' %}">帮助文档</a></li>
+      <li class="breadcrumb-item active">新建</li>
+    </ul>
+    </div>
+
+  <br>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <form id="help_form" action="{% url 'conf:help_create' %}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form|crispy }}
+          {{ form.media }}
+
+        </form>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary btn-lg pull-right" id="btn-create-help">发布</button>
+        </div>
+      </div>
+
+    </div>
+  <br><br>
+  </div>
+
+{% endblock %}
+{% block js %}
+  <script>
+    $(function () {
+      $('#btn-create-help').click(function () {
+        $('#help_form').submit();
+      })
+    })
+  </script>
+{% endblock %}

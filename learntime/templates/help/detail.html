@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}
+    帮助文档
+{% endblock %}
+{% block header_name %}
+    帮助文档
+{% endblock %}
+{% block body %}
+
+  <br>
+
+  <div class="container">
+    <div class="row">
+      <div class="offset-md-1 col-md-10 offset-md-1">
+        <div class="card">
+          <div class="card-body">
+            <div class="text-center">
+              <h1 class="card-title text-center">{{ help.title }}</h1>
+{#                <img src="{{ ALI_MEDIA_URL }}{{ activity.logo }}"  />#}
+                <span>分类：{{ help.category }} | 最后更新时间：{{ help.updated_at }}</span>
+              <hr>
+            </div>
+            <div class="row">
+              <div class="col-md-8 offset-md-2">
+                 <div class="">{{ help.content | safe }}</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

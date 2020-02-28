@@ -214,10 +214,15 @@ $(document).ready(function () {
             $('.admin-page').addClass("active")
         }
 
-        if (pathname.indexOf("/conf") > -1) {
+        if (pathname === "/conf/show/") {
             removeMenuHighLight();
             $('.conf-page').addClass("active")
         }
+        if (pathname === "/conf/help/list/") {
+            removeMenuHighLight();
+            $('.help-page').addClass("active")
+        }
+
         if (pathname === "/activities/") {
             removeMenuHighLight();
             $('.activity-page').addClass("active");
