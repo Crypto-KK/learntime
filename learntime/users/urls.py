@@ -26,6 +26,7 @@ urlpatterns = [
     path('admin-create/', view=views.AdminCreateView.as_view(), name='admin_create'),
     path('admin-delete/<int:pk>/', view=views.AdminDeleteView.as_view(), name='admin_delete'),
     path('admin-update/<int:pk>/', view=views.AdminUpdateView.as_view(), name='update_profile'),
+    path('my/', view=views.MyDetailView.as_view(), name='my_detail'),
     path("apply_confirm/", view=views.ApplyConfirmView.as_view(), name="apply_comfirm"),
     path("apply_no_confirm/", view=views.DontApplyConfirmView.as_view(), name="apply_no_comfirm"),
 

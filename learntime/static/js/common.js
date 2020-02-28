@@ -286,6 +286,17 @@ $(document).ready(function () {
         }
 
 
+        if (pathname === "/users/password-change/") {
+            removeMenuHighLight();
+            $('.change-password-page').addClass("active")
+        }
+
+        if (pathname === "/users/my/") {
+            removeMenuHighLight();
+            $('.my-detail-page').addClass("active")
+        }
+
+
     }
 
     function removeMenuHighLight() {

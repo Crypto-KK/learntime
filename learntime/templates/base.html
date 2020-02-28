@@ -52,32 +52,12 @@
               <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
 
                <!-- Logout    -->
-                <li class="nav-item"><a class="nav-link logout" data-toggle="modal" data-target="#helpModal"> <span class="d-none d-sm-inline">查看帮助</span></a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'users:password_change' %}">修改密码</a></li>
-                <li class="nav-item"><a href="{% url 'users:logout' %}" class="nav-link logout"> <span class="d-none d-sm-inline">退出登录</span><i class="fa fa-sign-out"></i></a></li>
+                <li class="nav-item"><a href="{% url 'users:logout' %}" class="nav-link logout"> <span class="d-none d-sm-inline">注销</span><i class="fa fa-sign-out"></i></a></li>
               </ul>
             </div>
           </div>
         </nav>
       </header>
-      <div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalCenterTitle">学时通使用说明</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              ...
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
-            </div>
-          </div>
-        </div>
-      </div>
       {% with role=request.user.role %}
       <div class="page-content d-flex align-items-stretch">
         <!-- Side Navbar -->
@@ -103,50 +83,56 @@
           <span class="heading">学生管理</span>
 
           <ul class="list-unstyled">
-            <li class="left-link index-page"><a href="{% url 'index' %}"> <i class="icon-home"></i>首页 </a></li>
+            <li class="left-link index-page"><a href="{% url 'index' %}"> <i class="icon-home fa-fw"></i>首页 </a></li>
             {% if role == 1 %}
-              <li class="left-link academy-page"><a href="{% url 'academy' %}"> <i class="fa fa-database"></i>学院管理 </a></li>
-              <li class="left-link grade-page"><a href="{% url 'grade' %}"> <i class="fa fa-cube"></i>年级管理 </a></li>
+              <li class="left-link academy-page"><a href="{% url 'academy' %}"> <i class="fa fa-database fa-fw"></i>学院管理 </a></li>
+              <li class="left-link grade-page"><a href="{% url 'grade' %}"> <i class="fa fa-cube fa-fw"></i>年级管理 </a></li>
             {% endif %}
             {% if role != 4 %}
-            <li class="left-link student-page" ><a href="{% url 'students:students' %}"> <i class="fa fa-users"></i>学生管理 </a></li>
+            <li class="left-link student-page" ><a href="{% url 'students:students' %}"> <i class="fa fa-users fa-fw"></i>学生管理 </a></li>
             {% endif %}
             {% if role == 1 or role == 3 %}
 
-              <li class="left-link credit-page"><a href="{% url 'students:student_credit' %}"> <i class="fa fa-wrench"></i>学时变更 </a></li>
+              <li class="left-link credit-page"><a href="{% url 'students:student_credit' %}"> <i class="fa fa-wrench fa-fw"></i>学时变更 </a></li>
             {% endif %}
-              <li class="left-link log-page"><a href="{% url 'operations:log_list' %}"><i class="fa fa-play-circle-o"></i>&nbsp;操作记录</a></li>
+              <li class="left-link log-page"><a href="{% url 'operations:log_list' %}"><i class="fa fa-reply-all fa-fw"></i>操作记录</a></li>
           </ul>
             {% if role == 1 %}
               <span class="heading">系统管理</span>
               <ul>
-              <li class="left-link register-page"><a href="{% url 'users:admin_apply' %}"> <i class="fa fa-edit"></i>注册审核 </a></li>
-              <li class="left-link admin-page"><a href="{% url 'users:admins' %}"> <i class="fa fa-user-circle-o"></i>用户管理 </a></li>
-              <li class="left-link conf-page"><a href="{% url 'conf:show' %}"> <i class="fa fa-window-close-o"></i>系统配置 </a></li>
+              <li class="left-link register-page"><a href="{% url 'users:admin_apply' %}"> <i class="fa fa-edit fa-fw"></i>注册审核 </a></li>
+              <li class="left-link admin-page"><a href="{% url 'users:admins' %}"> <i class="fa fa-user-circle-o fa-fw"></i>用户管理 </a></li>
+              <li class="left-link conf-page"><a href="{% url 'conf:show' %}"> <i class="fa fa-window-close-o fa-fw"></i>系统配置 </a></li>
               </ul>
             {% endif %}
 
           <span class="heading">活动管理</span>
           <ul>
             {% if role == 2 or role == 3 %}
-              <li class="left-link activity-verify-page"><a href="{% url 'activities:activity_unverify' %}"> <i class="fa fa-bullhorn"></i>活动审批 </a></li>
-              <li class="left-link credit-verify-page"><a href="{% url 'students:student_credit_verify' %}"> <i class="fa fa-bullhorn"></i>补录学时 </a></li>
+              <li class="left-link activity-verify-page"><a href="{% url 'activities:activity_unverify' %}"> <i class="fa fa-bullhorn fa-fw"></i>活动审批 </a></li>
+              <li class="left-link credit-verify-page"><a href="{% url 'students:student_credit_verify' %}"> <i class="fa fa-bullhorn fa-fw"></i>补录学时 </a></li>
             {% endif %}
             {% if role == 4 %}
-            <li class="left-link activity-page" ><a href="{% url 'activities:activities' %}"> <i class="fa fa-send-o"></i>我的活动</a></li>
-            <li class="left-link create-activity-page" ><a href="{% url 'activities:activity_create' %}"> <i class="fa fa-pencil-square-o"></i>发布活动</a></li>
-            <li class="left-link activity-sign" ><a href="{% url 'operations:sign_in_list' %}"> <i class="fa fa-qrcode"></i>&nbsp;签到签退</a></li>
-            <li class="left-link credit-page" ><a href="{% url 'students:student_credit_apply' %}"> <i class="fa fa-pencil"></i>&nbsp;补录学时</a></li>
+            <li class="left-link activity-page" ><a href="{% url 'activities:activities' %}"> <i class="fa fa-send-o fa-fw"></i>我的活动</a></li>
+            <li class="left-link create-activity-page" ><a href="{% url 'activities:activity_create' %}"> <i class="fa fa-pencil-square-o fa-fw"></i>发布活动</a></li>
+            <li class="left-link activity-sign" ><a href="{% url 'operations:sign_in_list' %}"> <i class="fa fa-qrcode fa-fw"></i>签到签退</a></li>
+            <li class="left-link credit-page" ><a href="{% url 'students:student_credit_apply' %}"> <i class="fa fa-pencil fa-fw"></i>补录学时</a></li>
             {% endif %}
             {% if role == 1 %}
-            <li class="left-link activity-all-page"><a href="{% url 'activities:activity_all' %}"> <i class="fa fa-bullhorn"></i>全部活动 </a></li>
+            <li class="left-link activity-all-page"><a href="{% url 'activities:activity_all' %}"> <i class="fa fa-bullhorn fa-fw"></i>全部活动 </a></li>
             {% endif %}
-            <li class="left-link join-list" ><a href="{% url 'operations:join_list' %}"> <i class="fa fa-database"></i>&nbsp;活动参加记录</a></li>
+            <li class="left-link join-list" ><a href="{% url 'operations:join_list' %}"> <i class="fa fa-database fa-fw"></i>活动参加记录</a></li>
 
           </ul>
           <span class="heading">统计模块</span>
           <ul>
-            <li class="left-link" ><a href="#"> <i class="fa fa-bar-chart"></i>学时统计 </a></li>
+            <li class="left-link" ><a href="#"> <i class="fa fa-bar-chart fa-fw"></i>学时统计 </a></li>
+          </ul>
+          <span class="heading">个人中心</span>
+          <ul>
+            <li class="left-link change-password-page" ><a href="{% url 'users:password_change' %}"> <i class="fa fa-pencil fa-fw"></i>修改密码 </a></li>
+            <li class="left-link my-detail-page" ><a href="{% url 'users:my_detail' %}"> <i class="fa fa-cog fa-fw"></i>我的信息 </a></li>
+            <li class="left-link " ><a href="#"> <i class="fa fa-question-circle fa-fw"></i>查看帮助 </a></li>
           </ul>
         {% endwith %}
         </nav>

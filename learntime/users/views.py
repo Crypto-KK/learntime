@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
-from django.views.generic import UpdateView, DeleteView, CreateView
+from django.views.generic import UpdateView, DeleteView, CreateView, DetailView
 from django.views.generic.base import View
 
 from learntime.globalconf.models import Configration
@@ -202,6 +202,16 @@ class AdminDeleteView(RootRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.warning(self.request, "删除管理员成功")
         return reverse_lazy("users:admins")
+
+
+class MyDetailView(DetailView):
+    """查看自己的资料"""
+    model = User
+    template_name = "users/admin_detail.html"
+    context_object_name = "admin"
+
+    def get_object(self, queryset=None):
+        return self.request.user
 
 
 class ApplyConfirmView(RootRequiredMixin, View):

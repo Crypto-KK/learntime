@@ -1,17 +1,16 @@
 {% extends 'base.html' %}
 {% block title %}
-    管理员管理
+    我的个人资料
 {% endblock %}
 {% block header_name %}
-    管理员管理
+    我的个人资料
 {% endblock %}
 {% block body %}
       <!-- Breadcrumb-->
     <div class="breadcrumb-holder container-fluid">
     <ul class="breadcrumb">
       <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
-      <li class="breadcrumb-item"><a href="{% url 'users:admins' %}">管理员管理</a></li>
-      <li class="breadcrumb-item active">管理员详情</li>
+      <li class="breadcrumb-item active">我的个人资料</li>
     </ul>
     </div>
 
@@ -22,15 +21,28 @@
       <div class="col-md-8 offset-md-2">
           <div class="card">
             <div class="card-body">
-              <h4 class="card-title">用户{{ admin.username }}的详细信息</h4>
+              <h1 class="card-title">个人资料</h1>
+              <p style="color: red">注意：若您的年级、学院、班级等信息发生变动，请点击申请变更按钮，提交申请。</p>
               <p class="card-text">姓名：{% if admin.name %}{{ admin.name }}{% else %}暂无{% endif %}</p>
               <p class="card-text">邮箱：{{ admin.email }}</p>
-              <p class="card-text">权限：{% for group in admin.groups.all %}{{ group }}{% endfor %}</p>
-              <p class="card-text">所属学院：{% if admin.academy %}{{ admin.academy }}{% else %}暂无{% endif %}</p>
-              <p class="card-text">所属年级：{% if admin.grade %}{{ admin.grade }}{% else %}暂无{% endif %}</p>
-              <p class="card-text">所属班级：{% if admin.klass %}{{ admin.klass }}{% else %}暂无{% endif %}</p>
+              <p class="card-text">权限：{{ admin.get_role_display }}</p>
+              <p class="card-text">学院：{% if admin.academy %}{{ admin.academy }}{% else %}-{% endif %}</p>
+              <p class="card-text">年级：{% if admin.grade %}{{ admin.grade }}{% else %}-{% endif %}</p>
+              <p class="card-text">班级：{% if admin.klass %}{{ admin.klass }}{% else %}-{% endif %}</p>
               <p class="card-text">注册时间：{{ admin.date_joined }}</p>
-              <p class="card-text"><a href="{% url 'users:admins' %}" class="btn btn-primary">返回</a></p>
+              <p class="card-text">上次登录：{{ admin.last_login }}</p>
+              {% if admin.is_freeze %}
+                <p class="card-text">账户状态：<span style="color: red">冻结</span></p>
+              {% else %}
+                <p class="card-text">账户状态：<span style="color: green">正常</span></p>
+              {% endif %}
+              {% if not request.user.is_superuser %}
+                <p class="card-text">
+                  <a href="{% url 'users:password_change' %}" class="btn btn-warning">更改密码</a>
+                  <a href="#" class="btn btn-primary">申请变更</a>
+                </p>
+              {% endif %}
+
 
             </div>
           </div>
