@@ -73,7 +73,7 @@ class SignInListView(RoleRequiredMixin, PaginatorListView):
     paginate_by = 20
 
     def get_queryset(self):
-        return Activity.objects.filter(user=self.request.user)\
+        return Activity.objects.filter(user=self.request.user, is_verify=True)\
             .select_related("user", "to", "to_school")
 
 

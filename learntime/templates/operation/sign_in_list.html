@@ -104,6 +104,7 @@
                         <th>类别</th>
                         <th>报名身份</th>
                         <th>学时</th>
+                        <th>报名人数</th>
                         <th>操作</th>
                       </tr>
                     </thead>
@@ -116,10 +117,13 @@
                           <td>{{ activity.get_credit_type_display }}</td>
                           <td>{{ activity.get_join_type_display }}</td>
                           <td>{{ activity.score }}</td>
+                          <td>{{ activity.join_students.count }}</td>
                           <td data-pk="{{ activity.pk }}" data-title="{{ activity.name }}">
                             <button class="btn btn-primary btn-sm btn-blue person-list-btn" data-toggle="modal" data-target="#personListModal">名单</button>
-                            <button class="btn btn-primary btn-sm sign-in-btn" data-toggle="modal" data-target="#signInModal">签到</button>
-                            <button class="btn btn-warning btn-sm sign-out-btn" data-toggle="modal" data-target="#signInModal">签退</button>
+                            {% if not activity.stop %}
+                              <button class="btn btn-primary btn-sm sign-in-btn" data-toggle="modal" data-target="#signInModal">签到</button>
+                              <button class="btn btn-warning btn-sm sign-out-btn" data-toggle="modal" data-target="#signInModal">签退</button>
+                            {% endif %}
                           </td>
                           </tr>
                       {% endfor %}

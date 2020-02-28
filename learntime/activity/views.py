@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -37,7 +39,14 @@ class MyActivityList(RoleRequiredMixin, PaginatorListView):
 
     def get_queryset(self):
         """返回我发布的活动"""
-        return Activity.objects.filter(user=self.request.user)
+        now = datetime.now()
+        activities = Activity.objects.filter(user=self.request.user)
+        # 获取所有已经超过截止时间的活动
+        activities_update_list = activities.filter(stop=False, is_verify=True, deadline__lt=now)
+        if activities_update_list.__len__() > 0:
+            activities_update_list.update(stop=True)
+        return activities
+
 
 
 class ActivityUnVerifyList(RoleRequiredMixin, PaginatorListView):

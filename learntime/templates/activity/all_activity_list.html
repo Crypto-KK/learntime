@@ -56,9 +56,11 @@
                         <th>类别</th>
                         <th>报名身份</th>
                         <th>学时</th>
-                        <th>审核者</th>
-                        <th>上级审核者</th>
-                        <th>状态</th>
+                        <th>审核人</th>
+                        <th>上级审核人</th>
+                        <th>审核</th>
+                        <th>报名人数</th>
+                        <th>活动状态</th>
                         <th>操作</th>
                       </tr>
                     </thead>
@@ -85,6 +87,25 @@
                                     <i class="fa fa-remove" style="color: red"></i>
                                   {% endif %}
                               {% endif %}
+                          </td>
+                          <td>
+                            {% if activity.is_verify %}
+                              {{ activity.join_students.count }}
+                            {% else %}
+                              -
+                            {% endif %}
+                          </td>
+                          <td>
+                            {% if not activity.is_verify %}
+                              -
+                            {% else %}
+                              {% if activity.stop %}
+                                <span style="color: red">已截止</span>
+                              {% else %}
+                                <span style="color: green">报名中</span>
+                              {% endif %}
+                            {% endif %}
+
                           </td>
                           <td>
                             {% if activity.is_verifying %}
