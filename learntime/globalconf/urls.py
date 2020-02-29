@@ -14,4 +14,6 @@ urlpatterns = [
     path("help/update/<int:pk>/", view=views.HelpUpdateView.as_view(), name="help_update"),
     path("help/delete/<int:pk>/", view=views.HelpDeleteView.as_view(), name="help_delete"),
 
+
+    path("gzcc/", view=views.GZCCView.as_view(), name="gzcc")
 ]

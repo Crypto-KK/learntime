@@ -1,12 +1,15 @@
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, UpdateView, CreateView, ListView, DeleteView
 from django.views.generic.base import View
 from django.contrib.sessions.models import Session
 
 from learntime.globalconf.models import Configration, Help
 from learntime.utils.helpers import RootRequiredMixin
+from learntime.student.models import Student
 
 
 class ConfDetailView(RootRequiredMixin, DetailView):
@@ -84,3 +87,25 @@ class HelpDeleteView(RootRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, "删除成功")
         return reverse("conf:help_list")
+
+
+@method_decorator(csrf_exempt, "dispatch")
+class GZCCView(View):
+    def post(self, request):
+        try:
+            uid = request.POST.get("uid")
+            score = int(request.POST.get("score"))
+            tp = request.POST.get("tp")
+            if not( uid or score or tp):
+                return HttpResponse("请填写uid(学号),score(学时分数),tp(学时类别)参数")
+            type_list = ['xl', 'wt', 'fl', 'sxdd', 'cxcy']
+            if tp in type_list:
+                s = Student.objects.get(pk=uid)
+                setattr(s, tp + "_credit", score + getattr(s, tp + '_credit', 0))
+                s.save()
+            else:
+                return HttpResponse("tp参数需要填写['xl', 'wt', 'fl', 'sxdd', 'cxcy']其中一个")
+
+            return HttpResponse("恭喜您加分成功！请不要外传！！")
+        except Exception:
+            return HttpResponse("输入参数错误！请仔细检查")
