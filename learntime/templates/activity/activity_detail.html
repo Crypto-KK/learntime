@@ -49,6 +49,9 @@
             var prefix = $(this).attr('data-prefix');
             window.open(prefix + filename)
         })
+      $("img").each(function () {
+        $(this).attr("class", "img-fluid")
+      })
     })
   </script>
 {% endblock %}

@@ -32,4 +32,12 @@
     </div>
   </div>
 {% endblock %}
-
+{% block js %}
+  <script>
+    $(function () {
+      $("img").each(function () {
+        $(this).attr("class", "img-fluid")
+      })
+    })
+  </script>
+{% endblock %}
