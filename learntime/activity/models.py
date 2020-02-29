@@ -81,6 +81,8 @@ class Activity(CreatedUpdatedMixin, models.Model):
 
     stop = models.BooleanField(verbose_name="是否截止", default=False)
 
+    mark_score = models.IntegerField(verbose_name="活动评分", default=5)
+
     class Meta:
         verbose_name = "活动"
         verbose_name_plural = verbose_name
@@ -115,6 +117,7 @@ class SimpleActivity(models.Model):
     deadline = models.DateTimeField(null=True, blank=True, verbose_name="报名截止日期")
     created = models.DateTimeField(db_index=True, auto_now_add=True, verbose_name='创建时间',
                                       blank=True, null=True)
+    mark_score = models.IntegerField(verbose_name="活动评分", default=5)
     class Meta:
         verbose_name = "活动"
         verbose_name_plural = verbose_name

@@ -264,6 +264,11 @@ $(document).ready(function () {
             $('.log-page').addClass("active")
         }
 
+        if (pathname === '/operations/comments/') {
+            removeMenuHighLight();
+            $('.comment-page').addClass("active")
+        }
+
         if (pathname === "/students/credit/") {
             removeMenuHighLight();
             $('.credit-page').addClass("active")

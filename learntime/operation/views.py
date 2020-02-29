@@ -4,10 +4,11 @@ import qrcode
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.utils.six import BytesIO
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
 
 from learntime.activity.models import Activity
-from learntime.operation.models import Log, StudentActivity
+from learntime.operation.models import Log, StudentActivity, Comment
 from learntime.utils.helpers import PaginatorListView, RoleRequiredMixin
 from learntime.users.enums import RoleEnum
 
@@ -23,6 +24,14 @@ class LogList(LoginRequiredMixin, PaginatorListView):
             return Log.objects.all().select_related("user")
         else:
             return Log.objects.filter(user=self.request.user).select_related("user")
+
+
+class CommentList(LoginRequiredMixin, PaginatorListView):
+    template_name = "operation/comment_list.html"
+    context_object_name = "comments"
+    paginate_by = 50
+    model = Comment
+
 
 
 class StudentActivityListView(RoleRequiredMixin, PaginatorListView):

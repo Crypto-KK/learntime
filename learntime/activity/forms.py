@@ -29,7 +29,7 @@ class ActivityForm(forms.ModelForm):
     class Meta:
         exclude = ("user", "uid", "is_verify", "is_academy_verify",
                    "is_school_verify", "to", "is_verifying", "reason", "to_school",
-                   "stop", "is_craft")
+                   "stop", "is_craft", "mark_score")
         model = Activity
 
     def clean_credit_type(self):
@@ -67,7 +67,7 @@ class ActivityCraftForm(forms.ModelForm):
     class Meta:
         exclude = ("user", "uid", "is_verify", "is_academy_verify",
                    "is_school_verify", "to", "is_verifying", "reason", "to_school",
-                   "stop", "is_craft")
+                   "stop", "is_craft", "mark_score")
         model = Activity
 
     time = forms.CharField(required=False, label="活动时间", help_text="此处可以自行手动填写，或者选择特定的日期")
