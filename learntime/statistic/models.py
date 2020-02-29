@@ -17,7 +17,16 @@ class CreditStat(models.Model):
     fl_credit = models.FloatField(default=0, verbose_name="法律学时")
     wt_credit = models.FloatField(default=0, verbose_name="文体学时")
     xl_credit = models.FloatField(default=0, verbose_name="心理学时")
-    record_time = models.DateField(verbose_name="统计时间")
+
+    # 学时变化情况
+    diff = models.FloatField(default=0, verbose_name="总学时月度变化")
+    diff_cxcy = models.FloatField(default=0, verbose_name="创新创业学时月度变化")
+    diff_sxdd = models.FloatField(default=0, verbose_name="思想道德学时月度变化")
+    diff_fl = models.FloatField(default=0, verbose_name="法律学时月度变化")
+    diff_wt = models.FloatField(default=0, verbose_name="文体学时月度变化")
+    diff_xl = models.FloatField(default=0, verbose_name="心理学时月度变化")
+
+    record_time = models.DateField(verbose_name="统计时间(上个月)")
 
     def __str__(self):
         return f"{self.uid} of {self.record_time}"
@@ -37,4 +46,5 @@ class CreditStat(models.Model):
         indexes = [
             models.Index(fields=['uid'], name='uid_idx')
         ]
+        ordering = ('-record_time', ) # 按照记录时间降序排序
 
