@@ -6,6 +6,8 @@ app_name = "activities"
 urlpatterns = [
     # 我发布的活动
     path('', view=views.MyActivityList.as_view(), name='activities'),
+    # 我的草稿箱
+    path('craft/list/', view=views.MyActivityCraftList.as_view(), name='craft_list'),
     # 等待我审核的活动
     path('activity-unverify/', view=views.ActivityUnVerifyList.as_view(), name='activity_unverify'),
     # 我审核通过的活动
@@ -16,6 +18,13 @@ urlpatterns = [
 
     # 新增活动
     path('create/', view=views.ActivityCreate.as_view(), name='activity_create'),
+    # 新增草稿
+    path('craft/create/', view=views.ActivityCraftCreate.as_view(), name='craft_create'),
+    # 草稿箱更新
+    path('craft/update/<str:pk>/', view=views.ActivityCraftUpdate.as_view(), name='craft_update'),
+    # 草稿箱发布
+    path('craft/publish/', view=views.ActivityCraftPublish.as_view(), name='craft_publish'),
+    
     # 活动详情
     path('detail/<str:pk>/', view=views.ActivityDetail.as_view(), name='activity_detail'),
     # 更新活动

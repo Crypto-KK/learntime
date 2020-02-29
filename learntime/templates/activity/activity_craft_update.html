@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 {% block title %}
-    修改活动
+    继续编辑
 {% endblock %}
 {% block header_name %}
-    活动管理
+    继续编辑
 {% endblock %}
 {% block css %}
     <link href="https://cdn.bootcss.com/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" rel="stylesheet">
@@ -14,8 +14,8 @@
     <div class="breadcrumb-holder container-fluid">
     <ul class="breadcrumb">
       <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
-      <li class="breadcrumb-item"><a href="{% url 'activities:activities' %}">活动管理</a></li>
-      <li class="breadcrumb-item active">修改活动</li>
+      <li class="breadcrumb-item"><a href="{% url 'activities:craft_list' %}">草稿箱</a></li>
+      <li class="breadcrumb-item active">继续编辑</li>
     </ul>
     </div>
 
@@ -24,13 +24,14 @@
   <div class="container">
     <div class="row">
       <div class="col-md-8 offset-md-2">
-        <form id="activity_form" action="{% url 'activities:activity_update' activity.pk %}" method="post" enctype="multipart/form-data">
+        <form id="activity_form" action="{% url 'activities:craft_update' activity.pk %}" method="post" enctype="multipart/form-data">
           {% csrf_token %}
           {{ form.media }}
           {{ form|crispy }}
         </form>
         <div class="form-group">
-          <button type="submit" class="btn btn-primary button-submit btn-lg">确认修改</button>
+          <button type="submit" class="btn btn-primary btn-lg button-submit">保存</button>
+          <button type="submit" class="btn btn-blue btn-lg button-save-continue" data-uid="{{ activity.pk }}">保存并继续编辑</button>
 
         </div>
       </div>
@@ -44,6 +45,13 @@
     $(function () {
         $('.button-submit').click(function () {
             $('#activity_form').submit();
+        });
+
+        $('.button-save-continue').click(function () {
+            let $form = $('#activity_form');
+            let uid = $(this).attr("data-uid");
+            $form.attr("action", `/activities/craft/update/${uid}/?continue=1`);
+            $form.submit();
         });
 
         datetimepickerComponent();

@@ -231,6 +231,10 @@ $(document).ready(function () {
             removeMenuHighLight();
             $('.create-activity-page').addClass("active");
         }
+        if (pathname === "/activities/craft/list/") {
+            removeMenuHighLight();
+            $('.craft-page').addClass("active");
+        }
         if (pathname === "/academy/") {
             removeMenuHighLight();
             $('.academy-page').addClass("active");

@@ -19,9 +19,8 @@ def after_create_activity(sender, instance=None, created=False, **kwargs):
     else:
         # 活动审核通过
         if instance.is_verify:
-
             # 写入activity表中
-            SimpleActivity.objects.create(
+            simple_activity = SimpleActivity.objects.create(
                 uid=instance.uid,
                 name=instance.name,
                 description=instance.desc,
@@ -34,6 +33,10 @@ def after_create_activity(sender, instance=None, created=False, **kwargs):
                 deadline=instance.deadline,
                 score=instance.score
             )
+            if instance.nums:
+                # 存在名额限制
+                simple_activity.nums = instance.nums
+                simple_activity.save()
 
             now = datetime.now() # 当前时间
             time_delta = instance.deadline - now

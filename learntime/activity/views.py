@@ -9,7 +9,7 @@ from django.views.generic import CreateView, DetailView, UpdateView
 from django.views.generic.base import View
 
 from learntime.activity.tasks import send_activity_verify_email
-from learntime.activity.forms import ActivityForm
+from learntime.activity.forms import ActivityForm, ActivityCraftForm
 from learntime.activity.models import Activity
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
@@ -25,7 +25,7 @@ class AllActivityList(RoleRequiredMixin, PaginatorListView):
 
     def get_queryset(self):
         """返回全部"""
-        return Activity.objects.all().select_related('user', 'to', 'to_school')
+        return Activity.objects.filter(is_craft=False).select_related('user', 'to', 'to_school')
 
 
 class MyActivityList(RoleRequiredMixin, PaginatorListView):
@@ -40,13 +40,27 @@ class MyActivityList(RoleRequiredMixin, PaginatorListView):
     def get_queryset(self):
         """返回我发布的活动"""
         now = datetime.now()
-        activities = Activity.objects.filter(user=self.request.user)
+        activities = Activity.objects.filter(user=self.request.user, is_craft=False)
         # 获取所有已经超过截止时间的活动
         activities_update_list = activities.filter(stop=False, is_verify=True, deadline__lt=now)
         if activities_update_list.__len__() > 0:
             activities_update_list.update(stop=True)
         return activities
 
+
+class MyActivityCraftList(RoleRequiredMixin, PaginatorListView):
+    """我的草稿箱"""
+    role_required = (RoleEnum.STUDENT.value,)
+    template_name = "activity/activity_craft_list.html"
+    paginate_by = 10
+    context_object_name = "activities"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['academies'] = Academy.objects.all()
+        return context
+    def get_queryset(self):
+        """返回我的草稿箱内容"""
+        return Activity.objects.filter(user=self.request.user, is_craft=True)
 
 
 class ActivityUnVerifyList(RoleRequiredMixin, PaginatorListView):
@@ -116,14 +130,87 @@ class ActivityCreate(RoleRequiredMixin, CreateView):
         to_admin = get_user_model().objects.get(pk=self.request.POST['to'])
         form.instance.to = to_admin
         form.instance.user = self.request.user
-
+        form.instance.is_craft = False #
         # 发送异步邮件给指定的审核者 to_admin
         send_activity_verify_email(to_admin.email)
         return super().form_valid(form)
 
     def get_success_url(self):
         messages.success(self.request, "发布活动成功")
-        return reverse_lazy("activities:activities")
+        return reverse("activities:activities")
+
+
+class ActivityCraftCreate(RoleRequiredMixin, CreateView):
+    """保存到草稿中"""
+    role_required = (RoleEnum.STUDENT.value, )
+    model = Activity
+    template_name = "activity/activity_create.html"
+    form_class = ActivityCraftForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['academies'] = Academy.objects.all()
+        return context
+
+    def form_valid(self, form):
+        # 指定审核者
+        form.instance.user = self.request.user
+        form.instance.is_craft = True
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, "保存到草稿箱成功！")
+        return reverse("activities:craft_list")
+
+
+class ActivityCraftUpdate(AuthorRequiredMixin, UpdateView):
+    """继续编辑草稿箱的内容"""
+    model = Activity
+    form_class = ActivityCraftForm
+    template_name = "activity/activity_craft_update.html"
+    context_object_name = "activity"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.instance.is_craft = True
+        print(form.instance.logo)
+        print(form.instance.file)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        if self.request.GET.get("continue"):
+            return reverse("activities:craft_update", kwargs={"pk": self.kwargs['pk']})
+        else:
+            messages.success(self.request, "修改草稿箱成功")
+            return reverse("activities:craft_list")
+
+
+
+class ActivityCraftPublish(AuthorRequiredMixin, View):
+    """草稿箱内容直接发ActivityForm布"""
+    def post(self, request):
+        activity_id = request.POST.get("activity_id")
+        admin_id = request.POST.get("admin_id")
+        if activity_id and admin_id:
+            try:
+                activity = Activity.objects.get(pk=activity_id)
+                admin = get_user_model().objects.get(pk=admin_id)
+            except Exception:
+                return JsonResponse({"status": "unknown", "err": "审核人查找失败"})
+            if activity.is_craft:
+                # 草稿才能发布
+                activity.user = request.user
+                activity.to = admin
+                activity.is_craft = False
+                form = ActivityForm(data=activity.__dict__, instance=activity)
+                if form.is_valid():
+                    activity.save()
+                    return JsonResponse({"status": "ok"})
+                else:
+                    return JsonResponse({"status": "fail", "err": form.errors})
+            else:
+                return JsonResponse({"status": "unknown", "err": "草稿才能发布"})
+
 
 
 class ActivityDetail(LoginRequiredMixin, DetailView):
@@ -142,6 +229,7 @@ class ActivityUpdate(AuthorRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
+        form.instance.is_craft = False
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -235,7 +323,7 @@ class GetAdminsView(LoginRequiredMixin, View):
             academy = Academy.objects.get(pk=request.POST['id'])
             admins = get_user_model().objects.filter(academy__contains=academy, role=3)
             for admin in admins:
-                admin_dict.update({admin.pk: admin.name})
+                admin_dict.update({admin.pk: f'{admin.name}({admin.grade})'})
 
             return JsonResponse({
                 "status": "ok",
