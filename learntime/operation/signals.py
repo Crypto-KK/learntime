@@ -18,14 +18,4 @@ def sign_out_activity(sender, instance=None, created=False, **kwargs):
         # 增加学时
         add_credit(settings.CREDIT_TYPE, instance.student_id, credit_type, credit)
 
-@receiver(post_save, sender=Comment)
-def publish_comment(sender, instance=None, created=False, **kwargs):
-    """当评论发出时，计算该活动的平均分并写入到活动表中"""
-    activity = instance.activity
-    comments = activity.comments
-    score = 0
-    for comment in comments:
-        score += comment.score
-    score = int(score / comments.count())
-    print(score)
 
