@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.utils.six import BytesIO
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import ListView
 from django.views.generic.base import View
 
 from learntime.activity.models import Activity
@@ -13,11 +14,11 @@ from learntime.utils.helpers import PaginatorListView, RoleRequiredMixin
 from learntime.users.enums import RoleEnum
 
 
-class LogList(LoginRequiredMixin, PaginatorListView):
+class LogList(LoginRequiredMixin, ListView):
     """日志列表页"""
     template_name = "operation/log_list.html"
     context_object_name = "logs"
-    paginate_by = 50
+    # paginate_by = 50
 
     def get_queryset(self):
         if self.request.user.role == 1:
