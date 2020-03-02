@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% load process_string %}
+{% block title %}
+    我的反馈
+{% endblock %}
+{% block header_name %}
+    我的反馈
+{% endblock %}
+{% block body %}
+      <!-- Breadcrumb-->
+    <div class="breadcrumb-holder container-fluid">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+      <li class="breadcrumb-item active">反馈</li>
+    </ul>
+    </div>
+
+    <section class="tables">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card">
+              <!-- Modal -->
+              <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="staticBackdropLabel"></h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body" id="feedback-content-wrap">
+
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+{#              Modal reply  #}
+              <div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">回复反馈</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                          <label for="message-text" class="col-form-label">回复内容:</label>
+                          <textarea class="form-control" id="message-text" maxlength="255"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                      <button type="button" class="btn btn-primary" id="btn-reply">发送</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-header">
+                {% if request.user.role != 1 %}
+                  <a href="{% url 'operations:feedback_create' %}" class="btn btn-warning btn-lg">去反馈</a>
+                {% else %}
+                  {% if feedbacks %}
+                    <h1>共{{ count }}条用户的反馈</h1>
+                  {% else %}
+                    <h1>还没有反馈</h1>
+                  {% endif %}
+                {% endif %}
+              </div>
+
+              {% if feedbacks %}
+              <div class="card-body">
+                <div class="table-responsive">
+                  {% with request.user.role as role %}
+                  <table class="table table-striped table-hover table-bordered " id="myTable">
+                    <thead>
+                      <tr>
+                        <th>序号</th>
+                        {% if request.user.role == 1 %}
+                          <th>反馈人</th>
+                        {% endif %}
+                        <th>反馈时间</th>
+                        <th>内容</th>
+                        <th>是否解决</th>
+                        <th>解决方案</th>
+                        <th>操作</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for feedback in feedbacks %}
+                          <tr>
+
+                          <td>{{ forloop.counter }}</td>
+                          {% if request.user.role == 1 %}
+                            <td>{{ feedback.name }}</td>
+                          {% endif %}
+                          <td>{{ feedback.created_at }}</td>
+                          <td>{{ feedback.content | removeHTML100 }}</td>
+                          <td>
+                            {% if feedback.is_fix %}
+                              <i class="fa fa-check" style="color: green;"></i>
+                            {% else %}
+                              <i class="fa fa-remove" style="color: red;"></i>
+                            {% endif %}
+                          </td>
+                          <td>{% if feedback.reply %}{{ feedback.reply }}{% else %}-{% endif %}</td>
+                          <td>
+                            <button type="button" class="btn btn-primary btn-sm btn-show-feedback" data-feedback-id="{{ feedback.pk }}" data-toggle="modal" data-target="#staticBackdrop">
+                              查看
+                            </button>
+                            {% if not feedback.is_fix %}
+                            <button type="button" class="btn btn-blue btn-sm btn-reply-feedback" data-feedback-id="{{ feedback.pk }}" data-email="{{ feedback.email }}" data-toggle="modal" data-target="#replyModal">
+                              回复
+                            </button>
+                            {% endif %}
+                            <a href="{% url 'operations:feedback_delete' feedback.pk %}" class="btn btn-danger btn-sm">删除</a>
+
+                          </td>
+                          </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+                {% endwith %}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {% include 'pagination.html' %}
+{% endblock %}
+
+{% block js %}
+  <script>
+    $(function () {
+      let feedback_id = "";
+      let email = "";
+      $('.btn-show-feedback').click(function () {
+        feedback_id = $(this).attr("data-feedback-id");
+        $.get({
+          url: "/operations/feedback/detail/",
+          data: {feedback_id},
+          cache: false,
+          success: res => {
+            if (res.status === "ok") {
+              $('#staticBackdropLabel').text(`${res.name}的反馈`);
+              $('#feedback-content-wrap').html(res.content)
+            } else {
+              $('#staticBackdropLabel').text(`温馨提示`);
+              $('#feedback-content-wrap').text("系统错误，请稍候重试")
+            }
+          }
+        })
+      })
+
+
+      $('.btn-reply-feedback').click(function () {
+        feedback_id = $(this).attr("data-feedback-id");
+        email = $(this).attr("data-email")
+      });
+
+      $('#btn-reply').click(function () {
+        let content = $('#message-text').val();
+        if (!content) {
+          alert("请输入回复内容");
+          return;
+        }
+        $.post({
+          url: '/operations/send_email/',
+          data: {
+            title: "【学时通】管理员回复了您的反馈",
+            content: `回复：${content}\n请登录学时通查看`,
+            email: email,
+            feedback_id: feedback_id
+          },
+          cache: false,
+          success: res => {
+            if (res.status === "ok") {
+              alert("反馈成功！");
+              window.location.reload();
+            } else {
+              alert("系统错误！")
+            }
+          }
+        })
+
+
+      })
+
+    })
+  </script>
+{% endblock %}

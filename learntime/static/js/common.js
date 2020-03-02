@@ -310,6 +310,11 @@ $(document).ready(function () {
             $('.my-detail-page').addClass("active")
         }
 
+        if (pathname === "/operations/feedback/") {
+            removeMenuHighLight();
+            $('.feedback-page').addClass("active")
+        }
+
 
     }
 

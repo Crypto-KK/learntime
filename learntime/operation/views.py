@@ -1,17 +1,19 @@
 import time
 
 import qrcode
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
+from django.urls import reverse
 from django.utils.six import BytesIO
-from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView
+from django.views.generic import ListView, CreateView, DeleteView
 from django.views.generic.base import View
 
 from learntime.activity.models import Activity
-from learntime.operation.models import Log, StudentActivity, Comment
-from learntime.utils.helpers import PaginatorListView, RoleRequiredMixin
+from learntime.operation.models import Log, StudentActivity, Comment, FeedBack
+from learntime.utils.helpers import PaginatorListView, RoleRequiredMixin, RootRequiredMixin
 from learntime.users.enums import RoleEnum
+from learntime.operation.tasks import send_email_to_user
 
 
 class LogList(LoginRequiredMixin, ListView):
@@ -133,3 +135,78 @@ class PersonListAPIView(RoleRequiredMixin, View):
             })
 
         return JsonResponse({"status": "ok", "count": len(return_data), "data": return_data})
+
+
+class FeedBackListView(LoginRequiredMixin, PaginatorListView):
+    """反馈列表"""
+    paginate_by = 20
+    context_object_name = "feedbacks"
+    template_name = "operation/feedback_list.html"
+
+    def get_queryset(self):
+        if self.request.user.role == RoleEnum.ROOT.value:
+            # 管理员
+            return FeedBack.objects.all()
+        else:
+            return FeedBack.objects.filter(email=self.request.user.email)
+
+
+class FeedBackCreateView(RoleRequiredMixin, CreateView):
+    role_required = (RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value, RoleEnum.STUDENT.value)
+    template_name = "operation/feedback_create.html"
+    fields = ('content', )
+    model = FeedBack
+
+    def form_valid(self, form):
+        form.instance.name = self.request.user.name
+        form.instance.email = self.request.user.email
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, "提交反馈成功！")
+        return reverse("operations:feedback_list")
+
+
+class FeedBackDeleteView(LoginRequiredMixin, DeleteView):
+    template_name = "operation/feedback_delete.html"
+    model = FeedBack
+    context_object_name = "feedback"
+    def get_success_url(self):
+        messages.success(self.request, "删除反馈成功！")
+        return reverse("operations:feedback_list")
+
+
+class FeedBackDetailAPIView(LoginRequiredMixin, View):
+    """反馈详情api接口"""
+    def get(self, request):
+        try:
+            feedback_id = request.GET.get('feedback_id')
+            feedback = FeedBack.objects.get(pk=feedback_id)
+            return JsonResponse({
+                "status": "ok",
+                "content": feedback.content,
+                "name": feedback.name
+            })
+        except Exception:
+            return JsonResponse({"status": "fail"})
+
+
+class SendEmailAPIView(RootRequiredMixin, View):
+    """发送邮件接口"""
+    def post(self, request):
+        try:
+            title = request.POST.get("title")
+            content = request.POST.get("content")
+            email = request.POST.get("email")
+            feedback_id = request.POST.get("feedback_id")
+
+            # 修改数据库记录
+            feedback = FeedBack.objects.get(pk=feedback_id)
+            feedback.is_fix = True
+            feedback.reply = content
+            feedback.save()
+            send_email_to_user(email, title, content)
+
+        except Exception:
+            return JsonResponse({"status": "fail"})
+        return JsonResponse({"status": "ok"})

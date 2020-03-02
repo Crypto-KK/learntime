@@ -185,7 +185,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "learntime.utils.context_processors.settings_context",
-                "learntime.utils.oss_processor.ali_media"
+                "learntime.utils.oss_processor.ali_media",
             ],
         },
     }

@@ -80,7 +80,7 @@
 
           </div>
           <!-- Sidebar Navidation Menus-->
-          <span class="heading">学生管理</span>
+{#          <span class="heading">学生管理</span>#}
 
           <ul class="list-unstyled">
             <li class="left-link index-page"><a href="{% url 'index' %}"> <i class="icon-home fa-fw"></i>首页 </a></li>
@@ -115,7 +115,7 @@
             {% if role == 4 %}
 
             <li class="left-link activity-page" ><a href="{% url 'activities:activities' %}"> <i class="fa fa-send-o fa-fw"></i>我发布的活动</a></li>
-            <li class="left-link craft-page" ><a href="{% url 'activities:craft_list' %}"> <i class="fa fa-send-o fa-fw"></i>草稿箱</a></li>
+            <li class="left-link craft-page" ><a href="{% url 'activities:craft_list' %}"> <i class="fa fa-trash fa-fw"></i>草稿箱</a></li>
             <li class="left-link create-activity-page" ><a href="{% url 'activities:activity_create' %}"> <i class="fa fa-pencil-square-o fa-fw"></i>发布活动</a></li>
             <li class="left-link activity-sign" ><a href="{% url 'operations:sign_in_list' %}"> <i class="fa fa-qrcode fa-fw"></i>签到签退</a></li>
             <li class="left-link credit-page" ><a href="{% url 'students:student_credit_apply' %}"> <i class="fa fa-pencil fa-fw"></i>补录学时</a></li>
@@ -136,6 +136,11 @@
             <li class="left-link change-password-page" ><a href="{% url 'users:password_change' %}"> <i class="fa fa-pencil fa-fw"></i>修改密码 </a></li>
             <li class="left-link my-detail-page" ><a href="{% url 'users:my_detail' %}"> <i class="fa fa-cog fa-fw"></i>我的信息 </a></li>
             <li class="left-link help-page" ><a href="{% url 'conf:help_list' %}"> <i class="fa fa-question-circle fa-fw"></i>查看帮助 </a></li>
+            {% if role != 1 %}
+              <li class="left-link feedback-page" ><a href="{% url 'operations:feedback_list' %}"> <i class="fa fa-quote-left fa-fw"></i>问题反馈 </a></li>
+            {% else %}
+              <li class="left-link feedback-page" ><a href="{% url 'operations:feedback_list' %}"> <i class="fa fa-quote-left fa-fw"></i>反馈处理 </a></li>
+            {% endif %}
           </ul>
         {% endwith %}
         </nav>
