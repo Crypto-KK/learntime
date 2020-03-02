@@ -45,6 +45,18 @@ class RemoveSessionView(RootRequiredMixin, View):
         return JsonResponse({"status": "ok"})
 
 
+class MaintenanceSystemView(RootRequiredMixin, View):
+    """维护或解除维护系统"""
+    def post(self, request):
+        try:
+            conf = Configration.objects.first()
+            conf.is_maintenance = not conf.is_maintenance
+            conf.save()
+            return JsonResponse({"status": "ok"})
+        except Exception:
+            return JsonResponse({"status": "fail"})
+
+
 class HelpCreateView(RootRequiredMixin, CreateView):
     """帮助文档新建"""
     model = Help

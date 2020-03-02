@@ -28,6 +28,11 @@
               <p class="card-text">学时基准：{{ conf.criterion }}</p>
               <p class="card-text">默认密码：{{ conf.default_password }}</p>
               <a class="btn btn-warning" href="{% url 'conf:edit' conf.pk %}">修改配置</a>
+              {% if conf.is_maintenance %}
+                <button id="status-btn" class="btn btn-blue">解除维护系统</button>
+              {% else %}
+                <button id="status-btn" class="btn btn-danger">维护系统</button>
+              {% endif %}
               <button id="remove-session-btn" class="btn btn-danger">清除所有会话</button>
 
             </div>
@@ -58,6 +63,22 @@
         }
 
       })
+
+      $('#status-btn').click(function () {
+        $.post({
+          url: "/conf/maintenance/",
+          cache: false,
+          success: res => {
+            if (res.status === "ok") {
+              alert("操作成功");
+              window.location.reload();
+            } else {
+              alert("系统错误")
+            }
+          }
+        })
+      })
+
     })
   </script>
 {% endblock %}
