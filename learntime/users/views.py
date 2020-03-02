@@ -149,10 +149,15 @@ class AdminList(RootRequiredMixin, PaginatorListView):
 
     def get_queryset(self):
         """按照不同权限查看不同的管理员"""
-        academy = self.request.GET.get('academy', None)
+        academy = self.request.GET.get('academy')
+        name = self.request.GET.get('name')
+        qs = User.objects.filter(is_active=True)
         if academy:
-            return User.objects.filter(is_active=True, academy=academy)
-        return User.objects.filter(is_active=True)
+            qs = qs.filter(academy__contains=academy)
+        if name:
+            qs = qs.filter(name__contains=name)
+
+        return qs
 
 
 

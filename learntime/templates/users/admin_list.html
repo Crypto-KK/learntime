@@ -22,22 +22,39 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-lg-12">
-            <h1>共有{{ count }}名管理员</h1>
+            <h1>共{{ count }}条记录</h1>
             <div class="card">
               <div class="card-header">
-                <div class="btn-group">
-                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  筛选学院
-                </button>
-                <div class="dropdown-menu">
-                <a class="dropdown-item" href="{% url 'users:admins' %}">全部</a>
-                  {% for academy in academy_list %}
-                    <a class="dropdown-item" href="?academy={{ academy }}" id="auto-select-academy">{{ academy }}</a>
-                  {% endfor %}
+                <div class="form-row">
+                  <div class="col-3">
+                    <button type="button" id="current-academy-btn" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    筛选学院
+                    </button>
+                    <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'users:admins' %}">全部</a>
+                      {% for academy in academy_list %}
+                        <a class="dropdown-item" href="?academy={{ academy }}" id="auto-select-academy">{{ academy }}</a>
+                      {% endfor %}
+                    </div>
+                  </div>
+
+                  <div class="col-5">
+                    <form class="form-inline">
+                        <input type="text" class="form-control" name="name" placeholder="搜索姓名">
+                        <button type="submit" class="btn btn-primary">搜索</button>
+                        <a class="btn btn-info" href="{% url 'users:admins' %}">重置</a>
+                    </form>
+                  </div>
+
+                  <div class="col-4">
+                    <a href="{% url 'users:admin_create' %}" class="btn btn-outline-success pull-right">添加管理员</a>
+                  </div>
+
                 </div>
 
-              </div>
-                <a href="{% url 'users:admin_create' %}" class="btn btn-outline-success pull-right">新增管理员</a>
+
+
+
               </div>
               <div class="card-body">
 
@@ -125,6 +142,7 @@
 {% block js %}
   <script>
     $(function () {
+
         function getQueryVariable(variable) {
           var query = window.location.search.substring(1);
           var vars = query.split("&");
@@ -136,8 +154,13 @@
         }
         var concatQuery = "";
         var academy = getQueryVariable("academy");
+        var name = getQueryVariable("name");
         if (academy) {
-        concatQuery = "academy=" + academy;
+          concatQuery = "academy=" + academy;
+          $('#current-academy-btn').text(decodeURI(academy))
+        }
+        if (name) {
+          concatQuery = "name=" + name;
         }
         $('.page-link').each(function () {
           // 分页时携带参数

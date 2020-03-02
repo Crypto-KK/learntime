@@ -16,11 +16,11 @@ from learntime.users.enums import RoleEnum
 from learntime.operation.tasks import send_email_to_user
 
 
-class LogList(LoginRequiredMixin, ListView):
+class LogList(LoginRequiredMixin, PaginatorListView):
     """日志列表页"""
     template_name = "operation/log_list.html"
     context_object_name = "logs"
-    # paginate_by = 50
+    paginate_by = 50
 
     def get_queryset(self):
         if self.request.user.role == 1:

@@ -55,9 +55,9 @@ class RegisterForm(forms.ModelForm):
 
 class UserForm(forms.ModelForm):
     academy = forms.ModelChoiceField(queryset=Academy.objects.all(),
-                                     required=False, help_text="选择学院")
+                                     required=False, help_text="可不填写", label="学院")
     grade = forms.ModelChoiceField(queryset=Grade.objects.all(),
-                                   required=False, help_text="选择年级")
+                                   required=False, help_text="可不填写", label="年级")
     class Meta:
         fields = ['name', "email", "academy", "grade", "klass", "role"]
         model = User
