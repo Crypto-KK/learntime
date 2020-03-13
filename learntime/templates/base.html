@@ -129,7 +129,7 @@
           </ul>
           <span class="heading">统计模块</span>
           <ul>
-            <li class="left-link" ><a href="{% url 'stat:stat' %}"> <i class="fa fa-bar-chart fa-fw"></i>学时统计 </a></li>
+            <li class="left-link stat-page" ><a href="{% url 'stat:stat' %}"> <i class="fa fa-bar-chart fa-fw"></i>学时统计 </a></li>
           </ul>
           <span class="heading">个人中心</span>
           <ul>
@@ -139,7 +139,7 @@
             {% if role != 1 %}
               <li class="left-link feedback-page" ><a href="{% url 'operations:feedback_list' %}"> <i class="fa fa-quote-left fa-fw"></i>问题反馈 </a></li>
             {% else %}
-              <li class="left-link feedback-page" ><a href="{% url 'operations:feedback_list' %}"> <i class="fa fa-quote-left fa-fw"></i>反馈处理 </a></li>
+              <li class="left-link problem-page" ><a href="{% url 'operations:feedback_list' %}"> <i class="fa fa-quote-left fa-fw"></i>反馈处理 </a></li>
             {% endif %}
           </ul>
         {% endwith %}

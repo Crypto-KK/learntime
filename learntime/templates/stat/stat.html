@@ -9,12 +9,48 @@
 {% endblock %}
 
 {% block body %}
-
+      <!-- Charts Section-->
+    <section class="charts">
+      <div class="container-fluid">
+        <div class="row">
+          <!-- Line Charts-->
+          <div class="col-lg-8">
+            <div class="line-chart-example card"  style="width: 1100px; height: 600px;">
+              <div class="card-close">
+                <div class="dropdown">
+                  <button type="button" id="closeCard1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
+                  <div aria-labelledby="closeCard1" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
+                </div>
+              </div>
+              <div class="card-header d-flex align-items-center">
+                <h3 class="h4">学时排名</h3>
+              </div>
+              <div class="card-body">
+                <div id="rank-bar" style="width:1100px; height:500px; position: relative;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 {% endblock %}
 
 {% block js %}
   <script src="https://cdn.bootcss.com/echarts/4.4.0-rc.1/echarts.min.js"></script>
-  <script>
+    <script>
+      $(function () {
+        var rank_chart = echarts.init(
+          document.getElementById('rank-bar'),
+          'white',
+          {renderer: 'canvas'}
+        );
+        $.get({
+          url: "/stat/rank_chart/15/",
+          success: res => {
+            rank_chart.setOption(res.data);
+          }
+        });
+      });
 
   </script>
 {% endblock %}

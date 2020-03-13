@@ -315,6 +315,11 @@ $(document).ready(function () {
             $('.feedback-page').addClass("active")
         }
 
+        if (pathname === "/stat/") {
+            removeMenuHighLight();
+            $('.stat-page').addClass("active")
+        }
+
 
     }
 

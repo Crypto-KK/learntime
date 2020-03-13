@@ -17,15 +17,19 @@ from pyecharts import options as opts
 
 User = get_user_model()
 
-def rank_chart_view(request):
+def rank_chart_view(request, maximum):
     """学时排名统计"""
-    students = Student.objects.all()[:10]
+
+    if maximum > 20:
+        maximum = 20
+    students = Student.objects.all()[:maximum]
 
     c = (
         Bar(init_opts=opts.InitOpts(theme=ThemeType.LIGHT))
             .add_xaxis([student.name for student in students])
             .add_yaxis("总学时", [student.credit for student in students])
-            .set_global_opts(title_opts=opts.TitleOpts(title="TOP 10"))
+            .set_global_opts(title_opts=opts.TitleOpts(title="学时排名TOP 15"))
+            .set_colors(['#60acfc', '#5bc49f', '#ff7c7c'])
             .dump_options_with_quotes()
     )
     return EchartsResponse(json.loads(c))
