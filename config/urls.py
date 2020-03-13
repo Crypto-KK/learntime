@@ -6,11 +6,11 @@ from django.views import defaults as default_views
 from learntime.student.views import find_student_by_uid_and_name
 from learntime.users.views import AcademyList, AcademyCreate, AcademyUpdate, AcademyDelete, GradeList, \
     GradeCreate, GradeDelete, GradeUpdate
-from learntime.statistic.views import IndexView, chart_view
+from learntime.statistic.views import IndexView
 
 urlpatterns = [
     path("",  IndexView.as_view(), name='index'),
-    path("chart/", chart_view, name='chart'),
+
 
     #学院管理
     path("academy/", AcademyList.as_view(), name="academy"),
@@ -29,7 +29,7 @@ urlpatterns = [
     path("activities/", include("learntime.activity.urls", namespace="activities")),
     path("operations/", include("learntime.operation.urls", namespace="operations")),
     path("conf/", include("learntime.globalconf.urls", namespace="conf")),
-
+    path('stat/', include('learntime.statistic.urls', namespace='stat')),
     path('ckeditor/', include('learntime.utils.ckeditor_urls')),
 
 

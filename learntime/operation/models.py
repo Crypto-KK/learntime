@@ -86,6 +86,7 @@ class Comment(CreatedUpdatedMixin, models.Model):
             models.Index(fields=['student_id'], name='student_id_idx')
         ]
         db_table = "comment"
+        ordering = ('-created_at',)
 
     def __str__(self):
         return self.content

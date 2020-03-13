@@ -17,7 +17,8 @@ from pyecharts import options as opts
 
 User = get_user_model()
 
-def chart_view(request):
+def rank_chart_view(request):
+    """学时排名统计"""
     students = Student.objects.all()[:10]
 
     c = (
@@ -57,3 +58,11 @@ class IndexView(LoginRequiredMixin, View):
                 "verifying_activities_nums": request.user.waiting_for_verify_activities.count()
             })
         return render(request, "stat/index.html", context=context)
+
+
+
+class StatisticView(LoginRequiredMixin, View):
+    """图表页视图"""
+    def get(self, request):
+
+        return render(request, 'stat/stat.html')
