@@ -94,8 +94,7 @@
             {% if role != 4 %}
             <li class="left-link student-page" ><a href="{% url 'students:students' %}"> <i class="fa fa-users fa-fw"></i>学生管理 </a></li>
             {% endif %}
-            {% if role == 1 or role == 3 %}
-
+            {% if role == 1%}
               <li class="left-link credit-page"><a href="{% url 'students:student_credit' %}"> <i class="fa fa-wrench fa-fw"></i>学时变更 </a></li>
             {% endif %}
               <li class="left-link log-page"><a href="{% url 'operations:log_list' %}"><i class="fa fa-reply-all fa-fw"></i>操作记录</a></li>

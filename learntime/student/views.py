@@ -253,11 +253,10 @@ class StudentAllDeleteView(RootRequiredMixin, View):
         return success
 
 
-class StudentCreditView(RoleRequiredMixin, PaginatorListView):
+class StudentCreditView(RootRequiredMixin, PaginatorListView):
     """学生学时列表页
-    权限：root和学院
+    权限：root
     """
-    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)
     template_name = 'students/student_credit.html'
     paginate_by = 20
     context_object_name = 'students'
@@ -288,11 +287,10 @@ class StudentCreditView(RoleRequiredMixin, PaginatorListView):
         return students
 
 
-class StudentEditCreditView(RoleRequiredMixin, View):
+class StudentEditCreditView(RootRequiredMixin, View):
     """根据学号查询和修改某个学生的学时
-    权限：root和院级
+    权限：root
     """
-    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)
 
     def get(self, request):
         """获取当前学生的所有学时信息并渲染到表单上"""
