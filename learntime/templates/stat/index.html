@@ -6,11 +6,11 @@
 
 {% block header_name %}
     首页&nbsp;&nbsp;
-    (
+
   {% if request.user.role == 3 %}
-      {{ request.user.academy }}{{ request.user.grade }}辅导员
+      ({{ request.user.academy }}{{ request.user.grade }}辅导员)
     {% endif %}
-  )
+
 {% endblock %}
 
 {% block body %}

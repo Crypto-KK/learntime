@@ -39,13 +39,13 @@ class CommentList(LoginRequiredMixin, PaginatorListView):
 
 class StudentActivityListView(RoleRequiredMixin, PaginatorListView):
     """学生参加活动列表页"""
-    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value, RoleEnum.STUDENT.value)
+    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value, RoleEnum.STUDENT.value)
     template_name = "operation/student_activity_list.html"
     context_object_name = "objects"
     paginate_by = 50
 
     def get_queryset(self):
-        if self.request.user.role == RoleEnum.ROOT.value: # ROOT级别能看到所有记录
+        if self.request.user.role == RoleEnum.ROOT.value or self.request.user.role == RoleEnum.SCHOOL.value: # ROOT级别能看到所有记录
             return StudentActivity.objects.all().select_related("student", "activity")
         elif self.request.user.role == RoleEnum.ACADEMY.value: # 院级能看到所在学院所在年级记录
             return StudentActivity.objects.filter(
