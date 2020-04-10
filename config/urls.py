@@ -5,7 +5,7 @@ from django.views import defaults as default_views
 
 from learntime.student.views import find_student_by_uid_and_name
 from learntime.users.views import AcademyList, AcademyCreate, AcademyUpdate, AcademyDelete, GradeList, \
-    GradeCreate, GradeDelete, GradeUpdate
+    GradeCreate, GradeDelete, GradeUpdate, InstituteList, InstituteCreate, InstituteUpdate, InstituteDelete
 from learntime.statistic.views import IndexView
 
 urlpatterns = [
@@ -23,6 +23,12 @@ urlpatterns = [
     path("grade/create/", GradeCreate.as_view(), name="grade_create"),
     path("grade/update/<int:pk>/", GradeUpdate.as_view(), name="grade_update"),
     path("grade/delete/<int:pk>/", GradeDelete.as_view(), name="grade_delete"),
+
+    # 协会管理
+    path("institute/", InstituteList.as_view(), name="institute"),
+    path("institute/create/", InstituteCreate.as_view(), name="institute_create"),
+    path("institute/update/<int:pk>/", InstituteUpdate.as_view(), name="institute_update"),
+    path("institute/delete/<int:pk>/", InstituteDelete.as_view(), name="institute_delete"),
 
     path("users/", include("learntime.users.urls", namespace="users")),
     path("students/", include("learntime.student.urls", namespace="students")),

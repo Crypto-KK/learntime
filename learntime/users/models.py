@@ -71,7 +71,7 @@ class Grade(Model):
 class Institute(Model):
     """协会数据库"""
     name = CharField(max_length=50, verbose_name="协会名称")
-    note = CharField(max_length=255, verbose_name="协会名称", null=True, blank=True)
+    note = CharField(max_length=255, verbose_name="备注", null=True, blank=True)
     user = ForeignKey(to=User, on_delete=models.DO_NOTHING, verbose_name="创建人")
 
     def __str__(self):

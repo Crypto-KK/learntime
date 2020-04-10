@@ -88,6 +88,9 @@
               <li class="left-link academy-page"><a href="{% url 'academy' %}"> <i class="fa fa-database fa-fw"></i>学院管理 </a></li>
               <li class="left-link grade-page"><a href="{% url 'grade' %}"> <i class="fa fa-cube fa-fw"></i>年级管理 </a></li>
             {% endif %}
+            {% if role == 1 or role == 2  %}
+              <li class="left-link institute-page"><a href="{% url 'institute' %}"> <i class="fa fa-gift fa-fw"></i>协会管理 </a></li>
+            {% endif %}
             {% if role != 4 %}
             <li class="left-link student-page" ><a href="{% url 'students:students' %}"> <i class="fa fa-users fa-fw"></i>学生管理 </a></li>
             {% endif %}

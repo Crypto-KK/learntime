@@ -245,6 +245,11 @@ $(document).ready(function () {
             $('.grade-page').addClass("active");
         }
 
+        if (pathname === "/institute/") {
+            removeMenuHighLight();
+            $('.institute-page').addClass("active");
+        }
+
         if (pathname === "/activities/activity-unverify/" || pathname === "/activities/activity-verify/") {
             removeMenuHighLight();
             $('.activity-verify-page').addClass("active");

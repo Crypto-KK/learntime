@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}删除协会{% endblock %}
+
+{% block body %}
+  <br>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+
+        <h1>确定要删除 {{ institute.name }} 吗？</h1>
+        <form method="post" action="{% url 'institute_delete' institute.pk %}">
+            {% csrf_token %}
+            <button class="btn-lg btn-danger" type="submit" id="deleteBtn">删除</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+
+{% endblock %}
+
+{% block js %}
+  <script>
+    $(function () {
+        $('#deleteBtn').click(function () {
+            alert("删除协会成功！")
+        })
+    })
+  </script>
+{% endblock %}

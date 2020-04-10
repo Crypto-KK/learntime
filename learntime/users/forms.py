@@ -3,8 +3,9 @@ from crispy_forms.layout import Layout, Field
 from django.contrib.auth import get_user_model
 from django import forms
 from django.contrib.auth.forms import PasswordResetForm
+from django.forms import ModelForm
 
-from learntime.users.models import Academy, Grade
+from learntime.users.models import Academy, Grade, Institute
 
 User = get_user_model()
 
@@ -70,3 +71,10 @@ class ForgetForm(PasswordResetForm):
         if User.objects.filter(email=email, is_active=True).count() == 0:
             raise forms.ValidationError("邮箱尚未注册！")
         return email
+
+
+class InstituteForm(ModelForm):
+
+    class Meta:
+        exclude = ('user',)
+        model = Institute
