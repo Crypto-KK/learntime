@@ -45,12 +45,17 @@ class RegisterForm(forms.ModelForm):
             raise forms.ValidationError("两次输入密码不一致")
         return self.cleaned_data
 
+    def clean_organization(self):
+
+        print(self.cleaned_data['organization'])
+        return self.cleaned_data['organization']
+
     academy = forms.CharField()
     grade =forms.CharField()
     password2 = forms.CharField()
 
     class Meta:
-        fields = ['name', 'email', 'password', 'role']
+        fields = ['name', 'email', 'password', 'role', 'department', 'organization']
         model = User
 
 

@@ -2,7 +2,9 @@
 {% block title %}
     注册
 {% endblock %}
-
+{% block css %}
+<link href="https://cdn.bootcss.com/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css" rel="stylesheet">
+{% endblock %}
 {% block body %}
     <!-- Form Panel    -->
     <div class="col-lg-6 bg-white">
@@ -43,6 +45,22 @@
                 <label for="register-student" class="form-check-label" >学生干部级</label>
               </div>
             </div>
+
+            <div class="form-group" id="choose-department">
+              <label for="inputState3">请填写您所在的部门</label>
+              <input type="text" name="department" id="inputState3" required>
+            </div>
+
+            <div class="form-group" id="choose-organization">
+              <label for="org-select">选择社团协会(请点击下拉框单选或多选)</label>
+              <select required multiple id="org-select" class="form-control" name="organization">
+                {% for organization in organizations %}
+                  <option value="{{ organization }}">{{ organization }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+
             <div class="form-group" id="choose-academy">
               <label for="inputState">选择所属学院</label>
               <select id="inputState" class="form-control" name="academy">
@@ -75,21 +93,37 @@
 {% endblock %}
 
 {% block js %}
+  <script src="https://cdn.bootcss.com/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.min.js"></script>
   <script>
     $(function () {
+        $('#choose-academy').show()
+        $('#choose-grade').show()
+        $('#choose-organization').show()
+        $('#choose-department').hide()
+
+        $("#org-select").multiselect({
+          selectAllText: "选择全部",
+          placeholder: "单选或者多选"
+        });
 
         $('#register-academy').click(function () {
             $('#choose-academy').show()
             $('#choose-grade').show()
+            $('#choose-organization').hide()
+            $('#choose-department').hide()
         });
 
         $('#register-school').click(function () {
             $('#choose-academy').hide()
             $('#choose-grade').hide()
+            $('#choose-organization').hide()
+            $('#choose-department').show()
         });
         $('#register-student').click(function () {
             $('#choose-academy').show()
             $('#choose-grade').show()
+            $('#choose-organization').show()
+            $('#choose-department').hide()
         });
         $('.errorlist').css("color", "red")
     })

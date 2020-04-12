@@ -26,10 +26,13 @@
                   <table class="table table-striped table-hover table-bordered">
                     <thead>
                       <tr>
+                        <th>申请时间</th>
                         <th>邮箱</th>
                         <th>姓名</th>
                         <th>学院</th>
                         <th>年级</th>
+                        <th>部门</th>
+                        <th>社团协会</th>
                         <th>操作</th>
                         <th>申请的权限</th>
                       </tr>
@@ -37,10 +40,13 @@
                     <tbody>
                       {% for admin in admins %}
                           <tr>
+                          <td>{{ admin.date_joined }}</td>
                           <td>{{ admin.email }}</td>
                           <td>{{ admin.name }}</td>
                           <td>{% if admin.academy %}{{ admin.academy }}{% else %}-{% endif %}</td>
                           <td>{% if admin.grade %}{{ admin.grade }}{% else %}-{% endif %}</td>
+                          <td>{% if admin.department %}{{ admin.department }}{% else %}-{% endif %}</td>
+                          <td>{% if admin.organization %}{{ admin.organization }}{% else %}-{% endif %}</td>
                           <td>{{ admin.get_role_display }}</td>
                           <td><button class="btn btn-success btn-sm confirmBtn" data-toggle="modal" data-target="#Modal" data-username="{{ admin.username }}" data-current-role="{{ admin.role }}">通过</button>
                           <button class="btn btn-danger btn-sm noConfirmBtn" data-toggle="modal" data-target="#noApplyModal" data-user-id="{{ admin.pk }}">不通过</button>

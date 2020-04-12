@@ -89,10 +89,12 @@
                     <thead>
                       <tr>
                         <th>姓名</th>
-                        <th>邮箱</th>
+{#                        <th>邮箱</th>#}
                         <th>学院</th>
                         <th>年级</th>
                         <th>班级</th>
+                        <th>部门</th>
+                        <th>社团协会</th>
                         <th>上次登录</th>
                         <th>权限</th>
                         <th>状态</th>
@@ -104,10 +106,12 @@
                       {% for admin in admins %}
                           <tr>
                           <td>{{ admin.name }}</td>
-                          <td>{{ admin.email }}</td>
+{#                          <td>{{ admin.email }}</td>#}
                           <td>{% if admin.academy %}{{ admin.academy }}{% else %}-{% endif %}</td>
                           <td>{% if admin.grade %}{{ admin.grade }}{% else %}-{% endif %}</td>
                           <td>{% if admin.klass %}{{ admin.klass }}{% else %}-{% endif %}</td>
+                          <td>{% if admin.department %}{{ admin.department }}{% else %}-{% endif %}</td>
+                          <td>{% if admin.organization %}{{ admin.organization }}{% else %}-{% endif %}</td>
                           <td>{% if admin.last_login %}{{ admin.last_login }}{% else %}-{% endif %}</td>
                           <td>{{ admin.get_role_display }}</td>
                           <td>{% if admin.is_freeze %}冻结{% else %}正常{% endif %}</td>

@@ -62,7 +62,8 @@ class RegisterView(View):
     context = {
         'form': RegisterForm(),
          "academies": Academy.objects.all(),
-         "grades": Grade.objects.all()
+         "grades": Grade.objects.all(),
+         'organizations': Institute.objects.all()
     }
     def get(self, request):
         return render(request, 'users/registration/register.html', self.context)
@@ -79,6 +80,12 @@ class RegisterView(View):
             if form.cleaned_data['role'] != 2:
                 user.academy = form.cleaned_data['academy']
                 user.grade = form.cleaned_data['grade']
+                if form.cleaned_data['role'] == 4:
+                    # 学时干部
+                    user.organization = form.cleaned_data['organization']
+            else:
+                # 校级用户
+                user.department = form.cleaned_data['department']
 
             user.set_password(form.cleaned_data['password'])
             user.register()

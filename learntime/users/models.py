@@ -19,7 +19,9 @@ class User(AbstractUser):
     grade = CharField(verbose_name='年级', max_length=20, null=True, blank=True,
                       help_text="请按照格式填写，例如(2019级)")
     klass = CharField(verbose_name='班级', max_length=20, null=True, blank=True,
-                      help_text="填写格式按照 <软件工程1班> 填写")
+                      help_text="填写格式按照格式填写，例如(软件工程1班)")
+    department = CharField(verbose_name="部门", max_length=50, null=True, blank=True)
+    organization = CharField(verbose_name="社团协会", max_length=50, null=True, blank=True)
     role = IntegerField(verbose_name="权限", choices=IDENTITY, default=4)
     is_freeze = BooleanField(verbose_name="是否冻结", default=False)
 
