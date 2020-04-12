@@ -303,8 +303,9 @@ class InstituteCreate(RoleRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.instance.save()
+        return super().form_valid(form)
     def get_success_url(self):
         messages.success(self.request, "新增协会成功")
-        return redirect(reverse("institute"))
+        return reverse("institute")
 InstituteDelete = institute_crud.create_delete_view("删除协会成功", "institute")
-InstituteUpdate = institute_crud.create_update_view(True, 0, '修改协会成功', 'institute')
+InstituteUpdate = institute_crud.create_update_view(False, InstituteForm, '修改协会成功', 'institute')

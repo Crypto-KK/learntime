@@ -6,7 +6,7 @@ from learntime.users.models import Academy, Grade
 
 
 class StudentCreateForm(forms.ModelForm):
-    uid = forms.CharField(help_text="学号")
+    uid = forms.CharField(label="学号")
     academy = forms.ModelChoiceField(label="学院", queryset=Academy.objects.all())
     grade = forms.ModelChoiceField(label="年级", queryset=Grade.objects.all())
     class Meta:
@@ -15,7 +15,10 @@ class StudentCreateForm(forms.ModelForm):
 
 
 class StudentEditForm(forms.ModelForm):
-    uid = forms.CharField(help_text="学号")
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['uid'].widget.attrs['readonly'] = True
+    uid = forms.CharField(label="学号", help_text="无法修改学号")
     academy = forms.ModelChoiceField(queryset=Academy.objects.all(), help_text="选择学院")
     grade = forms.ModelChoiceField(queryset=Grade.objects.all(), help_text="选择年级")
 
