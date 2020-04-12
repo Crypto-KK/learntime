@@ -77,7 +77,7 @@
 
 {% block js %}
   <script src="https://cdn.bootcss.com/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
-  <script src="{% static 'js/toast.js' %}"></script>
+{#  <script src="{% static 'js/toast.js' %}"></script>#}
   <script>
     $(function() {
         function makeToast() {
@@ -92,6 +92,18 @@
             pause_on_hover: false,
           });
         }
+
+        $('input[value="全部"]').change(function () {
+          let isChecked = $(this).prop("checked")
+          if (isChecked) {
+            // 全部选中了
+            $('input[type="checkbox"]').prop("checked", true)
+          } else {
+            $('input[type="checkbox"]').prop("checked", false)
+          }
+        })
+
+
 
         $('#button-craft').click(function () {
           // 点击保存草稿按钮

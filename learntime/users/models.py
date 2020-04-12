@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AbstractUser
-from django.db.models import CharField, IntegerField, Model, BooleanField, ForeignKey
+from django.db.models import CharField, IntegerField, Model, BooleanField, ForeignKey, Q
 from django.urls import reverse
 from django.db import models
 
@@ -45,10 +45,16 @@ class User(AbstractUser):
         ordering = ('role', )
 
 
+class AcademyManager(models.Manager):
+    """将'全部'学院隐藏掉"""
+    def all(self):
+        return super().filter(~Q(name="全部"))
+
+
 class Academy(Model):
     """学院数据库"""
     name = CharField(max_length=50, verbose_name="学院名称")
-
+    objects = AcademyManager()
     def __str__(self):
         return self.name
 

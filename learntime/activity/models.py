@@ -54,6 +54,7 @@ class Activity(CreatedUpdatedMixin, models.Model):
     file = models.FileField(upload_to=upload_file, verbose_name="活动策划书",
                             null=True, blank=True, help_text="请上传.doc或者.docx后缀的文档")
     sponsor = models.CharField(verbose_name="主办方", max_length=255, null=True, blank=True)
+    scope = models.CharField(max_length=255, verbose_name="允许报名的学院", default="全部")
     credit_type = models.CharField(choices=TYPE, max_length=20, verbose_name="学时类别",
                                    default="n", null=True, blank=True)
     place = models.CharField(max_length=255, verbose_name="活动地点", null=True, blank=True)
@@ -104,6 +105,7 @@ class SimpleActivity(models.Model):
     score = models.FloatField(default=0, verbose_name="学时")
     sponsor = models.CharField(verbose_name="主办方", max_length=255,
                                null=True, blank=True)
+    scope = models.CharField(max_length=255, verbose_name="允许报名的学院", default="全部")
     time = models.CharField(verbose_name="活动时间", max_length=255,
                             null=True, blank=True)
     stop = models.BooleanField(verbose_name="是否截止", default=False,
