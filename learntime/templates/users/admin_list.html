@@ -89,7 +89,7 @@
                     <thead>
                       <tr>
                         <th>姓名</th>
-{#                        <th>邮箱</th>#}
+                        <th>邮箱</th>
                         <th>学院</th>
                         <th>年级</th>
                         <th>班级</th>
@@ -106,7 +106,7 @@
                       {% for admin in admins %}
                           <tr>
                           <td>{{ admin.name }}</td>
-{#                          <td>{{ admin.email }}</td>#}
+                          <td>{{ admin.email }}</td>
                           <td>{% if admin.academy %}{{ admin.academy }}{% else %}-{% endif %}</td>
                           <td>{% if admin.grade %}{{ admin.grade }}{% else %}-{% endif %}</td>
                           <td>{% if admin.klass %}{{ admin.klass }}{% else %}-{% endif %}</td>

@@ -248,7 +248,8 @@ class StudentAllDeleteView(RootRequiredMixin, View):
                 user=self.request.user,
                 content=f"删除了所有学生记录"
             )
-        except Exception:
+        except Exception as e:
+            print(e)
             return fail
         return success
 

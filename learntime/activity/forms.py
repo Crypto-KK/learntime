@@ -85,8 +85,10 @@ class ActivityForm(forms.ModelForm):
             raise forms.ValidationError("请填写活动描述！")
         if not(score and score > 0):
             raise forms.ValidationError("获得学时不得小于0！")
-        if not (nums and nums > 0):
-            raise forms.ValidationError("名额数量不得小于0！")
+        if nums:
+            if nums < 0:
+                raise forms.ValidationError("名额数量不得小于0！")
+
         if not logo:
             raise forms.ValidationError("请上传活动图标！")
         return cd
@@ -133,3 +135,58 @@ class ActivityCraftForm(forms.ModelForm):
     # def clean(self):
     #     print(self.cleaned_data)
     #     return self.cleaned_data
+
+
+class ActivityCraftPublishForm(forms.ModelForm):
+    """草稿箱列表页发布活动表单"""
+    logo = forms.ImageField(required=True, label="活动图标", help_text="请务必上传")
+    file = forms.FileField(required=False, label="活动策划表", help_text="请上传.doc或.docx后缀的文档，若没有可以不上传")
+    sponsor = forms.CharField(required=True, label="主办方", max_length=255)
+    credit_type = forms.ChoiceField(choices=Activity.TYPE, label="学时类别", required=True)
+    nums = forms.IntegerField(label="名额数量", help_text="若无名额限制，请不要填写该内容", required=False)
+    place = forms.CharField(required=True, label="活动地点")
+    time = forms.CharField(required=True, label="活动时间")
+    deadline = forms.DateTimeField(required=True, label="活动截止日期", help_text="请选择大于现在的日期")
+    desc = RichTextFormField(required=True, label="活动描述")
+    join_type = forms.ChoiceField(choices=JOIN_TYPE, label="参与身份", required=True)
+    score = forms.FloatField(required=True, label="获得学时")
+
+
+    class Meta:
+        exclude = ("user", "uid", "is_verify", "is_academy_verify",
+                   "is_school_verify", "to", "is_verifying", "reason", "to_school",
+                   "stop", "is_craft", "mark_score")
+        model = Activity
+
+
+    def clean_credit_type(self):
+        # 学时类别选择了 未选择 ，验证失败
+        credit_type = self.cleaned_data['credit_type']
+        if credit_type == "n":
+            raise forms.ValidationError("请选择学时类别")
+        return credit_type
+
+    def clean_deadline(self):
+        # 验证活动截止时间
+        deadline = self.cleaned_data.get("deadline")
+        if deadline:
+            if datetime.now() > deadline:
+                raise forms.ValidationError("活动截止时间设置错误")
+        return deadline
+
+
+    def clean(self):
+        cd = self.cleaned_data
+        desc, score, nums, logo= cd.get("desc"), cd.get("score"), cd.get("nums"), \
+                                        cd.get("logo")
+        if not desc:
+            raise forms.ValidationError("请填写活动描述！")
+        if not(score and score > 0):
+            raise forms.ValidationError("获得学时不得小于0！")
+        if nums:
+            if nums < 0:
+                raise forms.ValidationError("名额数量不得小于0！")
+
+        if not logo:
+            raise forms.ValidationError("请上传活动图标！")
+        return cd

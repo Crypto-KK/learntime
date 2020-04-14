@@ -9,7 +9,7 @@ from django.views.generic import CreateView, DetailView, UpdateView
 from django.views.generic.base import View
 
 from learntime.activity.tasks import send_activity_verify_email
-from learntime.activity.forms import ActivityForm, ActivityCraftForm
+from learntime.activity.forms import ActivityForm, ActivityCraftForm, ActivityCraftPublishForm
 from learntime.activity.models import Activity
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
@@ -202,15 +202,18 @@ class ActivityCraftPublish(AuthorRequiredMixin, View):
                 activity.user = request.user
                 activity.to = admin
                 activity.is_craft = False
-                form = ActivityForm(data=activity.__dict__, instance=activity)
+                form = ActivityCraftPublishForm(data=activity.__dict__, instance=activity)
+                print(form.instance.scope)
                 if form.is_valid():
                     activity.save()
                     return JsonResponse({"status": "ok"})
                 else:
+                    print(form.errors)
                     return JsonResponse({"status": "fail", "err": form.errors})
             else:
                 return JsonResponse({"status": "unknown", "err": "草稿才能发布"})
-
+        else:
+            return JsonResponse({"status": "fail", "err": "活动id或adminid为空"})
 
 
 class ActivityDetail(LoginRequiredMixin, DetailView):

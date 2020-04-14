@@ -177,7 +177,8 @@
               } else if (res.status === "unknown") {
                 alert(res.err)
               } else {
-                alert(`您有${(Object.keys(res.err).length - 1).toString()}项信息未填写，请填写完整后再发布！`)
+                console.log(res.err)
+                alert(`您有${(Object.keys(res.err).length).toString()}项信息未填写，请填写完整后再发布！`)
                 $('#btn-cancel').click()
               }
             }
