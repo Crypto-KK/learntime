@@ -19,11 +19,11 @@
 
   <div class="container">
     <div class="row">
-      <div class="col-md-8 offset-md-2">
+      <div class="col-md-12">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title">详细信息</h4>
-              <p class="card-text">学号：{{ student.uid }}</p>
+              <p class="card-text" id="uid-text" data-student-id="{{ student.uid }}">学号：{{ student.uid }}</p>
               <p class="card-text">姓名：{{ student.name }}</p>
               <p class="card-text">学院：{{ student.academy }}</p>
               <p class="card-text">年级：{{ student.grade }}</p>
@@ -34,6 +34,35 @@
               <p class="card-text">法律学时：{{ student.fl_credit }}</p>
               <p class="card-text">文体学时：{{ student.wt_credit }}</p>
               <p class="card-text">心理学时：{{ student.xl_credit }}</p>
+
+              <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" id="chuangxinchuangye-tab" data-toggle="tab" href="#chuangxinchuangye" role="tab" aria-controls="chuangxinchuangye" aria-selected="true">创新创业</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="sixiangdaode-tab" data-toggle="tab" href="#sixiangdaode" role="tab" aria-controls="sixiangdaode" aria-selected="false">思想道德</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="falv-tab" data-toggle="tab" href="#falv" role="tab" aria-controls="falv" aria-selected="false">法律</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="wenti-tab" data-toggle="tab" href="#wenti" role="tab" aria-controls="wenti" aria-selected="false">文体</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="xinli-tab" data-toggle="tab" href="#xinli" role="tab" aria-controls="xinli" aria-selected="false">心理</a>
+                </li>
+              </ul>
+              <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="chuangxinchuangye" role="tabpanel" aria-labelledby="chuangxinchuangye-tab">
+
+                </div>
+                <div class="tab-pane fade" id="sixiangdaode" role="tabpanel" aria-labelledby="sixiangdaode-tab"></div>
+                <div class="tab-pane fade" id="falv" role="tabpanel" aria-labelledby="falv-tab"></div>
+
+                <div class="tab-pane fade" id="wenti" role="tabpanel" aria-labelledby="wenti-tab"></div>
+                <div class="tab-pane fade" id="xinli" role="tabpanel" aria-labelledby="xinli-tab"></div>
+              </div>
+              <br>
               <a class="btn btn-primary" href="{% url 'students:students' %}">返回</a>
             </div>
           </div>
@@ -43,8 +72,109 @@
     </div>
   </div>
 
-
-
-
 {% endblock %}
 
+{% block js %}
+  <script>
+    $(function () {
+      const student_id = $('#uid-text').attr("data-student-id")
+      let tem =
+                `
+                   <div>
+                   <table class="table table-striped table-hover table-bordered">
+                      <thead>
+                        <tr>
+                          <th>姓名</th>
+                          <th>参与活动名</th>
+                          <th>获得学时</th>
+                          <th>类别</th>
+                          <th>状态</th>
+                          <th>时间</th>
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+
+                      </tbody>
+                    </table>
+</div>
+                `
+
+        $.get({
+          url: '/operations/join-record/?student_id=' + student_id + '&type_name=创新创业素质',
+          success: res => {
+            $tem = $(tem)
+            res.data.forEach(record => {
+              $tem.find("tbody").append(`
+                <tr>
+                    <td>${record.student_name}</td>
+                    <td>${record.activity_name}</td>
+                    <td>${record.credit}</td>
+                    <td>${record.credit_type}</td>
+                    <td>${record.status}</td>
+                    <td>${record.create_time}</td>
+                </tr>
+              `)
+            })
+            $('#chuangxinchuangye').empty()
+            $('#chuangxinchuangye').append($tem.html())
+          }
+        })
+
+      $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        let tabId = e.target.id
+        let requestUri = "/operations/join-record/?student_id=" + student_id + "&type_name=";
+        switch (tabId) {
+          case "sixiangdaode-tab":
+            requestUri += "思想道德素质";
+
+            break;
+          case "falv-tab":
+            requestUri += "法律素质"
+
+            break;
+          case "wenti-tab":
+            requestUri += "文体素质"
+
+            break;
+          case "chuangxinchuangye-tab":
+            console.log("cxcy")
+            requestUri += "创新创业素质"
+
+            break;
+          case "xinli-tab":
+            requestUri += "心理素质"
+
+            break;
+          default:
+            break;
+        }
+
+
+
+        $.get({
+          url: requestUri,
+          success: res => {
+            console.log(res)
+            $tem = $(tem)
+            res.data.forEach(record => {
+              $tem.find("tbody").append(`
+                <tr>
+                    <td>${record.student_name}</td>
+                    <td>${record.activity_name}</td>
+                    <td>${record.credit}</td>
+                    <td>${record.credit_type}</td>
+                    <td>${record.status}</td>
+                    <td>${record.create_time}</td>
+                </tr>
+              `)
+            })
+            $('#' + tabId.split('-')[0]).empty()
+            $('#' + tabId.split('-')[0]).append($tem.html())
+          }
+        })
+
+
+      })
+    })
+  </script>
+{% endblock %}

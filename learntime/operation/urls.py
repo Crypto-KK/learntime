@@ -17,6 +17,10 @@ urlpatterns = [
 
     path('join-list/', view=views.StudentActivityListView.as_view(), name='join_list'),
     path('alter-status/', view=views.AlterStatusAPIView.as_view(), name='alter_status'),
+
+    # 查看学生的参加活动记录
+    path("join-record/", view=views.SearchRecordByPkAndTypeAPIView.as_view(), name='join_record'),
+
     path('sign-in-list/', view=views.SignInListView.as_view(), name='sign_in_list'),
     path('qrcode/<str:pk>/<int:frequency>/<int:signInOrSignOut>/<int:nonce>/', view=views.QRCodeAPIView.as_view(), name='qrcode'),
     path('person-list/<str:pk>/', view=views.PersonListAPIView.as_view(), name='person_list'),

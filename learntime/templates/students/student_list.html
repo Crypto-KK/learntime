@@ -163,7 +163,7 @@
 {#                          <td><input type="checkbox" name="student-checkbox" value="{{ student.uid }}"></td>#}
 {#                          {% endif %}#}
                           <td style="font-weight: bold">{{ student.uid }}</td>
-                          <td>{{ student.name }}</td>
+                          <td><a href="{% url 'students:student_detail' student.pk %}">{{ student.name }}</a></td>
                           <td>{{ student.academy }}</td>
                           <td>{{ student.grade }}</td>
                           <td>{{ student.clazz }}</td>

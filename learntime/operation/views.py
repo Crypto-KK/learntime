@@ -137,6 +137,40 @@ class PersonListAPIView(RoleRequiredMixin, View):
         return JsonResponse({"status": "ok", "count": len(return_data), "data": return_data})
 
 
+class SearchRecordByPkAndTypeAPIView(LoginRequiredMixin, View):
+    """查找某个学生某个类型的参加活动记录"""
+    def get(self, request):
+        """
+        :param request:
+        :param student_id: 学号
+        :param type_name: 参与的类型
+        :return:
+        """
+        student_id = request.GET.get("student_id")
+        type_name = request.GET.get("type_name")
+        if not student_id:
+            return JsonResponse({"status": "fail", "reason": "学号查找不到"})
+
+        if not type_name:
+            records = StudentActivity.objects.filter(student__uid=student_id)
+        else:
+            records = StudentActivity.objects.filter(student__uid=student_id,
+                                       credit_type=type_name)
+            print(records)
+        results = []
+        for record in records:
+            results.append({
+                "activity_name": record.activity_name,
+                "credit": record.credit,
+                "credit_type": record.credit_type,
+                "student_name": record.student_name,
+                "create_time": record.create_time.strftime("%Y-%m-%d %H:%M:%S"),
+                "status": record.get_status_display()
+            })
+
+        return JsonResponse({"status": "ok", "data": results})
+
+
 class FeedBackListView(LoginRequiredMixin, PaginatorListView):
     """反馈列表"""
     paginate_by = 20
