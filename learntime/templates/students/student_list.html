@@ -168,11 +168,11 @@
                           <td>{{ student.grade }}</td>
                           <td>{{ student.clazz }}</td>
                           <td style="color: blue">{{ student.credit }}</td>
-                          <td style="color: blue">{{ student.wt_credit }}</td>
-                          <td style="color: blue">{{ student.fl_credit }}</td>
-                          <td style="color: blue">{{ student.xl_credit }}</td>
-                          <td style="color: blue">{{ student.cxcy_credit }}</td>
-                          <td style="color: blue">{{ student.sxdd_credit }}</td>
+                          <td style="color: blue"><a href="{% url 'students:student_detail' student.pk %}?credit_type=wt">{{ student.wt_credit }}</a></td>
+                          <td style="color: blue"><a href="{% url 'students:student_detail' student.pk %}?credit_type=fl">{{ student.fl_credit }}</a></td>
+                          <td style="color: blue"><a href="{% url 'students:student_detail' student.pk %}?credit_type=xl">{{ student.xl_credit }}</a></td>
+                          <td style="color: blue"><a href="{% url 'students:student_detail' student.pk %}?credit_type=cxcy">{{ student.cxcy_credit }}</a></td>
+                          <td style="color: blue"><a href="{% url 'students:student_detail' student.pk %}?credit_type=sxdd">{{ student.sxdd_credit }}</a></td>
                           {% if role == 1%}
                           <td>
 {#                              <a href="{% url 'students:student_detail' student.pk %}" class="btn btn-success btn-sm">查看</a>#}

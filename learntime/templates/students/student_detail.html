@@ -99,8 +99,19 @@
 </div>
                 `
 
+      function getQueryVariable(variable)
+      {
+       var query = window.location.search.substring(1);
+       var vars = query.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+       }
+       return(false);
+      }
+      function req(student_id, type_name, tab_id) {
         $.get({
-          url: '/operations/join-record/?student_id=' + student_id + '&type_name=创新创业素质',
+          url: "/operations/join-record/?student_id=" + student_id + "&type_name=" + type_name,
           success: res => {
             $tem = $(tem)
             res.data.forEach(record => {
@@ -115,10 +126,46 @@
                 </tr>
               `)
             })
-            $('#chuangxinchuangye').empty()
-            $('#chuangxinchuangye').append($tem.html())
+            $('#' + tab_id.split('-')[0]).empty()
+            $('#' + tab_id.split('-')[0]).append($tem.html())
           }
         })
+      }
+      let UrlCreditType = getQueryVariable("credit_type") // URL传递的参数，若有则代表直达学分的tab栏
+
+      if(UrlCreditType) {
+
+        switch (UrlCreditType) {
+          case "wt":
+            $('#wenti-tab').tab('show')
+            req(student_id, "文体素质", 'wenti')
+            break;
+          case "xl":
+            $('#xinli-tab').tab('show')
+            req(student_id, "心理素质", 'xinli')
+            break;
+          case "fl":
+            $('#falv-tab').tab('show')
+            req(student_id, "法律素质", 'falv')
+            break;
+          case "sxdd":
+            $('#sxdd-credit').tab('show')
+            req(student_id, "思想道德素质", 'sixiangdaode')
+            break;
+          case "cxcy":
+            $('#chuangxinchuangye-tab').tab('show')
+            req(student_id, "创新创业素质", 'chuangxinchuangye')
+            break;
+        }
+
+      } else {
+        req(student_id, "创新创业素质", "chuangxinchuangye") // 默认查询
+      }
+
+
+
+
+
 
       $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         let tabId = e.target.id
@@ -148,8 +195,6 @@
           default:
             break;
         }
-
-
 
         $.get({
           url: requestUri,
