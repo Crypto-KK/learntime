@@ -32,7 +32,7 @@ class MyActivityList(RoleRequiredMixin, PaginatorListView):
     """我发布的活动列表 干部级可以在这里发布活动，查看自己的活动
     只能由干部操作
     """
-    role_required = (RoleEnum.STUDENT.value,)
+    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value)
     template_name = "activity/activity_list.html"
     paginate_by = 10
     context_object_name = "activities"
@@ -133,6 +133,40 @@ class ActivityCreateByStudent(RoleRequiredMixin, CreateView):
         form.instance.is_craft = False #
         # 发送异步邮件给指定的审核者 to_admin
         send_activity_verify_email(to_admin.email)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, "发布活动成功")
+        return reverse("activities:activities")
+
+
+class ActivityCreateByAcademy(RoleRequiredMixin, CreateView):
+    """学院辅导员发布活动"""
+    role_required = (RoleEnum.ACADEMY.value, )
+    model = Activity
+    template_name = "activity/activity_create_by_academy.html"
+    form_class = ActivityForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['schools'] = get_user_model().objects.filter(role=2)
+        return context
+
+    def form_valid(self, form):
+        # 指定审核者
+        print(form.instance.scope)
+        print(self.request.user.academy)
+        if form.instance.scope == self.request.user.academy:
+            # 活动允许的范围为本辅导员所在的学院，直接通过审核而不用经过上级批准
+            form.instance.is_verify = True
+            form.instance.is_verifying = False
+        else:
+            to_school = get_user_model().objects.get(pk=self.request.POST['to'])
+            form.instance.to_school = to_school
+        form.instance.user = self.request.user
+        form.instance.is_craft = False #
+        # 发送异步邮件给指定的审核者 to_admin
+        # send_activity_verify_email(to_admin.email)
         return super().form_valid(form)
 
     def get_success_url(self):

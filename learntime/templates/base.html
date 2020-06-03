@@ -114,6 +114,9 @@
             {% if role == 4 %}
               <li class="left-link create-activity-page" ><a href="{% url 'activities:activity_create_by_student' %}"> <i class="fa fa-pencil-square-o fa-fw"></i>发布活动</a></li>
             {% endif %}
+            {% if role == 3 %}
+              <li class="left-link create-activity-page" ><a href="{% url 'activities:activity_create_by_academy' %}"> <i class="fa fa-pencil-square-o fa-fw"></i>发布活动</a></li>
+            {% endif %}
             {% if role == 2 or role == 3 %}
               <li class="left-link activity-verify-page"><a href="{% url 'activities:activity_unverify' %}"> <i class="fa fa-bullhorn fa-fw"></i>活动审批 </a></li>
             {% endif %}
