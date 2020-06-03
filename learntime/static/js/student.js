@@ -13,7 +13,15 @@ $(function () {
     if (data.status === "fail") {
         alert(data.reason)
     } else {
-        alert("导入学生数据成功！");
+        let student_list = []
+        if (data.data.fail_count > 0) {
+            data.data.fail_list.forEach(obj => {
+                student_list.push(obj)
+            })
+        }
+        let student_str = student_list.join(",")
+
+        alert(`${data.data.success_count}条导入成功，${data.data.fail_count}条导入失败\n导入失败名单：${student_str}`);
         window.location.reload()
     }
   });

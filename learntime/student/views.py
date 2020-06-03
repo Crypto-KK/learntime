@@ -11,6 +11,7 @@ from django.db.models import Q
 
 from io import BytesIO
 import xlrd
+from datetime import datetime
 
 from config.settings.base import CREDIT_TYPE
 from learntime.operation.models import Log
@@ -128,39 +129,54 @@ class StudentDelete(RootRequiredMixin, DeleteView):
         return reverse_lazy("students:students")
 
 
-class StudentExcelImportView(RootRequiredMixin, View):
+class StudentExcelImportView(RoleRequiredMixin, View):
     """学生excel导入视图"""
-
+    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)
     def post(self, request):
         form = StudentExcelForm(request.POST, request.FILES) # 获取提交后的表单
+        fail_list = []
+        success_count = 0
+        fail_count = 0
         if form.is_valid(): # 表单校验通过
             #StudentFile.objects.create(excel_file=form.cleaned_data['excel_file'])
             file_obj = request.FILES['excel_file'].read()
             try:
                 workbook = xlrd.open_workbook(file_contents=file_obj) # 使用xlrd打开excel文件
-                print(workbook)
                 table = workbook.sheets()[0] # 获取第一个工作薄
                 nrows = table.nrows # 获取总行数
-                for _ in range(1, nrows): # 从第二行开始导入数据
-                    row = table.row_values(_) # 获取一条记录
-                    student = Student.objects.create(
+            except Exception as e:  # 文件内容有误
+                print(e)
+                return JsonResponse({"status": "fail", "reason": "导入失败！"})
+
+            for _ in range(1, nrows): # 从第二行开始导入数据
+                row = table.row_values(_) # 获取一条记录
+                is_exist = Student.objects.filter(pk=row[0])
+                is_exist_count = is_exist.count()
+                if is_exist_count > 0:
+                    # 学生数据重复，记录下来
+                    fail_count += 1
+                    fail_list.append(is_exist[0].uid + " " + is_exist[0].name)
+                    print("学生数据重复。跳过")
+                else:
+                    student = Student(
                         uid=row[0], name=row[1], academy=row[2],
                         grade=row[3], clazz=row[4], credit=float(row[5]),
                         wt_credit=float(row[6]), fl_credit=float(row[7]), xl_credit=float(row[8]),
                         cxcy_credit=float(row[9]), sxdd_credit=float(row[10])
                     ) # 创建一个学生实例
-                    student.save() # 保存
-
-            except Exception as e: # 文件内容有误
-                print(e)
-                return JsonResponse({"status": "fail", "reason": "导入失败！"})
+                    student.save()
+                    success_count += 1
 
             # 写入日志中
             Log.objects.create(
                 user=self.request.user,
-                content=f"导入了{nrows - 1}条学生记录"
+                content=f"一共导入了{nrows - 1}条学生记录，{success_count}条成功，{fail_count}条失败"
             )
-            return JsonResponse({"status": "ok"})
+            return JsonResponse({"status": "ok", "data": {
+                "success_count": success_count,
+                "fail_count": fail_count,
+                "fail_list": fail_list
+            }})
 
         else: # 文件格式错误
             return JsonResponse({"status": "fail", "reason": "必须为xls或xlsx格式！"})
@@ -455,7 +471,6 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             except User.DoesNotExist:# 如果查询不到审核者，直接报错
                 if request.user.role == RoleEnum.ACADEMY.value:
                     to = request.user
-                    print(to)
                 else:
                     return JsonResponse({"status": "fail", "reason": "请选择审核者"})
 
@@ -475,7 +490,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
                     if obj.to == obj.user: # 审核者和申请者相同,增加学时
                         obj.verify = True
                         if not add_credit(CREDIT_TYPE, obj.uid, obj.credit_type, obj.credit):
-                            return JsonResponse({"status": "fail", "reason": "增加学时失败"})
+                            return JsonResponse({"status": "fail", "reason": "学时类别填写错误！可选项为：思想道德素质、创新创业素质、心理素质、文体素质、法律素质"})
                         if not add_student_activity(obj.uid, obj.join_type,
                                                     activity_name=obj.activity_name,
                                                     credit=obj.credit,
