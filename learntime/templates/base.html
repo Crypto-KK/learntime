@@ -65,7 +65,7 @@
           <!-- Sidebar Header-->
           <div class="sidebar-header d-flex align-items-center">
             <div class="avatar">
-              <img src="{% static 'img/avatar.png' %}" alt="..." class="img-fluid rounded-circle">
+              <img src="https://learningtime.oss-cn-shenzhen.aliyuncs.com/media/file/avatar.png" alt="..." class="img-fluid rounded-circle">
             </div>
             <div class="title">
               <h1 class="h4">{{ request.user.name }}</h1>
@@ -117,6 +117,10 @@
             {% if role == 3 %}
               <li class="left-link create-activity-page" ><a href="{% url 'activities:activity_create_by_academy' %}"> <i class="fa fa-pencil-square-o fa-fw"></i>发布活动</a></li>
             {% endif %}
+            {% if role == 2 %}
+              <li class="left-link create-activity-page" ><a href="{% url 'activities:activity_create_by_school' %}"> <i class="fa fa-pencil-square-o fa-fw"></i>发布活动</a></li>
+            {% endif %}
+            <li class="left-link activity-page" ><a href="{% url 'activities:activities' %}"> <i class="fa fa-send-o fa-fw"></i>我发布的活动</a></li>
             {% if role == 2 or role == 3 %}
               <li class="left-link activity-verify-page"><a href="{% url 'activities:activity_unverify' %}"> <i class="fa fa-bullhorn fa-fw"></i>活动审批 </a></li>
             {% endif %}
@@ -126,7 +130,7 @@
 
             {% if role == 4 %}
 
-            <li class="left-link activity-page" ><a href="{% url 'activities:activities' %}"> <i class="fa fa-send-o fa-fw"></i>我发布的活动</a></li>
+
             <li class="left-link craft-page" ><a href="{% url 'activities:craft_list' %}"> <i class="fa fa-trash fa-fw"></i>草稿箱</a></li>
 
             <li class="left-link activity-sign" ><a href="{% url 'operations:sign_in_list' %}"> <i class="fa fa-qrcode fa-fw"></i>签到签退</a></li>

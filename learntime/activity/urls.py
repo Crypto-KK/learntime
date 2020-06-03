@@ -19,6 +19,7 @@ urlpatterns = [
     # 新增活动
     path('create/by-student/', view=views.ActivityCreateByStudent.as_view(), name='activity_create_by_student'),
     path('create/by-academy/', view=views.ActivityCreateByAcademy.as_view(), name='activity_create_by_academy'),
+    path('create/by-school/', view=views.ActivityCreateBySchool.as_view(), name='activity_create_by_school'),
     # 新增草稿
     path('craft/create/', view=views.ActivityCraftCreate.as_view(), name='craft_create'),
     # 草稿箱更新
