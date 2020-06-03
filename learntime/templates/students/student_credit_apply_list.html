@@ -16,6 +16,17 @@
   </div>
 {% endblock %}
 {% block body %}
+  <div class="modal fade" id="loadingModal" backdrop="static" keyboard="false">
+    　　
+    <div style="width: 200px;height:100px; z-index: 20000; position: absolute; text-align: center; left: 50%; top: 50%;margin-left:-100px;margin-top:-10px">
+        　　　　
+        <div class="progress progress-striped active"
+             style="margin-bottom: 0;height:50px; text-align:center;line-height: 50px;font-size:large;">
+              正在导入中，请稍后...　　　　
+        </div>
+        　　
+    </div>
+</div>
     <section class="tables">
       <div class="container-fluid">
         <ul class="nav nav-tabs">
@@ -43,7 +54,7 @@
 
                 </div>
                 <div class="modal-body">
-                  <form id="student-import-form" class="form-group" enctype="multipart/form-data" method="post" action="{% url 'students:student_credit_import' %}">
+                  <form id="student-credit-import-form" class="form-group" enctype="multipart/form-data" method="post" action="{% url 'students:student_credit_import' %}">
 
                     <p class="help-block">请严格根据表格内容填写</p>
                     <p class="help-block"><a href="https://learningtime.oss-cn-shenzhen.aliyuncs.com/media/file/%E5%AD%A6%E6%97%B6%E8%AE%A4%E5%AE%9A%E8%A1%A8%E6%A8%A1%E6%9D%BF.xlsx" download="学时认定表模板.txt">点击此处下载模板文件</a></p>
@@ -60,7 +71,7 @@
                       </select>
                       <br><br>
                     {% endif %}
-                    <input type="submit" class="btn btn-primary" value="确认导入"/>
+                    <input type="submit" class="btn btn-primary" onclick="onConfirm()" value="确认导入"/>
                     <button type="button" class="btn btn-default pull-right" data-dismiss="modal">取消</button>
 
                   </form>
@@ -148,71 +159,102 @@
   <script src="{% static 'js/jquery-form.js' %}"></script>
   <script src="{% static 'js/student.js' %}"></script>
   <script>
-    function deleteTr(obj) { // 删除单条记录
-      if (window.confirm("您确定删除该记录吗？")) {
-        $.ajax({
-          method: "POST",
-          url: '/students/credit-delete/',
-          traditional: true,
-          data: {
-            pks: JSON.stringify([$(obj).attr("data-pk")])
-          },
-          success: res => {
-            if (res.status === "fail") {
-              alert("删除失败！")
-            }
-          }
-        });
-        obj.parentNode.parentNode.remove();
+    $(function () {
+      //展示loading框
+      showLoading = function ()
+      {
+         $('#loadingModal').modal({backdrop: 'static', keyboard: false});
       }
-    }
-
-    $('#all').click(function () {
-      // 全选or全不选
-      $('input[name="sub"]').prop("checked", this.checked);
-      if (this.checked) {
-        $('#deleteSelected').show()
-      } else {
-        $('#deleteSelected').hide()
+      //隐藏掉loading框
+      hideLoading = function ()
+      {
+         $('#loadingModal').modal('hide');
       }
-    });
 
-    $('input[name="sub"]').click(function () { // 选择监听
-      var $sub = $('input[name="sub"]');
-      var checkedCount = $sub.filter(":checked").length; // 选中的数量
-      $('#all').prop("checked", $sub.length == checkedCount ? true: false);
-      if (checkedCount > 0) {
-        $('#deleteSelected').show()
-      } else {
-        $('#deleteSelected').hide()
-      }
-    });
 
-    $('#deleteSelected').click(function () {
-      if (window.confirm("确定删除所选补录数据吗？")) {
-        let $subs = $('input[name="sub"]').filter(":checked");
-        let pks = [];
-        for (let i = 0; i < $subs.length; i ++) {
-          pks.push($($subs[i]).attr("data-pk"));
-          $subs[i].parentNode.parentNode.remove();
+
+      function deleteTr(obj) { // 删除单条记录
+  if (window.confirm("您确定删除该记录吗？")) {
+    $.ajax({
+      method: "POST",
+      url: '/students/credit-delete/',
+      traditional: true,
+      data: {
+        pks: JSON.stringify([$(obj).attr("data-pk")])
+      },
+      success: res => {
+        if (res.status === "fail") {
+          alert("删除失败！")
         }
+      }
+    });
+    obj.parentNode.parentNode.remove();
+  }
+}
 
-        $.ajax({
-          method: "POST",
-          url: '/students/credit-delete/',
-          traditional: true,
-          data: {
-            pks: JSON.stringify(pks)
-          },
-          success: res => {
-            if (res.status === "fail") {
-              alert("删除失败！")
-            }
+      $('#all').click(function () {
+        // 全选or全不选
+        $('input[name="sub"]').prop("checked", this.checked);
+        if (this.checked) {
+          $('#deleteSelected').show()
+        } else {
+          $('#deleteSelected').hide()
+        }
+      });
+
+      $('input[name="sub"]').click(function () { // 选择监听
+        var $sub = $('input[name="sub"]');
+        var checkedCount = $sub.filter(":checked").length; // 选中的数量
+        $('#all').prop("checked", $sub.length == checkedCount ? true: false);
+        if (checkedCount > 0) {
+          $('#deleteSelected').show()
+        } else {
+          $('#deleteSelected').hide()
+        }
+      });
+
+      $('#deleteSelected').click(function () {
+        if (window.confirm("确定删除所选补录数据吗？")) {
+          let $subs = $('input[name="sub"]').filter(":checked");
+          let pks = [];
+          for (let i = 0; i < $subs.length; i ++) {
+            pks.push($($subs[i]).attr("data-pk"));
+            $subs[i].parentNode.parentNode.remove();
           }
-        });
 
+          $.ajax({
+            method: "POST",
+            url: '/students/credit-delete/',
+            traditional: true,
+            data: {
+              pks: JSON.stringify(pks)
+            },
+            success: res => {
+              if (res.status === "fail") {
+                alert("删除失败！")
+              }
+            }
+          });
+
+        }
+      })
+
+
+      // 获取返回结果
+      $('#student-credit-import-form').ajaxForm(function (data) {
+        if (data.status === "fail") {
+            alert(data.reason)
+        } else {
+            console.log(data)
+            //window.location.reload()
+        }
+      });
+
+      function onConfirm() {
+        alert("con")
       }
     })
+
   </script>
 {% endblock %}
 

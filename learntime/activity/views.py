@@ -113,11 +113,11 @@ class ActivityVerifyList(ActivityUnVerifyList):
             return Activity.objects.none()
 
 
-class ActivityCreate(RoleRequiredMixin, CreateView):
-    """发布活动，只能由干部发布"""
+class ActivityCreateByStudent(RoleRequiredMixin, CreateView):
+    """学生发布活动"""
     role_required = (RoleEnum.STUDENT.value, )
     model = Activity
-    template_name = "activity/activity_create.html"
+    template_name = "activity/activity_create_by_student.html"
     form_class = ActivityForm
 
     def get_context_data(self, **kwargs):
@@ -144,7 +144,7 @@ class ActivityCraftCreate(RoleRequiredMixin, CreateView):
     """保存到草稿中"""
     role_required = (RoleEnum.STUDENT.value, )
     model = Activity
-    template_name = "activity/activity_create.html"
+    template_name = "activity/activity_create_by_student.html"
     form_class = ActivityCraftForm
 
     def get_context_data(self, **kwargs):

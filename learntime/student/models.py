@@ -19,11 +19,11 @@ class Student(CreatedUpdatedMixin, models.Model):
     clazz = models.CharField(max_length=255, null=True, blank=True,
                              verbose_name="班级")
     credit = models.FloatField(default=0, verbose_name="学时")
-    cxcy_credit = models.FloatField(default=0, verbose_name="创新创业学时")
-    sxdd_credit = models.FloatField(default=0, verbose_name="思想道德学时")
-    fl_credit = models.FloatField(default=0, verbose_name="法律学时")
-    wt_credit = models.FloatField(default=0, verbose_name="文体学时")
-    xl_credit = models.FloatField(default=0, verbose_name="心理学时")
+    cxcy_credit = models.FloatField(default=0, verbose_name="创新创业素质")
+    sxdd_credit = models.FloatField(default=0, verbose_name="思想道德素质")
+    fl_credit = models.FloatField(default=0, verbose_name="法律素养")
+    wt_credit = models.FloatField(default=0, verbose_name="文体素质")
+    xl_credit = models.FloatField(default=0, verbose_name="身心素质")
 
     class Meta:
         verbose_name = "学生"
@@ -67,15 +67,15 @@ class SimpleStudent(models.Model):
                              verbose_name="班级")
     credit = models.FloatField(default=0, verbose_name="学时",
                                null=True, blank=True)
-    cxcy_credit = models.FloatField(default=0, verbose_name="创新创业学时",
+    cxcy_credit = models.FloatField(default=0, verbose_name="创新创业素质",
                                     null=True, blank=True)
-    sxdd_credit = models.FloatField(default=0, verbose_name="思想道德学时",
+    sxdd_credit = models.FloatField(default=0, verbose_name="思想道德素质",
                                     null=True, blank=True)
-    fl_credit = models.FloatField(default=0, verbose_name="法律学时",
+    fl_credit = models.FloatField(default=0, verbose_name="法律素养",
                                   null=True, blank=True)
-    wt_credit = models.FloatField(default=0, verbose_name="文体学时",
+    wt_credit = models.FloatField(default=0, verbose_name="文体素质",
                                   null=True, blank=True)
-    xl_credit = models.FloatField(default=0, verbose_name="心理学时",
+    xl_credit = models.FloatField(default=0, verbose_name="身心素质",
                                   null=True, blank=True)
 
     class Meta:

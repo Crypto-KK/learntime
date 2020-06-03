@@ -272,7 +272,7 @@ class UserLogListAPIView(RootRequiredMixin, View):
         :param pk: 用户pk
         """
         return_data = []
-        logs = Log.objects.filter(user_id=pk)
+        logs = Log.objects.filter(user_id=pk)[:30]
 
         for log in logs:
             return_data.append({

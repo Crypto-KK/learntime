@@ -147,8 +147,8 @@ def add_student_activity(student_pk, join_type, activity_pk=None, activity_name=
     """
     join_type_id = 1
     CREDIT_TYPE_REVERSE = {
-        "xl_credit": "心理素质",
-        "fl_credit": "法律素质",
+        "xl_credit": "身心素质",
+        "fl_credit": "法律素养",
         "wt_credit": "文体素质",
         "sxdd_credit": "思想品德素质",
         "cxcy_credit": "创新创业素质",

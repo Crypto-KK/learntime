@@ -44,7 +44,9 @@
             <div class="card">
               <div class="card-header">
                 <h1 style="display: inline-block">共{{ count }}个活动</h1>
-                <a href="{% url 'activities:activity_create' %}" class="btn btn-primary pull-right">发布活动</a>
+                {% if request.user.role == 4 %}
+                  <a href="{% url 'activities:activity_create_by_student' %}" class="btn btn-primary pull-right">发布活动</a>
+                {% endif %}
               </div>
               <div class="card-body">
                 <div class="modal fade" id="showReason" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

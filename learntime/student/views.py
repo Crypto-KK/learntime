@@ -478,6 +478,8 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
                 workbook = xlrd.open_workbook(file_contents=request.FILES['excel_file'].read()) # 使用xlrd打开excel文件
                 table = workbook.sheets()[0] # 获取第一个工作薄
                 nrows = table.nrows # 获取总行数
+                if nrows < 2:
+                    return JsonResponse({"status": "fail", "reason": "文件格式不正确"})
                 for _ in range(2, nrows): # 从第3行开始导入数据
                     row = table.row_values(_) # 获取一条记录
                     obj = StudentCreditVerify.objects.create(
@@ -490,7 +492,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
                     if obj.to == obj.user: # 审核者和申请者相同,增加学时
                         obj.verify = True
                         if not add_credit(CREDIT_TYPE, obj.uid, obj.credit_type, obj.credit):
-                            return JsonResponse({"status": "fail", "reason": "学时类别填写错误！可选项为：思想道德素质、创新创业素质、心理素质、文体素质、法律素质"})
+                            return JsonResponse({"status": "fail", "reason": "学时类别填写错误！可选项为：思想道德素质、创新创业素质、身心素质、文体素质、法律素养"})
                         if not add_student_activity(obj.uid, obj.join_type,
                                                     activity_name=obj.activity_name,
                                                     credit=obj.credit,
@@ -499,7 +501,6 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
                         obj.save()
 
             except Exception as e: # 文件内容有误
-                print(e)
                 return JsonResponse({"status": "fail", "reason": e.__str__()})
 
             # 写入日志中
