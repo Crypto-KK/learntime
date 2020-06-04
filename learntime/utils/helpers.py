@@ -135,6 +135,26 @@ def add_credit(mappings, student_pk, credit_type, mount):
         return 1
 
 
+def minus_credit(mappings, student_pk, credit_type, mount):
+    """减少学时
+    :param mappings: 映射
+    :param student_pk: 学号
+    :param credit_type: 学时类别，例如思想品德素质
+    :param mount: 增加的学时
+    :return 1 success
+    """
+    try:
+        student = Student.objects.get(pk=student_pk)
+        credit_type_attr = mappings[credit_type]
+        old_credit = getattr(student, credit_type_attr)
+        setattr(student, credit_type_attr, old_credit - mount)
+        student.save()
+    except Exception as e:
+        return 0
+    else:
+        return 1
+
+
 def add_student_activity(student_pk, join_type, activity_pk=None, activity_name='',
                          credit=0, credit_type=""):
     """
@@ -178,6 +198,58 @@ def add_student_activity(student_pk, join_type, activity_pk=None, activity_name=
                 credit=credit, activity_name=activity_name, **attrs,
                 credit_type=credit_type
             )
+    except Exception as e:
+        print(e)
+        return 0
+    else:
+        return 1
+
+
+def remove_student_activity(student_pk, join_type, activity_pk=None, activity_name='',
+                         credit=0, credit_type=""):
+    """
+    删除关联的学生和活动
+    :param student_pk: 学号
+    :param join_type: 参与类型
+    :param activity_pk: 活动id 若没有可不填
+    :param activity_name: 活动名 若没有可不填
+    :return 1 success
+    """
+    join_type_id = 1
+    CREDIT_TYPE_REVERSE = {
+        "xl_credit": "身心素质",
+        "fl_credit": "法律素养",
+        "wt_credit": "文体素质",
+        "sxdd_credit": "思想品德素质",
+        "cxcy_credit": "创新创业素质",
+    }
+    try:
+        student = Student.objects.get(pk=student_pk)
+        if join_type == "参赛者" or join_type == "参加者":
+            join_type_id = 1
+        elif join_type == "观众":
+            join_type_id = 2
+        elif join_type == "工作人员":
+            join_type_id = 3
+        attrs = {
+            "student": student, "join_type": join_type_id,
+            "academy": student.academy, "grade": student.grade,
+            "clazz": student.clazz, "student_name": student.name,
+        }
+        if activity_pk:
+            activity = Activity.objects.get(pk=activity_pk)
+            student_activities = StudentActivity.objects.filter(activity=activity, credit=activity.score,
+                activity_name=activity.name, **attrs,
+                credit_type=CREDIT_TYPE_REVERSE[activity.credit_type])
+            if student_activities.count() > 0:
+                student_activities[0].delete()
+        else:
+            student_activities = StudentActivity.objects.filter(
+                credit=credit, activity_name=activity_name, **attrs,
+                credit_type=credit_type)
+            if student_activities.count() > 0:
+                student_activities[0].delete()
+
     except Exception as e:
         print(e)
         return 0

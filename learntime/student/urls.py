@@ -5,7 +5,7 @@ from learntime.student.views import (StudentExcelImportView, StudentExcelExportV
                                      StudentAllDeleteView, StudentCreditView, StudentEditCreditView,
                                      StudentBulkAddCreditView, StudentCreditApplyListView, StudentCreditExcelImportView,
                                      StudentCreditVerifyListView, StudentCreditApplyCreateView, StudentCreditDeleteView,
-                                     StudentCreditApplyConfirmListView, StudentCreditConfirmView)
+                                     StudentCreditApplyConfirmListView, StudentCreditConfirmView, StudentCreditWithdrawView)
 
 app_name = "students"
 urlpatterns = [
@@ -45,6 +45,12 @@ urlpatterns = [
     path("credit-import/", view=StudentCreditExcelImportView.as_view(), name='student_credit_import'),
     # 删除学时补录申请接口
     path("credit-delete/", view=StudentCreditDeleteView.as_view(), name='student_credit_delete'),
+
+    # 撤回补录成功的学时接口
+    path("credit-withdraw/", view=StudentCreditWithdrawView.as_view(), name='student_credit_withdraw'),
+
+
+
     # 审核通过学时补录申请接口
     path("credit-confirmation/", view=StudentCreditConfirmView.as_view(), name='student_credit_confirmation'),
 ]

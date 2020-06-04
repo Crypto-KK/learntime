@@ -20,7 +20,7 @@ from learntime.student.models import Student, StudentCreditVerify
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
 from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, FormInitialMixin, \
-    RootRequiredMixin, add_credit, add_student_activity
+    RootRequiredMixin, add_credit, add_student_activity, minus_credit, remove_student_activity
 
 success = JsonResponse({"status": "ok"})
 fail = JsonResponse({"status": "fail"})
@@ -422,7 +422,6 @@ class StudentCreditApplyListView(RoleRequiredMixin, PaginatorListView):
 
 class StudentCreditApplyConfirmListView(RoleRequiredMixin, PaginatorListView):
     """学时补录审核成功列表页
-    权限：学生干部级
     """
     role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value)
     paginate_by = 50
@@ -528,6 +527,24 @@ class StudentCreditDeleteView(RoleRequiredMixin, View):
             return JsonResponse({"status": "fail"})
         return JsonResponse({"status": "ok"})
 
+
+class StudentCreditWithdrawView(RoleRequiredMixin, View):
+    """撤回审核通过的补录记录"""
+    role_required = (RoleEnum.ACADEMY.value,)
+    def post(self, request):
+        try:
+            pks = json.loads(request.POST.get("pks"))
+            for pk in pks:
+                obj = StudentCreditVerify.objects.get(pk=pk)
+                minus_credit(CREDIT_TYPE, obj.uid, obj.credit_type, obj.credit) # 减少学时
+                remove_student_activity(obj.uid, obj.join_type,
+                                        activity_name=obj.activity_name,
+                                        credit=obj.credit,
+                                        credit_type=obj.credit_type)  # 删除学生与活动的关联
+                obj.delete() # 删除审核记录
+        except Exception as e:
+            return JsonResponse({"status": "fail"})
+        return JsonResponse({"status": "ok"})
 
 class StudentCreditConfirmView(RoleRequiredMixin, View):
     """学时补录申请审核通过，需要院级权限"""
