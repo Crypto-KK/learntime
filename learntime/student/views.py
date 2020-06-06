@@ -53,10 +53,10 @@ class StudentList(RoleRequiredMixin, PaginatorListView):
         clazz = self.request.GET.get('clazz')
 
         # 初步的students查询集
-        students = Student.objects.filter(
-            academy=self.request.user.academy) \
-            if role == RoleEnum.ACADEMY.value else Student.objects.all()
-
+        students = Student.objects.all()
+        if role == RoleEnum.ACADEMY.value:
+            students = students.filter(academy=self.request.user.academy,
+                                       grade=self.request.user.grade)
         if uid:
             return students.filter(uid=uid)
         if name:

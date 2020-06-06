@@ -95,14 +95,6 @@ class StudentCreditVerify(models.Model):
         001   测试      2
         002   儿子      2
     """
-    CREDIT_TYPE = (
-        (0, '未选择'),
-        (1, '法律学时'),
-        (2, '文体学时'),
-        (3, '心理学时'),
-        (4, '创新创业学时'),
-        (5, '思想道德学时'),
-    )
     activity_name = models.CharField(max_length=50, verbose_name="活动名称")
     sponsor = models.CharField(max_length=20, verbose_name="主办方")
     uid = models.CharField(max_length=20, verbose_name="学号")

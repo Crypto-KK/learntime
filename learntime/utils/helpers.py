@@ -191,12 +191,13 @@ def add_student_activity(student_pk, join_type, activity_pk=None, activity_name=
             StudentActivity.objects.create(
                 activity=activity, credit=activity.score,
                 activity_name=activity.name, **attrs,
-                credit_type=CREDIT_TYPE_REVERSE[activity.credit_type]
+                credit_type=CREDIT_TYPE_REVERSE[activity.credit_type],
+                status=3
             )
         else:
             StudentActivity.objects.create(
                 credit=credit, activity_name=activity_name, **attrs,
-                credit_type=credit_type
+                credit_type=credit_type, status=3
             )
     except Exception as e:
         print(e)
