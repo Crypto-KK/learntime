@@ -20,8 +20,12 @@ $(function () {
             })
         }
         let student_str = student_list.join(",")
+        if (data.data.fail_count > 0) {
+            Toast.success(`${data.data.success_count}条导入成功，${data.data.fail_count}条导入失败\n导入失败名单：${student_str}`)
+        } else {
+            Toast.warning(`${data.data.success_count}条导入成功`)
+        }
 
-        alert(`${data.data.success_count}条导入成功，${data.data.fail_count}条导入失败\n导入失败名单：${student_str}`);
         window.location.reload()
     }
   });

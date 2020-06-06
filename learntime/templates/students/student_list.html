@@ -69,7 +69,7 @@
                   {% if role == 1 or role == 3 %}
                     <button class="btn btn-blue" data-toggle="modal" data-target="#modal-in-class">
 
-                      <i class="fa fa-caret-square-o-right"> 导入</i>
+                      <i class="fa fa-caret-square-o-right">导入</i>
                     </button>
                     <div class="modal modal-default fade" id="modal-in-class">
                       <div class="modal-dialog">
@@ -87,7 +87,7 @@
                               {{ form.as_p }}
 
                               <p class="help-block">请下载excel模板：<button id="download" class="btn btn-info btn-sm">下载模板</button></p>
-                              <input type="submit" class="btn btn-primary" value="导入"/>
+                              <button type="button" id="import-data-button" class="btn btn-primary pull-right">确认导入</button>
                               <button type="button" class="btn btn-default pull-right" data-dismiss="modal">取消</button>
 
                             </form>
@@ -215,10 +215,69 @@
 {% block js %}
   <script src="{% static 'js/jquery-form.js' %}"></script>
   <script src="{% static 'js/student.js' %}"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery.blockUI/2.70.0-2014.11.23/jquery.blockUI.min.js"></script>
+  <script src="{% static 'js/loading.js' %}"></script>
   <script>
     $(function () {
+      {#Loading.show()#}
       $('#download').click(function () {
         window.open("https://learningtime.oss-cn-shenzhen.aliyuncs.com/media/file/%E5%AD%A6%E6%97%B6%E9%80%9A%E5%AD%A6%E7%94%9F%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF.xls")
+      })
+
+      $('#import-data-button').click(function () {
+        let file = document.querySelector("#id_excel_file").files[0]
+        if (!file) {
+          Toast.error("请上传文件！")
+          return;
+        }
+        // 后缀判断
+        let suffixs = ['xls', 'xlsx'];
+        let fileName = file.name
+        let suffix = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length).toLowerCase();
+        let validateSuffix = false
+        for (let i = 0; i < suffixs.length; i++) {
+          if (suffixs[i].toLowerCase() === suffix) {
+            validateSuffix = true;
+            break
+          }
+        }
+        if (!validateSuffix) {
+          Toast.warning("文件上传失败，仅支持：" + suffixs.join(","))
+          return
+        }
+
+        Loading.show()
+        let formData = new window.FormData()
+        formData.append("excel_file", file)
+        $.post({
+          url: "/students/student-import/",
+          data: formData,
+          processData: false,   // jQuery不要去处理发送的数据
+          contentType: false,   // jQuery不要去设置Content-Type请求头
+          success: res => {
+            Loading.hide()
+            if (res.status === 'ok') {
+              let student_list = []
+              if (res.data.fail_count > 0) {
+                  res.data.fail_list.forEach(obj => {
+                      student_list.push(obj)
+                  })
+              }
+              let student_str = student_list.join(",")
+              if (res.data.fail_count > 0) {
+                  Toast.warning_with_time(`${res.data.success_count}条导入成功，${res.data.fail_count}条导入失败\n请手动刷新页面查看\n导入失败名单：${student_str}\n`, 60000)
+              } else {
+                  Toast.success(`${res.data.success_count}条导入成功，3秒后自动刷新`)
+                  setTimeout(() => {
+                    window.location.reload()
+                  }, 3000)
+              }
+            } else {
+              Toast.error(res.reason)
+            }
+          }
+        })
+
       })
     })
   </script>

@@ -215,7 +215,8 @@
 {#    <script src="{% static 'vendor/layer/layer.js' %}"></script>#}
 {#    <script src={% static 'js/charts-home.js' %}></script>#}
     <!-- Main File-->
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="{% static 'js/mytoast.js' %}"></script>
     {% compress js %}
       <script src="{% static 'js/common.js' %}"></script>
     {% endcompress %}
