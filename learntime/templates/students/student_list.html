@@ -175,7 +175,7 @@
         <td>{{ student.academy }}</td>
         <td>{{ student.grade }}</td>
         <td>{{ student.clazz }}</td>
-        <td style="color: blue">{{ student.credit }}</td>
+        <td style="color: blue"><a href="{% url 'students:student_detail' student.pk %}?credit_type=qb">{{ student.credit }}</a></td>
         <td style="color: blue"><a
                 href="{% url 'students:student_detail' student.pk %}?credit_type=wt">{{ student.wt_credit }}</a></td>
         <td style="color: blue"><a

@@ -120,7 +120,9 @@
             {% if role == 2 %}
               <li class="left-link create-activity-page" ><a href="{% url 'activities:activity_create_by_school' %}"> <i class="fa fa-pencil-square-o fa-fw"></i>发布活动</a></li>
             {% endif %}
+            {% if role != 1 %}
             <li class="left-link activity-page" ><a href="{% url 'activities:activities' %}"> <i class="fa fa-send-o fa-fw"></i>我发布的活动</a></li>
+            {% endif %}
             {% if role == 2 or role == 3 %}
               <li class="left-link activity-verify-page"><a href="{% url 'activities:activity_unverify' %}"> <i class="fa fa-bullhorn fa-fw"></i>活动审批 </a></li>
             {% endif %}

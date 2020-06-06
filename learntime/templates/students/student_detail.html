@@ -22,38 +22,46 @@
       <div class="col-md-12">
           <div class="card">
             <div class="card-body">
-              <h4 class="card-title">详细信息</h4>
+              <h3 class="card-title">详细信息</h3>
               <p class="card-text" id="uid-text" data-student-id="{{ student.uid }}">学号：{{ student.uid }}</p>
               <p class="card-text">姓名：{{ student.name }}</p>
               <p class="card-text">学院：{{ student.academy }}</p>
               <p class="card-text">年级：{{ student.grade }}</p>
               <p class="card-text">班级：{{ student.clazz }}</p>
               <p class="card-text">总学时：{{ student.credit }}</p>
-              <p class="card-text">创新创业学时：{{ student.cxcy_credit }}</p>
-              <p class="card-text">思想道德学时：{{ student.sxdd_credit }}</p>
-              <p class="card-text">法律学时：{{ student.fl_credit }}</p>
-              <p class="card-text">文体学时：{{ student.wt_credit }}</p>
-              <p class="card-text">心理学时：{{ student.xl_credit }}</p>
-
+              <p class="card-text">创新创业素质：{{ student.cxcy_credit }}</p>
+              <p class="card-text">思想品德素质：{{ student.sxdd_credit }}</p>
+              <p class="card-text">法律素养：{{ student.fl_credit }}</p>
+              <p class="card-text">文体素质：{{ student.wt_credit }}</p>
+              <p class="card-text">身心素质：{{ student.xl_credit }}</p>
+              <br>
+              <h3>查看活动参加记录</h3>
               <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
-                  <a class="nav-link active" id="chuangxinchuangye-tab" data-toggle="tab" href="#chuangxinchuangye" role="tab" aria-controls="chuangxinchuangye" aria-selected="true">创新创业</a>
+                  <a class="nav-link active" id="quanbu-tab" data-toggle="tab" href="#quanbu" role="tab" aria-controls="quanbu" aria-selected="true">全部参加记录</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" id="sixiangdaode-tab" data-toggle="tab" href="#sixiangdaode" role="tab" aria-controls="sixiangdaode" aria-selected="false">思想道德</a>
+                  <a class="nav-link" id="chuangxinchuangye-tab" data-toggle="tab" href="#chuangxinchuangye" role="tab" aria-controls="chuangxinchuangye" aria-selected="true">创新创业素质</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" id="falv-tab" data-toggle="tab" href="#falv" role="tab" aria-controls="falv" aria-selected="false">法律</a>
+                  <a class="nav-link" id="sixiangdaode-tab" data-toggle="tab" href="#sixiangdaode" role="tab" aria-controls="sixiangdaode" aria-selected="false">思想品德素质</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" id="wenti-tab" data-toggle="tab" href="#wenti" role="tab" aria-controls="wenti" aria-selected="false">文体</a>
+                  <a class="nav-link" id="falv-tab" data-toggle="tab" href="#falv" role="tab" aria-controls="falv" aria-selected="false">法律素养</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" id="xinli-tab" data-toggle="tab" href="#xinli" role="tab" aria-controls="xinli" aria-selected="false">心理</a>
+                  <a class="nav-link" id="wenti-tab" data-toggle="tab" href="#wenti" role="tab" aria-controls="wenti" aria-selected="false">文体素质</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="xinli-tab" data-toggle="tab" href="#xinli" role="tab" aria-controls="xinli" aria-selected="false">身心素质</a>
                 </li>
               </ul>
               <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="chuangxinchuangye" role="tabpanel" aria-labelledby="chuangxinchuangye-tab">
+                <div class="tab-pane fade show active" id="quanbu" role="tabpanel" aria-labelledby="quanbu-tab">
+
+                </div>
+
+                <div class="tab-pane fade show" id="chuangxinchuangye" role="tabpanel" aria-labelledby="chuangxinchuangye-tab">
 
                 </div>
                 <div class="tab-pane fade" id="sixiangdaode" role="tabpanel" aria-labelledby="sixiangdaode-tab"></div>
@@ -136,6 +144,10 @@
       if(UrlCreditType) {
 
         switch (UrlCreditType) {
+          case "qb":
+            $('#quanbu-tab').tab('show')
+            req(student_id, "", 'quanbu')
+            break;
           case "wt":
             $('#wenti-tab').tab('show')
             req(student_id, "文体素质", 'wenti')
@@ -150,7 +162,7 @@
             break;
           case "sxdd":
             $('#sxdd-credit').tab('show')
-            req(student_id, "思想道德素质", 'sixiangdaode')
+            req(student_id, "思想品德素质", 'sixiangdaode')
             break;
           case "cxcy":
             $('#chuangxinchuangye-tab').tab('show')
@@ -159,7 +171,7 @@
         }
 
       } else {
-        req(student_id, "创新创业素质", "chuangxinchuangye") // 默认查询
+        req(student_id, "全部", "") // 默认查询
       }
 
 
@@ -171,8 +183,11 @@
         let tabId = e.target.id
         let requestUri = "/operations/join-record/?student_id=" + student_id + "&type_name=";
         switch (tabId) {
+          case "quanbu-tab":
+            requestUri += "";
+            break
           case "sixiangdaode-tab":
-            requestUri += "思想道德素质";
+            requestUri += "思想品德素质";
 
             break;
           case "falv-tab":
