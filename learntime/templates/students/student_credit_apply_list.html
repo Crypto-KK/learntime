@@ -54,7 +54,7 @@
 
                 </div>
                 <div class="modal-body">
-                  <form id="student-credit-import-form" class="form-group" enctype="multipart/form-data" method="post" action="{% url 'students:student_credit_import' %}">
+                  <form class="form-group" enctype="multipart/form-data" method="post" action="{% url 'students:student_credit_import' %}">
 
                     <p class="help-block">请严格根据表格内容填写</p>
                     <p class="help-block"><a href="https://learningtime.oss-cn-shenzhen.aliyuncs.com/media/file/%E5%AD%A6%E6%97%B6%E8%AE%A4%E5%AE%9A%E8%A1%A8%E6%A8%A1%E6%9D%BF.xlsx" download="学时认定表模板.txt">点击此处下载模板文件</a></p>
@@ -71,7 +71,7 @@
                       </select>
                       <br><br>
                     {% endif %}
-                    <input type="submit" class="btn btn-primary" onclick="onConfirm()" value="确认导入"/>
+                    <input type="button" id="import-activity-data-button" class="btn btn-primary pull-right" value="确认导入"/>
                     <button type="button" class="btn btn-default pull-right" data-dismiss="modal">取消</button>
 
                   </form>
@@ -158,6 +158,8 @@
 {% block js %}
   <script src="{% static 'js/jquery-form.js' %}"></script>
   <script src="{% static 'js/student.js' %}"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery.blockUI/2.70.0-2014.11.23/jquery.blockUI.min.js"></script>
+  <script src="{% static 'js/loading.js' %}"></script>
   <script>
     $(function () {
       //展示loading框
@@ -174,22 +176,22 @@
 
 
       function deleteTr(obj) { // 删除单条记录
-  if (window.confirm("您确定删除该记录吗？")) {
-    $.ajax({
-      method: "POST",
-      url: '/students/credit-delete/',
-      traditional: true,
-      data: {
-        pks: JSON.stringify([$(obj).attr("data-pk")])
-      },
-      success: res => {
-        if (res.status === "fail") {
-          alert("删除失败！")
+        if (window.confirm("您确定删除该记录吗？")) {
+          $.ajax({
+            method: "POST",
+            url: '/students/credit-delete/',
+            traditional: true,
+            data: {
+              pks: JSON.stringify([$(obj).attr("data-pk")])
+            },
+            success: res => {
+              if (res.status === "fail") {
+                alert("删除失败！")
+              }
+            }
+          });
+          obj.parentNode.parentNode.remove();
         }
-      }
-    });
-    obj.parentNode.parentNode.remove();
-  }
 }
 
       $('#all').click(function () {
@@ -219,7 +221,7 @@
           let pks = [];
           for (let i = 0; i < $subs.length; i ++) {
             pks.push($($subs[i]).attr("data-pk"));
-            $subs[i].parentNode.parentNode.remove();
+            {#$subs[i].parentNode.parentNode.remove();#}
           }
 
           $.ajax({
@@ -231,7 +233,12 @@
             },
             success: res => {
               if (res.status === "fail") {
-                alert("删除失败！")
+                Toast.error("删除失败！")
+              } else {
+                Toast.success(`数据删除成功，3秒后自动刷新`)
+                setTimeout(() => {
+                  window.location.reload()
+                }, 3000)
               }
             }
           });
@@ -240,20 +247,50 @@
       })
 
 
-      // 获取返回结果
-      $('#student-credit-import-form').ajaxForm(function (data) {
-        if (data.status === "fail") {
-            alert(data.reason)
-        } else {
-            console.log(data)
-            alert("导入数据成功！")
-            window.location.reload()
+      $('#import-activity-data-button').click(function () {
+        let file = document.querySelector("#id_excel_file").files[0]
+        if (!file) {
+          Toast.error("请上传文件！")
+          return;
         }
-      });
+        // 后缀判断
+        let suffixs = ['xls', 'xlsx'];
+        let fileName = file.name
+        let suffix = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length).toLowerCase();
+        let validateSuffix = false
+        for (let i = 0; i < suffixs.length; i++) {
+          if (suffixs[i].toLowerCase() === suffix) {
+            validateSuffix = true;
+            break
+          }
+        }
+        if (!validateSuffix) {
+          Toast.warning("文件上传失败，仅支持：" + suffixs.join(","))
+          return
+        }
 
-      function onConfirm() {
-        alert("con")
-      }
+        Loading.show()
+        let formData = new window.FormData()
+        formData.append("excel_file", file)
+        $.post({
+          url: "/students/credit-import/",
+          data: formData,
+          processData: false,   // jQuery不要去处理发送的数据
+          contentType: false,   // jQuery不要去设置Content-Type请求头
+          success: res => {
+            Loading.hide()
+            if (res.status === 'ok') {
+              Toast.success(`补录数据导入成功，3秒后自动刷新`)
+              setTimeout(() => {
+                window.location.reload()
+              }, 3000)
+            } else {
+              Toast.error(res.reason)
+            }
+          }
+        })
+
+      })
     })
 
   </script>

@@ -533,6 +533,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
         form = StudentExcelForm(request.POST, request.FILES) # 获取提交后的表单
         if form.is_valid(): # 表单校验通过
             to_id = request.POST.get("to_id")
+            credit_verify_instance_list = [] # 学时补录记录列表
             try:
                 to = User.objects.get(pk=to_id)
             except User.DoesNotExist:# 如果查询不到审核者，直接报错
@@ -545,31 +546,37 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
                 workbook = xlrd.open_workbook(file_contents=request.FILES['excel_file'].read()) # 使用xlrd打开excel文件
                 table = workbook.sheets()[0] # 获取第一个工作薄
                 nrows = table.nrows # 获取总行数
-                if nrows < 2:
-                    return JsonResponse({"status": "fail", "reason": "文件格式不正确"})
-                for _ in range(2, nrows): # 从第3行开始导入数据
-                    row = table.row_values(_) # 获取一条记录
-                    obj = StudentCreditVerify.objects.create(
-                        activity_name=row[0], sponsor=row[1], name=row[2],
-                        uid=row[3], academy=row[4], clazz=row[5],
-                        join_type=row[6], award=row[7], credit_type=row[8],
-                        credit=row[9], contact=row[10], to_name=row[11],
-                        to=to, user=request.user
-                    )
-                    if obj.to == obj.user: # 审核者和申请者相同,增加学时
-                        obj.verify = True
-                        if not add_credit(CREDIT_TYPE, obj.uid, obj.credit_type, obj.credit):
-                            return JsonResponse({"status": "fail", "reason": "学时类别填写错误！可选项为：思想道德素质、创新创业素质、身心素质、文体素质、法律素养"})
-                        if not add_student_activity(obj.uid, obj.join_type,
-                                                    activity_name=obj.activity_name,
-                                                    credit=obj.credit,
-                                                    credit_type=obj.credit_type):
-                            return JsonResponse({"status": "fail", "reason": "学生活动关联失败"})
-                        obj.save()
+            except Exception:
+                return JsonResponse({"status": "fail", "reason": "文件导入失败，请重新上传"})
 
-            except Exception as e: # 文件内容有误
-                return JsonResponse({"status": "fail", "reason": e.__str__()})
+            # 检查文件是否合规
+            is_check, check_message = self.check_excel_file(table, nrows)
+            if not is_check:
+                # 没有通过文件校验，返回错误信息
+                return JsonResponse({"status": "fail", "reason": check_message})
 
+            for _ in range(2, nrows): # 从第3行开始导入数据
+                row = table.row_values(_) # 获取一条记录
+
+                single_row_check, single_row_message = self.check_single_row(row)
+                if not single_row_check:
+                    # 行校验不通过，则添加到失败名单
+                    return JsonResponse({"status": "fail", "reason": single_row_message})
+
+                obj = self.build_student(row, to, request.user) # 获取补录学时实例
+                credit_verify_instance_list.append(obj)
+
+            for credit_verify_instance in credit_verify_instance_list:
+                if credit_verify_instance.to == credit_verify_instance.user: # 审核者和申请者相同,增加学时
+                    credit_verify_instance.verify = True
+                    if not add_credit(CREDIT_TYPE, credit_verify_instance.uid, credit_verify_instance.credit_type, credit_verify_instance.credit):
+                        return JsonResponse({"status": "fail", "reason": "学时类别填写错误！可选项为：思想道德素质、创新创业素质、身心素质、文体素质、法律素养"})
+                    if not add_student_activity(credit_verify_instance.uid, credit_verify_instance.join_type,
+                                                activity_name=credit_verify_instance.activity_name,
+                                                credit=credit_verify_instance.credit,
+                                                credit_type=credit_verify_instance.credit_type):
+                        return JsonResponse({"status": "fail", "reason": "学生活动关联失败"})
+                    credit_verify_instance.save()
             # 写入日志中
             Log.objects.create(
                 user=self.request.user,
@@ -580,6 +587,75 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
         else: # 文件格式错误
             return JsonResponse({"status": "fail", "reason": "必须为xls或xlsx格式！"})
 
+    def check_excel_file(self, table, nrows):
+        """
+        检查excel文件是否合规
+        :param table: excel文件
+        :param nrows: 总行数
+        :return: boolean
+        """
+        if nrows <= 2:
+            # 行小于等于2，直接报错
+            return (False, "excel表格没有填写内容！请重新填写")
+
+        first_row = table.row_values(1)
+        if first_row[0] == "活动名称" and first_row[1] == "主办方" and first_row[2] == "姓名" \
+            and first_row[3] == "学号" and first_row[4] == "学院" and first_row[5] == "班级" \
+            and first_row[6] == "参加类型" and first_row[7] == "获奖情况" and first_row[8] == "认定项目" \
+            and first_row[9] == "认定活动时" and first_row[10] == "填报人及联系方式" and first_row[11] == "审核人"\
+            and first_row[12] == "备注":
+            return (True, "ok")
+        else:
+            return (False, "文件格式错误，请下载模板填写！")
+
+    def check_single_row(self, row):
+        """
+        检查导入表格的每一行是否符合规范
+        :param row: 行
+        :param to: 审核者
+        :param user: 当前用户
+        :return: boolean
+        """
+        try:
+            activity_name = row[0]
+            sponsor = row[1]
+            name = row[2]
+            uid = row[3]
+            academy = row[4]
+            clazz = row[5]
+            join_type = row[6]
+            award = row[7]
+            credit_type = row[8]
+            credit = row[9]
+            contact = row[10]
+            to_name = row[11]
+        except Exception:
+            return (False, "请检查数据是否填写完整！")
+
+        try:
+            credit = float(row[9])
+        except Exception:
+            return (False, "认定活动时必须填写数字型！")
+
+        credit = float(row[9])
+        if credit <= 0:
+            return (False, "认定活动时不能小于0！")
+
+        if not join_type in ['参加者', '观众', '工作人员']:
+            return (False, "参加类型必须为 参加者/观众/工作人员其中之一")
+
+        return (True, "")
+
+
+    def build_student(self, row, to, user):
+        """创建学生的实例"""
+        return StudentCreditVerify(
+            activity_name=row[0], sponsor=row[1], name=row[2],
+            uid=row[3], academy=row[4], clazz=row[5],
+            join_type=row[6], award=row[7], credit_type=row[8],
+            credit=row[9], contact=row[10], to_name=row[11],
+            to=to, user=user
+        )
 
 class StudentCreditDeleteView(RoleRequiredMixin, View):
     """学时补录申请删除"""
