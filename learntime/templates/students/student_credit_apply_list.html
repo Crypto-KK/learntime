@@ -57,7 +57,7 @@
                   <form class="form-group" enctype="multipart/form-data" method="post" action="{% url 'students:student_credit_import' %}">
 
                     <p class="help-block">请严格根据表格内容填写</p>
-                    <p class="help-block"><a href="https://learningtime.oss-cn-shenzhen.aliyuncs.com/media/file/%E5%AD%A6%E6%97%B6%E8%AE%A4%E5%AE%9A%E8%A1%A8%E6%A8%A1%E6%9D%BF.xlsx" download="学时认定表模板.txt">点击此处下载模板文件</a></p>
+                    <p class="help-block"><a href="https://learningtime.oss-cn-shenzhen.aliyuncs.com/media/file/%E5%AD%A6%E6%97%B6%E8%AE%A4%E5%AE%9A%E8%A1%A8%E6%A8%A1%E6%9D%BF%28%E6%9C%80%E6%96%B0%E7%89%88%29.xlsx" download="学时认定表模板.txt">点击此处下载模板文件</a></p>
 
                     {% csrf_token %}
                     {{ form.as_p }}
