@@ -134,38 +134,47 @@ class StudentExcelImportView(RoleRequiredMixin, View):
     role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)
     def post(self, request):
         form = StudentExcelForm(request.POST, request.FILES) # 获取提交后的表单
-        fail_list = []
-        success_count = 0
-        fail_count = 0
+        fail_list = [] # 失败的学生名单
+        success_count = 0 # 成功数
+        fail_count = 0 # 失败数
+        student_instance_list = [] # 学生实例列表
         if form.is_valid(): # 表单校验通过
-            #StudentFile.objects.create(excel_file=form.cleaned_data['excel_file'])
             file_obj = request.FILES['excel_file'].read()
             try:
                 workbook = xlrd.open_workbook(file_contents=file_obj) # 使用xlrd打开excel文件
                 table = workbook.sheets()[0] # 获取第一个工作薄
                 nrows = table.nrows # 获取总行数
+
             except Exception as e:  # 文件内容有误
-                print(e)
-                return JsonResponse({"status": "fail", "reason": "导入失败！"})
+                return JsonResponse({"status": "fail", "reason": "文件导入失败，请重新刷新页面导入"})
+
+            # 检查文件是否合规
+            is_check, check_message = self.check_excel_file(table, nrows)
+            if not is_check:
+                # 没有通过文件校验，返回错误信息
+                return JsonResponse({"status": "fail", "reason": check_message})
 
             for _ in range(1, nrows): # 从第二行开始导入数据
                 row = table.row_values(_) # 获取一条记录
+                single_row_check, single_row_message = self.check_single_row(row)
+                if not single_row_check:
+                    # 行校验不通过，则添加到失败名单
+                    return JsonResponse({"status": "fail", "reason": single_row_message})
+
                 is_exist = Student.objects.filter(pk=row[0])
                 is_exist_count = is_exist.count()
                 if is_exist_count > 0:
                     # 学生数据重复，记录下来
                     fail_count += 1
-                    fail_list.append(is_exist[0].uid + " " + is_exist[0].name)
-                    print("学生数据重复。跳过")
+                    fail_list.append(is_exist[0].uid + "-" + is_exist[0].name)
                 else:
-                    student = Student(
-                        uid=row[0], name=row[1], academy=row[2],
-                        grade=row[3], clazz=row[4], credit=float(row[5]),
-                        wt_credit=float(row[6]), fl_credit=float(row[7]), xl_credit=float(row[8]),
-                        cxcy_credit=float(row[9]), sxdd_credit=float(row[10])
-                    ) # 创建一个学生实例
-                    student.save()
-                    success_count += 1
+                    student = self.build_student(row)
+                    student_instance_list.append(student)
+
+            # 保存学生实例到数据库中
+            for obj in student_instance_list:
+                obj.save()
+                success_count += 1
 
             # 写入日志中
             Log.objects.create(
@@ -180,6 +189,65 @@ class StudentExcelImportView(RoleRequiredMixin, View):
 
         else: # 文件格式错误
             return JsonResponse({"status": "fail", "reason": "必须为xls或xlsx格式！"})
+
+    def check_excel_file(self, table, nrows):
+        """
+        检查excel文件是否合规
+        :param table: excel文件
+        :param nrows: 总行数
+        :return: boolean
+        """
+        if nrows <= 1:
+            # 行小于等于1，直接报错
+            return (False, "excel表格没有填写内容！请重新填写")
+
+        first_row = table.row_values(0)
+        if first_row[0] == "学号" and first_row[1] == "姓名" and first_row[2] == "学院" \
+            and first_row[3] == "年级" and first_row[4] == "班级" and first_row[5] == "总学时" \
+            and first_row[6] == "文体素质学时" and first_row[7] == "法律素养学时" and first_row[8] == "身心素质学时" \
+            and first_row[9] == "创新创业素质学时" and first_row[10] == "思想品德素质学时":
+            return (True, "ok")
+        else:
+            return (False, "文件格式错误，请下载模板填写！")
+
+    def check_single_row(self, row):
+        """
+        检查导入表格的每一行是否符合规范
+        :param row: 行
+        :return: boolean
+        """
+        try:
+            uid = row[0]
+            name = row[1]
+        except Exception:
+            return (False, "请检查数据是否填写完整！")
+        try:
+            academy = row[2]
+            grade = row[3]
+            clazz = row[4]
+            credit = float(row[5])
+            wt_credit = float(row[6])
+            fl_credit = float(row[7])
+            xl_credit = float(row[8])
+            cxcy_credit = float(row[9])
+            sxdd_credit = float(row[10])
+        except Exception:
+            return (False, "请仔细检查文件的错误！")
+
+        if credit >=0 and wt_credit >=0 and fl_credit >= 0 \
+            and xl_credit >=0 and cxcy_credit >=0 and sxdd_credit >= 0:
+            return (True, "")
+        else:
+            return (False, "学时数不能小于0！")
+
+    def build_student(self, row):
+        """创建学生的实例"""
+        return Student(
+            uid=row[0], name=row[1], academy=row[2],
+            grade=row[3], clazz=row[4], credit=float(row[5]),
+            wt_credit=float(row[6]), fl_credit=float(row[7]), xl_credit=float(row[8]),
+            cxcy_credit=float(row[9]), sxdd_credit=float(row[10])
+        )  # 创建一个学生实例
 
 
 class StudentExcelExportView(RootRequiredMixin, View):
