@@ -1,12 +1,12 @@
 Loading = {
   show: function () {
     $.blockUI({
-      message: '<img src="/static/img/loading.gif" />',
+      message: '<img src="https://learningtime.oss-cn-shenzhen.aliyuncs.com/media/file/loading.gif" /><br><span>正在导入中，请稍等......</span>',
       css: {
         zIndex: "10011",
         padding: "10px",
         left: "50%",
-        width: "80px",
+        width: "220px",
         marginLeft: "-40px",
       }
     });

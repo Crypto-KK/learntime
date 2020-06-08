@@ -23,7 +23,7 @@ class StudentActivity(models.Model):
         (2, '签到成功'),
         (3, '签退成功'),
     )
-    student = models.ForeignKey(Student, on_delete=models.DO_NOTHING,
+    student = models.ForeignKey(Student, on_delete=models.CASCADE,
                                 verbose_name="学生", related_name="join_activities")
     student_name = models.CharField(max_length=20, verbose_name="姓名", null=True, blank=True)
     academy = models.CharField(max_length=20, verbose_name="学院", null=True, blank=True)
@@ -31,7 +31,7 @@ class StudentActivity(models.Model):
     clazz = models.CharField(max_length=20, verbose_name="班级", null=True, blank=True)
 
     activity_name = models.CharField(max_length=50, verbose_name="活动名称", null=True, blank=True)
-    activity = models.ForeignKey(Activity, on_delete=models.DO_NOTHING,
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE,
                                  verbose_name="活动", null=True, blank=True,
                                  related_name="join_students")
     credit = models.FloatField(default=0, verbose_name="获得学时")
