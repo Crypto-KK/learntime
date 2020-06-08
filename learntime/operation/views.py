@@ -37,9 +37,8 @@ class CommentList(LoginRequiredMixin, PaginatorListView):
 
 
 
-class StudentActivityListView(RoleRequiredMixin, PaginatorListView):
+class StudentActivityListView(LoginRequiredMixin, PaginatorListView):
     """学生参加活动列表页"""
-    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value, RoleEnum.STUDENT.value)
     template_name = "operation/student_activity_list.html"
     context_object_name = "objects"
     paginate_by = 50
