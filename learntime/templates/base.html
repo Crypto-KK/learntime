@@ -146,7 +146,7 @@
             {% endif %}
 
             <li class="left-link join-list" ><a href="{% url 'operations:join_list' %}"> <i class="fa fa-database fa-fw"></i>活动参加记录</a></li>
-            <li class="left-link comment-page" ><a href="{% url 'operations:comment_list' %}"> <i class="fa fa-comments fa-fw"></i>活动评论</a></li>
+{#            <li class="left-link comment-page" ><a href="{% url 'operations:comment_list' %}"> <i class="fa fa-comments fa-fw"></i>活动评论</a></li>#}
 
           </ul>
           <span class="heading">统计模块</span>
@@ -216,6 +216,15 @@
 {#    <script src={% static 'js/charts-home.js' %}></script>#}
     <!-- Main File-->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+
+
+        <!--[if lt IE 9]>
+      <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+
+    <![endif]-->
+
     <script src="{% static 'js/mytoast.js' %}"></script>
     {% compress js %}
       <script src="{% static 'js/common.js' %}"></script>
