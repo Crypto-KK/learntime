@@ -23,6 +23,10 @@ class StudentActivity(models.Model):
         (2, '签到成功'),
         (3, '签退成功'),
     )
+    VERIFY = (
+        (0, "未验证"),
+        (1, "已验证")
+    )
     student = models.ForeignKey(Student, on_delete=models.CASCADE,
                                 verbose_name="学生", related_name="join_activities")
     student_name = models.CharField(max_length=20, verbose_name="姓名", null=True, blank=True)
@@ -40,7 +44,7 @@ class StudentActivity(models.Model):
                                 verbose_name='创建时间')
     join_type = models.SmallIntegerField(verbose_name="参与类型", choices=JOIN_TYPE)
     status = models.SmallIntegerField(verbose_name="参与状态", default=1, choices=STATUS)
-
+    is_verify = models.SmallIntegerField(verbose_name="是否验证", default=1, choices=VERIFY)
 
     class Meta:
         verbose_name = "学生活动表"
