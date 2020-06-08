@@ -470,9 +470,8 @@ class StudentBulkAddCreditView(RoleRequiredMixin, View):
 
 class StudentCreditApplyListView(RoleRequiredMixin, PaginatorListView):
     """学时补录申请列表页
-    权限：学生干部级
     """
-    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value)
+    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
     paginate_by = 50
     context_object_name = "students"
     template_name = "students/student_credit_apply_list.html"
@@ -491,7 +490,7 @@ class StudentCreditApplyListView(RoleRequiredMixin, PaginatorListView):
 class StudentCreditApplyConfirmListView(RoleRequiredMixin, PaginatorListView):
     """学时补录审核成功列表页
     """
-    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value)
+    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
     paginate_by = 50
     context_object_name = "students"
     template_name = "students/student_credit_confirm_list.html"
@@ -528,7 +527,7 @@ class StudentCreditApplyCreateView(RoleRequiredMixin, CreateView):
 
 class StudentCreditExcelImportView(RoleRequiredMixin, View):
     """导入学时补录数据接口"""
-    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value)
+    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
     def post(self, request):
         form = StudentExcelForm(request.POST, request.FILES) # 获取提交后的表单
         if form.is_valid(): # 表单校验通过
@@ -537,7 +536,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             try:
                 to = User.objects.get(pk=to_id)
             except User.DoesNotExist:# 如果查询不到审核者，直接报错
-                if request.user.role == RoleEnum.ACADEMY.value:
+                if request.user.role == RoleEnum.ACADEMY.value or request.user.role == RoleEnum.SCHOOL.value:
                     to = request.user
                 else:
                     return JsonResponse({"status": "fail", "reason": "请选择审核者"})
@@ -674,7 +673,7 @@ class StudentCreditDeleteView(RoleRequiredMixin, View):
 
 class StudentCreditWithdrawView(RoleRequiredMixin, View):
     """撤回审核通过的补录记录"""
-    role_required = (RoleEnum.ACADEMY.value,)
+    role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
     def post(self, request):
         try:
             pks = json.loads(request.POST.get("pks"))
@@ -717,7 +716,7 @@ class StudentCreditVerifyListView(RoleRequiredMixin, PaginatorListView):
     """学生组织审核学时列表页
     权限：院级和学生组织
     """
-    role_required = (RoleEnum.ACADEMY.value,)
+    role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
     paginate_by = 50
     context_object_name = "students"
     template_name = "students/student_credit_verify_list.html"

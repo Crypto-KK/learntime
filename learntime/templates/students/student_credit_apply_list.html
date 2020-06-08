@@ -30,7 +30,7 @@
     <section class="tables">
       <div class="container-fluid">
         <ul class="nav nav-tabs">
-          {% if request.user.role == 3 %}
+          {% if request.user.role == 3 or request.user.role == 2 %}
             <li class="nav-item">
               <a class="nav-link" href="{% url 'students:student_credit_verify' %}">审核申请</a>
             </li>
@@ -86,8 +86,8 @@
                 {% if request.user.role == 4 %}
                   <h1 style="display: inline-block;">已提交{{ count }}条学时补录申请，等待审核中</h1>
                 {% endif %}
-                {% if request.user.role == 3 %}
-                  <h1 style="display: inline-block;">请导入Excel表格，提交后自动审核通过</h1>
+                {% if request.user.role == 3 or request.user.role == 2 %}
+                  <h1 style="display: inline-block;">请导入Excel表格，提交后自动将自动录入系统</h1>
                 {% endif %}
                 <button class="btn btn-blue pull-right" data-toggle="modal" data-target="#modal-in-class">
                   <i class="fa fa-caret-square-o-right" > 导入Excel表格</i>
