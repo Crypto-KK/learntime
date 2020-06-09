@@ -10,8 +10,8 @@
         <div class="content">
           <form method="post" class="form-validate" action="{% url 'users:login' %}">
             <div class="form-group">
-              <input id="login-username" type="email" name="email" required data-msg="请输入您的邮箱" class="input-material">
-              <label for="login-username" class="label-material">邮箱</label>
+              <input id="login-username" name="email" required data-msg="请输入您的账号或邮箱" class="input-material">
+              <label for="login-username" class="label-material">账号</label>
             </div>
             <div class="form-group">
               <input id="login-password" type="password" name="password" required data-msg="请输入您的密码" class="input-material">
@@ -26,7 +26,7 @@
             <!-- This should be submit button but I replaced it with <a> for demo purposes-->
           </form><a href="{% url 'users:password_reset' %}" class="forgot-pass">忘记密码?</a><br><small>还没有账号? </small><a href="{% url 'users:register' %}" class="signup">注册</a>
           <br><br>
-          <p>推荐使用谷歌、火狐浏览器访问本站，<a href="http://www.firefox.com.cn/">前往下载</a></p>
+          <p>请使用谷歌或火狐浏览器访问本站，<a href="http://www.firefox.com.cn/">前往下载</a></p>
         </div>
       </div>
     </div>

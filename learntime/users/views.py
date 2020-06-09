@@ -29,15 +29,16 @@ class LoginView(View):
         return render(request, 'users/registration/login.html', {'form': form})
 
     def post(self, request):
-        form = LoginForm(request.POST)
+        # print(request.POST)
+        # form = LoginForm(request.POST)
+        email = request.POST.get("email")
+        password = request.POST.get("password")
         next = request.GET.get('next', '')
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
-            user = authenticate(email=email, password=password)
+        if not (email is None or password is None):
+            print(email, password)
+            user = authenticate(username=email, password=password)
             if user is not None:
                 if user.is_freeze:
-                    print("freeze")
                     return render(request, 'users/registration/login.html', {'form': form, 'error': "该账号已被冻结，请联系管理员"})
                 else:
                     login(request, user)
@@ -45,7 +46,8 @@ class LoginView(View):
                         return HttpResponseRedirect(reverse('index'))
                     else:
                         return HttpResponseRedirect(next)
-        return render(request, 'users/registration/login.html', {'form': form, 'error': "账号名或密码错误"})
+
+        return render(request, 'users/registration/login.html', {'error': "账号名或密码错误"})
 
 
 def logout_view(request):
