@@ -84,12 +84,11 @@
                             <form id="student-import-form" class="form-group" enctype="multipart/form-data"
                                   method="post" action="{% url 'students:student_import' %}">
                               {% csrf_token %}
-{#                              {{ form.as_p }}#}
-                              {% crispy form %}
-
-                              <p class="help-block">请下载excel模板：<button type="button" id="download" class="btn btn-info btn-sm">下载模板</button></p>
+                              {{ form.as_p }}
+{#                              {% crispy form %}#}
+                              <p class="help-block"><a href="https://learningtime.oss-cn-shenzhen.aliyuncs.com/media/file/%E5%AD%A6%E7%94%9F%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF.xls">点击此处下载模板文件</a></p>
                               <button type="button" id="import-data-button" class="btn btn-primary pull-right">确认导入</button>
-                              <button type="button" class="btn btn-default pull-right" data-dismiss="modal">取消</button>
+                              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 
                             </form>
                           </div>
@@ -221,9 +220,6 @@
   <script>
     $(function () {
       {#Loading.show()#}
-      $('#download').click(function () {
-        window.open("https://learningtime.oss-cn-shenzhen.aliyuncs.com/media/file/%E5%AD%A6%E7%94%9F%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF.xls")
-      })
 
       $('#import-data-button').click(function () {
         let file = document.querySelector("#id_excel_file").files[0]
