@@ -37,11 +37,11 @@
                 <label for="register-school" class="form-check-label" >校级</label>
               </div>
               <div class="form-check form-check-inline">
-                <input id="register-academy" name="role" type="radio" required value="3" data-msg="" class="checkbox-template">
+                <input id="register-academy" name="role" type="radio" required value="3" data-msg="" class="checkbox-template" checked>
                 <label for="register-academy" class="form-check-label" >学院级</label>
               </div>
               <div class="form-check form-check-inline">
-                <input id="register-student" name="role" type="radio" required value="4" data-msg="" class="checkbox-template" checked>
+                <input id="register-student" name="role" type="radio" required value="4" data-msg="" class="checkbox-template">
                 <label for="register-student" class="form-check-label" >学生干部级</label>
               </div>
             </div>
@@ -100,7 +100,7 @@
     $(function () {
         $('#choose-academy').show()
         $('#choose-grade').show()
-        $('#choose-organization').show()
+        $('#choose-organization').hide()
         $('#choose-department').hide()
 
         $("#org-select").multiselect({

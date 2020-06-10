@@ -116,7 +116,7 @@
     <div class="card">
     <div class="card-header">
       {% if role == 3 %}
-        <h1>{{ request.user.academy }} {{ request.user.grade }}</h1>
+        <h1>{{ request.user.academy }} {{ request.user.grade }}(共{{ count }}人)</h1>
       {% endif %}
       {% if role == 1 or role == 2 %}
         {#                &nbsp;&nbsp;&nbsp;<input type="checkbox" id="checkAll" name='CheckAll'>#}
@@ -159,7 +159,7 @@
       <th>心理</th>
       <th>创新创业</th>
       <th>思想道德</th>
-      {% if role == 1 %}
+      {% if role == 1 or role == 3 %}
         <th>操作</th>
       {% endif %}
     </tr>
@@ -189,7 +189,7 @@
         <td style="color: blue"><a
                 href="{% url 'students:student_detail' student.pk %}?credit_type=sxdd">{{ student.sxdd_credit }}</a>
         </td>
-        {% if role == 1 %}
+        {% if role == 1 or role == 3 %}
           <td>
             {#                              <a href="{% url 'students:student_detail' student.pk %}" class="btn btn-success btn-sm">查看</a>#}
             <a href="{% url 'students:student_update' student.pk %}" class="btn btn-success btn-sm">编辑</a>

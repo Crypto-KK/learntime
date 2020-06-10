@@ -98,8 +98,9 @@ class StudentCreate(RootRequiredMixin, CreateView):
         return reverse_lazy("students:students")
 
 
-class StudentUpdate(RootRequiredMixin, FormInitialMixin, UpdateView):
+class StudentUpdate(RoleRequiredMixin, FormInitialMixin, UpdateView):
     """修改学生"""
+    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)
     model = Student
     form_class = StudentEditForm
     template_name = "students/student_update.html"
@@ -118,8 +119,9 @@ class StudentUpdate(RootRequiredMixin, FormInitialMixin, UpdateView):
         return reverse_lazy("students:students")
 
 
-class StudentDelete(RootRequiredMixin, DeleteView):
+class StudentDelete(RoleRequiredMixin, DeleteView):
     """删除学生"""
+    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)
     model = Student
     template_name = "students/student_delete.html"
     context_object_name = "student"

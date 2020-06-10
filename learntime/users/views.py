@@ -18,6 +18,7 @@ from learntime.users.models import Academy, Grade, Institute
 from learntime.utils.factories import CrudViewFactory
 from learntime.utils.helpers import PaginatorListView, RootRequiredMixin, FormInitialMixin, RoleRequiredMixin
 from learntime.operation.models import Log
+from learntime.users.tasks import send_user_verify_email
 
 User = get_user_model() # 惰性获取User对象
 
@@ -237,6 +238,7 @@ class ApplyConfirmView(RootRequiredMixin, View):
             user = User.objects.get(username=username)
             user.role = role_id  # 增加用户权限
             user.register_success() # 审核通过
+            send_user_verify_email(user.email)
             # 记录日志
             Log.objects.create(
                 user=request.user,
