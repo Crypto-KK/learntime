@@ -68,13 +68,13 @@ class Activity(CreatedUpdatedMixin, models.Model):
     is_verify = models.BooleanField(verbose_name="是否通过审核", default=False)
     is_verifying = models.BooleanField(verbose_name="是否正在进行审核", default=True)
     reason = models.CharField(max_length=255, verbose_name="审核失败原因", default="")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
                              verbose_name="发布者", null=True, blank=True,
                              related_name="my_activities")
-    to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+    to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
                              verbose_name="院级审核者", null=True, blank=True,
                            related_name="waiting_for_verify_activities")
-    to_school = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+    to_school = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
                              verbose_name="校级审核者", null=True, blank=True,
                            related_name="school_waiting_for_verify_activities")
 

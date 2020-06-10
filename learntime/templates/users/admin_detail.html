@@ -22,7 +22,7 @@
           <div class="card">
             <div class="card-body">
               <h1 class="card-title">个人资料</h1>
-              <p style="color: red">注意：若您的年级、学院、班级等信息发生变动，请点击申请变更按钮，提交申请。</p>
+              <p style="color: red">注意：若您的邮箱信息发生变动，请点击申请变更按钮，提交申请。</p>
               <p class="card-text">姓名：{% if admin.name %}{{ admin.name }}{% else %}暂无{% endif %}</p>
               <p class="card-text">邮箱：{{ admin.email }}</p>
               <p class="card-text">权限：{{ admin.get_role_display }}</p>
@@ -39,7 +39,7 @@
               {% if not request.user.is_superuser %}
                 <p class="card-text">
                   <a href="{% url 'users:password_change' %}" class="btn btn-warning">更改密码</a>
-                  <a href="#" class="btn btn-primary">申请变更</a>
+                  <a href="#" class="btn btn-primary">申请变更邮箱</a>
                 </p>
               {% endif %}
 

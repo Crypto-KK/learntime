@@ -39,7 +39,7 @@ class LoginView(View):
             user = authenticate(username=email, password=password)
             if user is not None:
                 if user.is_freeze:
-                    return render(request, 'users/registration/login.html', {'form': form, 'error': "该账号已被冻结，请联系管理员"})
+                    return render(request, 'users/registration/login.html', {'error': "该账号已被冻结，请联系管理员"})
                 else:
                     login(request, user)
                     if next == "":
