@@ -223,6 +223,14 @@ class StudentExcelImportView(RoleRequiredMixin, View):
             name = row[1]
         except Exception:
             return (False, "请检查数据是否填写完整！")
+
+        if uid.__len__() != 12:
+            # 学号必须为12位
+            return (False, "请仔细检查文件内容！学号必须为12位")
+
+        if name == "":
+            return (False, "请仔细检查文件内容！学生姓名不能为空")
+
         try:
             academy = row[2]
             grade = row[3]
@@ -235,6 +243,15 @@ class StudentExcelImportView(RoleRequiredMixin, View):
             sxdd_credit = float(row[10])
         except Exception:
             return (False, "请仔细检查文件的错误！")
+
+        if academy == "" or grade == "" or clazz == "":
+            return (False, "请仔细检查文件的错误！学院或年级或班级不能为空")
+
+        if academy != self.request.user.academy:
+            return (False, "只允许导入" + self.request.user.academy + "的学生信息，其他学院无权限导入")
+
+        if grade != self.request.user.grade:
+            return (False, "只允许导入" + self.request.user.academy + self.request.user.grade + "的学生信息，其他年级无权限导入")
 
         if credit >=0 and wt_credit >=0 and fl_credit >= 0 \
             and xl_credit >=0 and cxcy_credit >=0 and sxdd_credit >= 0:

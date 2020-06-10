@@ -3,3 +3,6 @@
   border-color: #20a8d8;
   color: #fff
 }
+td {
+  text-align:center; !important;
+}
