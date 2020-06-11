@@ -24,6 +24,7 @@ class User(AbstractUser):
     organization = CharField(verbose_name="社团协会", max_length=50, null=True, blank=True)
     role = IntegerField(verbose_name="权限", choices=IDENTITY, default=4)
     is_freeze = BooleanField(verbose_name="是否冻结", default=False)
+    is_delete = BooleanField(verbose_name="是否删除", default=False)
 
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"username": self.username})

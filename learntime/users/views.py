@@ -161,7 +161,7 @@ class AdminList(RootRequiredMixin, PaginatorListView):
         """按照不同权限查看不同的管理员"""
         academy = self.request.GET.get('academy')
         name = self.request.GET.get('name')
-        qs = User.objects.filter(is_active=True)
+        qs = User.objects.filter(is_active=True, is_delete=False)
         if academy:
             qs = qs.filter(academy__contains=academy)
         if name:
@@ -213,6 +213,13 @@ class AdminDeleteView(RootRequiredMixin, DeleteView):
     model = User
     template_name = "users/admin_delete.html"
     context_object_name = "admin"
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.is_delete = True
+        self.object.save()
+        return HttpResponseRedirect(success_url)
 
     def get_success_url(self):
         messages.warning(self.request, "删除管理员成功")

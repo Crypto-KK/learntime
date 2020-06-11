@@ -40,6 +40,7 @@
                 <p class="card-text">
                   <a href="{% url 'users:password_change' %}" class="btn btn-warning">更改密码</a>
                   <a href="#" class="btn btn-primary">申请变更邮箱</a>
+                  <button data-id="{{ request.user.pk }}" id="delete-account" class="btn btn-danger" >删除本账号</button>
                 </p>
               {% endif %}
 
@@ -49,9 +50,21 @@
       </div>
     </div>
   </div>
-
-
-
-
 {% endblock %}
 
+{% block js %}
+  <script>
+    $(function () {
+      $('#delete-account').click(function () {
+        if (window.confirm("确认删除账号吗？删除后您将无法登陆系统，但所有数据将会被保留")) {
+          $.post({
+            url: "/users/admin-delete/" + $(this).attr("data-id"),
+            success: res => {
+              console.log(res)
+            }
+          })
+        }
+      })
+    })
+  </script>
+{% endblock %}
