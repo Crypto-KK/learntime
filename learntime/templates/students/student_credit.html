@@ -6,6 +6,15 @@
 {% block header_name %}
     学时操作
 {% endblock %}
+{% block css %}
+  <style>
+    table {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  </style>
+{% endblock %}
 {% block bread %}
       <!-- Breadcrumb-->
     <div class="breadcrumb-holder container-fluid">

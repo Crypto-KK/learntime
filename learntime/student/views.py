@@ -224,7 +224,7 @@ class StudentExcelImportView(RoleRequiredMixin, View):
         except Exception:
             return (False, "请检查数据是否填写完整！")
 
-        if uid.__len__() != 12:
+        if str(uid).__len__() != 12:
             # 学号必须为12位
             return (False, "请仔细检查文件内容！学号必须为12位")
 

@@ -3,8 +3,17 @@
 {% block title %}
   学生管理
 {% endblock %}
-{% block css %}
+{#{% block css %}#}
   {#  <link href="https://cdn.bootcss.com/bootstrap-table/1.15.4/bootstrap-table.min.css" rel="stylesheet">#}
+{#{% endblock %}#}
+{% block css %}
+  <style>
+    table {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  </style>
 {% endblock %}
 {% block header_name %}
   学生管理
@@ -153,9 +162,9 @@
       <th>年级</th>
       <th>班级</th>
       <th>总学时</th>
-      <th>文体素质</th>
-      <th>法律素养</th>
-      <th>身心素质</th>
+      <th>文体</th>
+      <th>法律</th>
+      <th>身心</th>
       <th>创新创业</th>
       <th>思想品德</th>
       {% if role == 1 or role == 3 %}
@@ -191,7 +200,7 @@
         {% if role == 1 or role == 3 %}
           <td>
             {#                              <a href="{% url 'students:student_detail' student.pk %}" class="btn btn-success btn-sm">查看</a>#}
-            <a href="{% url 'students:student_update' student.pk %}" class="btn btn-success btn-sm">编辑</a>
+            <a href="{% url 'students:student_update' student.pk %}" class="btn btn-warning btn-sm">修改</a>
             <a href="{% url 'students:student_delete' student.pk %}" class="btn btn-danger btn-sm ">删除</a>
           </td>
         {% endif %}
