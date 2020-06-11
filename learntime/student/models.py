@@ -29,7 +29,7 @@ class Student(CreatedUpdatedMixin, models.Model):
         verbose_name = "学生"
         verbose_name_plural = verbose_name
         db_table = "student_backend"
-        ordering = ('-credit',)
+        ordering = ('uid',)
 
     def __str__(self):
         return self.uid

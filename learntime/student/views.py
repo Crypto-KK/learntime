@@ -33,7 +33,7 @@ class StudentList(RoleRequiredMixin, PaginatorListView):
     """
     role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value)
     template_name = "students/student_list.html"
-    paginate_by = 20
+    paginate_by = 50
     context_object_name = "students"
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -54,21 +54,32 @@ class StudentList(RoleRequiredMixin, PaginatorListView):
 
         # 初步的students查询集
         students = Student.objects.all()
+        student_list = []
+        if uid:
+            students = students.filter(uid=uid)
+        if name:
+            students = students.filter(name__contains=name)
+        if academy:
+            students = students.filter(academy__contains=academy)
+        if grade:
+            students = students.filter(grade__contains=grade)
+        if clazz:
+            students = students.filter(clazz__contains=clazz)
+
         if role == RoleEnum.ACADEMY.value:
             students = students.filter(academy=self.request.user.academy,
                                        grade=self.request.user.grade)
-        if uid:
-            return students.filter(uid=uid)
-        if name:
-            return students.filter(name__contains=name)
-        if academy:
-            return students.filter(academy__contains=academy)
-        if grade:
-            return students.filter(grade__contains=grade)
-        if clazz:
-            return students.filter(clazz__contains=clazz)
+            for student in students.filter(uid__startswith="{}".format(self.request.user.grade.split("级")[0])):
+                # 将学号为当前辅导员年级的优先显示
+                student_list.append(student)
+            for student in students.exclude(uid__startswith="{}".format(self.request.user.grade.split("级")[0])):
+                student_list.append(student)
 
-        return students
+        else:
+            for student in students:
+                student_list.append(student)
+
+        return student_list
 
 
 class StudentDetail(RoleRequiredMixin, DetailView):
@@ -226,7 +237,7 @@ class StudentExcelImportView(RoleRequiredMixin, View):
 
         if str(uid).__len__() != 12:
             # 学号必须为12位
-            return (False, "请仔细检查文件内容！学号必须为12位")
+            return (False, "请仔细检查文件内容！学号必须为12位，至少有一名学生的学号错误")
 
         if name == "":
             return (False, "请仔细检查文件内容！学生姓名不能为空")
@@ -250,8 +261,8 @@ class StudentExcelImportView(RoleRequiredMixin, View):
         if academy != self.request.user.academy:
             return (False, "只允许导入" + self.request.user.academy + "的学生信息，其他学院无权限导入")
 
-        if grade != self.request.user.grade:
-            return (False, "只允许导入" + self.request.user.academy + self.request.user.grade + "的学生信息，其他年级无权限导入")
+        # if grade != self.request.user.grade:
+        #     return (False, "只允许导入" + self.request.user.academy + self.request.user.grade + "的学生信息，其他年级无权限导入")
 
         if credit >=0 and wt_credit >=0 and fl_credit >= 0 \
             and xl_credit >=0 and cxcy_credit >=0 and sxdd_credit >= 0:
