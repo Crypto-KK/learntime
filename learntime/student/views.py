@@ -187,7 +187,10 @@ class StudentExcelImportView(RoleRequiredMixin, View):
 
             # 保存学生实例到数据库中
             for obj in student_instance_list:
-                obj.save()
+                try:
+                    obj.save()
+                except Exception as already_exist:
+                    return JsonResponse({"status": "fail", "reason": "表格中有学号重复，请在excel中进行学号数据筛选，修改无误后再导入"})
                 success_count += 1
 
             # 写入日志中
@@ -297,11 +300,11 @@ class StudentExcelExportView(RoleRequiredMixin, View):
         sheet.write(0, 3, '年级')
         sheet.write(0, 4, '班级')
         sheet.write(0, 5, '总学时')
-        sheet.write(0, 6, '文体学时')
-        sheet.write(0, 7, '法律学时')
-        sheet.write(0, 8, '心理学时')
-        sheet.write(0, 9, '创新创业学时')
-        sheet.write(0, 10, '思想道德学时')
+        sheet.write(0, 6, '文体素质学时')
+        sheet.write(0, 7, '法律素养学时')
+        sheet.write(0, 8, '身心素质学时')
+        sheet.write(0, 9, '创新创业素质学时')
+        sheet.write(0, 10, '思想品德素质学时')
 
         students = Student.objects.all()
 
