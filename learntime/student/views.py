@@ -196,7 +196,7 @@ class StudentExcelImportView(RoleRequiredMixin, View):
             # 写入日志中
             Log.objects.create(
                 user=self.request.user,
-                content=f"一共导入了{nrows - 1}条学生记录，{success_count}条成功，{fail_count}条失败"
+                content=f"一共导入了{nrows - 1}条学生记录，{success_count}条成功，{fail_count}条失败\n失败的名单如下：{'、'.join(fail_list)}"
             )
             return JsonResponse({"status": "ok", "data": {
                 "success_count": success_count,
@@ -205,7 +205,7 @@ class StudentExcelImportView(RoleRequiredMixin, View):
             }})
 
         else: # 文件格式错误
-            return JsonResponse({"status": "fail", "reason": "必须为xls或xlsx格式！"})
+            return JsonResponse({"status": "fail", "reason": "导入的文件必须为xls或xlsx格式！"})
 
     def check_excel_file(self, table, nrows):
         """

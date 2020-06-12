@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
 from django.utils.six import BytesIO
-from django.views.generic import ListView, CreateView, DeleteView
+from django.views.generic import ListView, CreateView, DeleteView, DetailView
 from django.views.generic.base import View
 
 from learntime.activity.models import Activity
@@ -27,6 +27,13 @@ class LogList(LoginRequiredMixin, PaginatorListView):
             return Log.objects.all().select_related("user")
         else:
             return Log.objects.filter(user=self.request.user).select_related("user")
+
+
+class LogDetail(LoginRequiredMixin, DetailView):
+    """日志详情页"""
+    template_name = "operation/log_detail.html"
+    context_object_name = "log"
+    model = Log
 
 
 class CommentList(LoginRequiredMixin, PaginatorListView):

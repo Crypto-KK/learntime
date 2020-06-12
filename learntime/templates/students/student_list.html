@@ -96,7 +96,9 @@
                               {{ form.as_p }}
 {#                              {% crispy form %}#}
                               <p class="help-block"><a href="https://learningtime.oss-cn-shenzhen.aliyuncs.com/media/file/%E5%AD%A6%E7%94%9F%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF.xls">点击此处下载模板文件</a></p>
-                              <p class="help-block" style="color: red;">请注意：学号务必填写正确！必须修改为文本型格式，不能为数字型</p>
+                              <p class="help-block" style="color: red;">注意：学号一定要检查无误，需修改为文本型格式，不能为数字型</p>
+                              <p class="help-block">导入失败可能有多种原因。1.该学号在系统中已经存在了，无法再次导入。2.该学生可能转专业、降级或复学，信息还在原来的班级上，请联系原来的辅导员修改学生的信息。若需要查看导入失败的名单，请点击左侧的操作记录进行查看。</p>
+                              <p class="help-block">建议各位辅导员导入成功后，再导出名单进行二次核对！若有问题，请点击网站右上角联系技术小哥，我们将尽快帮您解决</p>
                               <button type="button" id="import-data-button" class="btn btn-primary pull-right">确认导入</button>
                               <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 

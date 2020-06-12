@@ -8,6 +8,8 @@ urlpatterns = [
     path("send_email/", view=views.SendEmailAPIView.as_view(), name='send_email'),
 
     path('logs/', view=views.LogList.as_view(), name='log_list'),
+    path('log-detail/<int:pk>/', view=views.LogDetail.as_view(), name='log_detail'),
+
     path('comments/', view=views.CommentList.as_view(), name='comment_list'),
 
     path('feedback/', view=views.FeedBackListView.as_view(), name='feedback_list'),

@@ -19,6 +19,9 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="card">
+              <div class="card-header">
+                <h3>共{{ count }}条日志</h3>
+              </div>
               <div class="card-body">
                 <div class="table-responsive">
                   {% with request.user.role as role %}
@@ -41,7 +44,7 @@
                             {% if role == 1 %}
                               <td>{{ log.user }}({{ log.user.get_role_display }})</td>
                             {% endif %}
-                          <td>{{ log.content }}</td>
+                          <td><a href="{% url 'operations:log_detail' log.pk %}">{{ log.content | truncatechars:50 }}</a></td>
                           </tr>
                       {% endfor %}
                     </tbody>

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}
+    学生管理
+{% endblock %}
+{% block header_name %}
+    日志详情
+{% endblock %}
+{% block body %}
+      <!-- Breadcrumb-->
+    <div class="breadcrumb-holder container-fluid">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'operations:log_list' %}">日志列表</a></li>
+      <li class="breadcrumb-item active">日志详情</li>
+    </ul>
+    </div>
+
+  <br>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title">日志详细信息</h3>
+              <p class="card-text">编号：{{ log.pk }}</p>
+              <p class="card-text">时间：{{ log.created_at }}</p>
+              <p class="card-text">操作人：{{ log.user.name }}</p>
+              <p class="card-text">内容：{{ log.content }}</p>
+              <br>
+              <a class="btn btn-primary" href="{% url 'operations:log_list' %}">返回</a>
+            </div>
+          </div>
+      </div>
+
+
+    </div>
+  </div>
+
+{% endblock %}
+
