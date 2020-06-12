@@ -71,9 +71,9 @@
                   </div>
                 </form>
               </div>
-              <div class="col-lg-4"></div>
+              <div class="col-lg-3"></div>
 
-              <div class="col-lg-3">
+              <div class="col-lg-4">
                 <div class="pull-right">
                   {% if role == 1 or role == 3 %}
                     <button class="btn btn-blue" data-toggle="modal" data-target="#modal-in-class">
@@ -106,10 +106,14 @@
                       </div>
                     </div>
                   {% endif %}
-                  {% if role == 1 %}
+                  {% if role == 1 or role == 3 %}
                     <a class="btn btn-blue" href="{% url 'students:student_export' %}">
-                      <i class="fa fa-download">下载数据</i>
+                      <i class="fa fa-download">导出</i>
                     </a>
+                  {% endif %}
+
+                  {% if role == 3 %}
+                    <a href="{% url 'students:student_create' %}" class="btn btn-outline-success">手动添加学生</a>
                   {% endif %}
                 </div>
 
@@ -143,8 +147,10 @@
           </div>
         </div>
         {#                &nbsp;<a href="#" class="btn btn-danger" id="bulk-delete-btn">删除所选学生</a>#}
-        {% if role == 1 %}
+        {% if role == 1 or role == 3 %}
           <a href="{% url 'students:student_create' %}" class="btn btn-outline-success">添加学生</a>
+        {% endif %}
+        {% if role == 1 %}
           <a href="{% url 'students:student_export' %}" class="btn btn-danger pull-right" id="delete-all-btn">删除所有学生</a>
         {% endif %}
       {% endif %}

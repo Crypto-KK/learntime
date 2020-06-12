@@ -90,8 +90,9 @@ class StudentDetail(RoleRequiredMixin, DetailView):
     model = Student
 
 
-class StudentCreate(RootRequiredMixin, CreateView):
+class StudentCreate(RoleRequiredMixin, CreateView):
     """添加学生"""
+    role_required = (RoleEnum.ACADEMY.value, RoleEnum.ROOT.value)
     model = Student
     template_name = "students/student_create.html"
     form_class = StudentCreateForm
@@ -280,9 +281,9 @@ class StudentExcelImportView(RoleRequiredMixin, View):
         )  # 创建一个学生实例
 
 
-class StudentExcelExportView(RootRequiredMixin, View):
+class StudentExcelExportView(RoleRequiredMixin, View):
     """学生excel导出视图"""
-
+    role_required = (RoleEnum.ACADEMY.value, RoleEnum.ROOT.value)
     def get(self, request):
         import xlwt
 
@@ -302,9 +303,15 @@ class StudentExcelExportView(RootRequiredMixin, View):
         sheet.write(0, 9, '创新创业学时')
         sheet.write(0, 10, '思想道德学时')
 
+        students = Student.objects.all()
+
+        if self.request.user.role == RoleEnum.ACADEMY.value:
+            students = students.filter(academy=self.request.user.academy,
+                                       grade=self.request.user.grade)
+
         # 写数据
         row = 1
-        for student in Student.objects.all(): # 单条写入学生数据
+        for student in students: # 单条写入学生数据
             sheet.write(row, 0, student.uid)
             sheet.write(row, 1, student.name)
             sheet.write(row, 2, student.academy)
