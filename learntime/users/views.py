@@ -149,7 +149,7 @@ class AdminList(RootRequiredMixin, PaginatorListView):
     """管理员列表页需要ROOT"""
     template_name = "users/admin_list.html"
     context_object_name = "admins"
-    paginate_by = 20
+    paginate_by = 100
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=None, **kwargs)

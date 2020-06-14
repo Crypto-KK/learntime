@@ -39,7 +39,7 @@
             <a class="nav-link active" href="{% url 'students:student_credit_apply' %}">提交申请</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'students:student_credit_confirm' %}">审核通过的申请</a>
+            <a class="nav-link" href="{% url 'students:student_credit_confirm' %}">补录成功或审核通过的记录</a>
           </li>
 
         </ul>
@@ -87,7 +87,7 @@
                   <h1 style="display: inline-block;">已提交{{ count }}条学时补录申请，等待审核中</h1>
                 {% endif %}
                 {% if request.user.role == 3 or request.user.role == 2 %}
-                  <h1 style="display: inline-block;">请导入Excel表格，提交后自动将自动录入系统</h1>
+                  <h1 style="display: inline-block;">请点击右侧按钮下载模板填写后导入，系统将自动补录成功</h1>
                 {% endif %}
                 <button class="btn btn-blue pull-right" data-toggle="modal" data-target="#modal-in-class">
                   <i class="fa fa-caret-square-o-right" > 导入Excel表格</i>

@@ -125,10 +125,10 @@
             <li class="left-link activity-page" ><a href="{% url 'activities:activities' %}"> <i class="fa fa-send-o fa-fw"></i>我发布的活动</a></li>
             {% endif %}
             {% if role == 2 or role == 3 %}
-              <li class="left-link activity-verify-page"><a href="{% url 'activities:activity_unverify' %}"> <i class="fa fa-bullhorn fa-fw"></i>活动审批 </a></li>
+              <li class="left-link activity-verify-page"><a href="{% url 'activities:activity_unverify' %}"> <i class="fa fa-check-square fa-fw"></i>活动审核 </a></li>
             {% endif %}
             {% if role == 3 or role == 2 %}
-              <li class="left-link credit-verify-page"><a href="{% url 'students:student_credit_verify' %}"> <i class="fa fa-bullhorn fa-fw"></i>学时审批 </a></li>
+              <li class="left-link credit-verify-page"><a href="{% url 'students:student_credit_verify' %}"> <i class="fa fa-check-square-o fa-fw"></i>补录学时审核 </a></li>
             {% endif %}
 
             {% if role == 4 %}
