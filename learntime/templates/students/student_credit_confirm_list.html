@@ -46,6 +46,7 @@
                     <thead>
                       <tr>
                         <th><input type="checkbox" id="all"></th>
+                        <th>补录时间</th>
                         <th>活动名称</th>
                         <th>主办方</th>
                         <th>学号</th>
@@ -55,6 +56,7 @@
                         <th>参与身份</th>
                         <th>学时</th>
                         <th>审核者</th>
+                        <th>联系方式</th>
                         <th>状态</th>
                         <th>操作</th>
                       </tr>
@@ -66,6 +68,7 @@
                           <td style='vertical-align: middle;'>
                             <input type="checkbox" name="sub" data-pk="{{ student.pk }}">
                           </td>
+                          <td style="font-weight: bold; vertical-align: middle;">{{ student.created_at }}</td>
                           <td style="font-weight: bold; vertical-align: middle;">{{ student.activity_name }}</td>
                           <td style='vertical-align: middle;'>{{ student.sponsor }}</td>
                           <td style='vertical-align: middle;'>{{ student.uid }}</td>
@@ -75,10 +78,10 @@
                           <td style='vertical-align: middle;'>{{ student.join_type }}</td>
                           <td style='vertical-align: middle;'>{{ student.credit }}</td>
                           <td style='vertical-align: middle;'>{{ student.to }}</td>
+                          <td style='vertical-align: middle;'>{{ student.contact }}</td>
                           <td style='vertical-align: middle;'><i class="fa fa-check" style="color: green"></i></td>
                           <td>
-                             <button class="btn btn-danger btn-sm" onclick="withdraw(this)" data-pk="{{ student.pk }}">
-                              <i class="fa fa-trash"></i>撤回
+                             <button class="btn btn-danger btn-sm" onclick="withdraw(this)" data-pk="{{ student.pk }}">撤回
                             </button>
                           </td>
                           </tr>

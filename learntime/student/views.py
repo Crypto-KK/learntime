@@ -239,6 +239,11 @@ class StudentExcelImportView(RoleRequiredMixin, View):
         except Exception:
             return (False, "请检查数据是否填写完整！")
 
+        if uid == "":
+            return (False, "请仔细检查文件内容！学号不能为空")
+
+        if str(uid).__contains__("."):
+            return (False, "学号包含小数点！请手动将表格中的学号改为文本型\n例如将201606126666.0修改为201606126666")
         # if str(uid).__len__() != 12:
         #     # 学号必须为12位
         #     return (False, "请仔细检查文件内容！学号必须为12位，至少有一名学生的学号错误")
@@ -602,6 +607,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
                     # 行校验不通过，则添加到失败名单
                     return JsonResponse({"status": "fail", "reason": single_row_message})
 
+
                 obj = self.build_student(row, to, request.user) # 获取补录学时实例
                 credit_verify_instance_list.append(obj)
 
@@ -671,14 +677,48 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
         except Exception:
             return (False, "请检查数据是否填写完整！")
 
+        uid = str(uid)
+
+        if uid == "":
+            return (False, "学号不能为空")
+
+        if uid.__contains__("."):
+            return (False, f"学号{uid}填写错误，请将学号改为文本型，不能为数字型")
+
+        if name == "":
+            return (False, "姓名不能为空")
+        if sponsor == "":
+            return (False, "主办方不能为空")
+        if clazz == "":
+            return (False, "班级不能为空")
+        if academy == "":
+            return (False, "学院不能为空")
+        if activity_name == "":
+            return (False, "活动名不能为空")
+        if credit_type == "":
+            return (False, "学时类别不能为空")
+        if credit == "":
+            return (False, "认定活动时不能为空")
+        if contact == "":
+            return (False, "联系人不能为空")
+
+        if Student.objects.filter(uid=uid).count() < 1:
+            # 学生不存在，不能进行导入
+            return (False, f'学号：{uid}，姓名：{name}在系统中不存在，请仔细检查表格是否填写错误！')
+
+        if Academy.objects.filter(name=academy).count() < 1:
+            return (False, f"学院输入错误，系统中不存在{academy}，请纠正！")
+
         try:
             credit = float(row[9])
         except Exception:
             return (False, "认定活动时必须填写数字型！")
 
-        credit = float(row[9])
         if credit <= 0:
             return (False, "认定活动时不能小于0！")
+
+        if credit >= 10:
+            return (False, "认定活动时不能大于10！")
 
         if not join_type in ['参加者', '观众', '工作人员']:
             return (False, "参加类型必须为 参加者/观众/工作人员其中之一")
