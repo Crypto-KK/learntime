@@ -625,7 +625,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             # 写入日志中
             Log.objects.create(
                 user=self.request.user,
-                content=f"导入了{nrows - 1}条需要增加学时的学生记录，等待审核中"
+                content=f"导入了{nrows - 1}条补录学时数据，详情内容如下：\n{'，    '.join([o.name + '的' + o.credit_type + '增加了' + str(o.credit) + '个学时' for o in credit_verify_instance_list])}"
             )
             return JsonResponse({"status": "ok"})
 
@@ -755,18 +755,29 @@ class StudentCreditWithdrawView(RoleRequiredMixin, View):
     """撤回审核通过的补录记录"""
     role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
     def post(self, request):
+        content_list = []  # 日志内容
         try:
             pks = json.loads(request.POST.get("pks"))
             for pk in pks:
                 obj = StudentCreditVerify.objects.get(pk=pk)
-                minus_credit(CREDIT_TYPE, obj.uid, obj.credit_type, obj.credit) # 减少学时
-                remove_student_activity(obj.uid, obj.join_type,
+                if not minus_credit(CREDIT_TYPE, obj.uid, obj.credit_type, obj.credit): # 减少学时
+                    return JsonResponse({"status": "fail", "reason": f'{obj.uid + ":" + obj.name}撤回失败'})
+                if not remove_student_activity(obj.uid, obj.join_type,
                                         activity_name=obj.activity_name,
                                         credit=obj.credit,
-                                        credit_type=obj.credit_type)  # 删除学生与活动的关联
+                                        credit_type=obj.credit_type):  # 删除学生与活动的关联
+                    return JsonResponse({"status": "fail", "reason": f'{obj.uid + ":" + obj.name}撤回失败'})
+
                 obj.delete() # 删除审核记录
+                content_list.append(f'{obj.name}撤回{obj.credit_type}的{obj.credit}个学时')
         except Exception as e:
             return JsonResponse({"status": "fail"})
+
+        Log.objects.create(
+            user=self.request.user,
+            content=f"撤回了{len(pks)}条补录学时数据，详情内容如下：{'，    '.join(content_list)}"
+        )
+
         return JsonResponse({"status": "ok"})
 
 class StudentCreditConfirmView(RoleRequiredMixin, View):
