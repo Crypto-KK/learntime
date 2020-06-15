@@ -6,3 +6,4 @@ class RoleEnum(Enum):
     SCHOOL = 2
     ACADEMY = 3
     STUDENT = 4
+    ORG = 5

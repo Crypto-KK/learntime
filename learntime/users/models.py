@@ -12,6 +12,7 @@ class User(AbstractUser):
         (2, '校级'), #校级
         (3, '院级'), #院级
         (4, '学生干部级'), #干部级
+        (5, '组织账号')
     )
 
     name = CharField(verbose_name="姓名", max_length=20)
