@@ -31,7 +31,7 @@ class StudentList(RoleRequiredMixin, PaginatorListView):
 
     需要ROOT、校级、学院级的权限
     """
-    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value)
+    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value, RoleEnum.ORG.value)
     template_name = "students/student_list.html"
     paginate_by = 50
     context_object_name = "students"
@@ -75,6 +75,11 @@ class StudentList(RoleRequiredMixin, PaginatorListView):
             for student in students.exclude(uid__startswith="{}".format(self.request.user.grade.split("级")[0])):
                 student_list.append(student)
 
+        elif role == RoleEnum.ORG.value:
+            students = students.filter(academy=self.request.user.academy)
+            for student in students:
+                student_list.append(student)
+
         else:
             for student in students:
                 student_list.append(student)
@@ -84,7 +89,7 @@ class StudentList(RoleRequiredMixin, PaginatorListView):
 
 class StudentDetail(RoleRequiredMixin, DetailView):
     """学生详情"""
-    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value)
+    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value, RoleEnum.ACADEMY.value, RoleEnum.ORG.value)
     context_object_name = "student"
     template_name = "students/student_detail.html"
     model = Student
@@ -92,7 +97,7 @@ class StudentDetail(RoleRequiredMixin, DetailView):
 
 class StudentCreate(RoleRequiredMixin, CreateView):
     """添加学生"""
-    role_required = (RoleEnum.ACADEMY.value, RoleEnum.ROOT.value)
+    role_required = (RoleEnum.ACADEMY.value, RoleEnum.ROOT.value, RoleEnum.ORG.value)
     model = Student
     template_name = "students/student_create.html"
     form_class = StudentCreateForm
@@ -112,7 +117,7 @@ class StudentCreate(RoleRequiredMixin, CreateView):
 
 class StudentUpdate(RoleRequiredMixin, FormInitialMixin, UpdateView):
     """修改学生"""
-    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)
+    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value, RoleEnum.ORG.value)
     model = Student
     form_class = StudentEditForm
     template_name = "students/student_update.html"
@@ -133,7 +138,7 @@ class StudentUpdate(RoleRequiredMixin, FormInitialMixin, UpdateView):
 
 class StudentDelete(RoleRequiredMixin, DeleteView):
     """删除学生"""
-    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)
+    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value, RoleEnum.ORG.value)
     model = Student
     template_name = "students/student_delete.html"
     context_object_name = "student"
@@ -267,8 +272,8 @@ class StudentExcelImportView(RoleRequiredMixin, View):
         if academy == "" or grade == "" or clazz == "":
             return (False, "请仔细检查文件的错误！学院或年级或班级不能为空")
 
-        if academy != self.request.user.academy:
-            return (False, "只允许导入" + self.request.user.academy + "的学生信息，其他学院无权限导入")
+        # if academy != self.request.user.academy:
+        #     return (False, "只允许导入" + self.request.user.academy + "的学生信息，其他学院无权限导入")
 
         # if grade != self.request.user.grade:
         #     return (False, "只允许导入" + self.request.user.academy + self.request.user.grade + "的学生信息，其他年级无权限导入")
@@ -516,7 +521,7 @@ class StudentBulkAddCreditView(RoleRequiredMixin, View):
 class StudentCreditApplyListView(RoleRequiredMixin, PaginatorListView):
     """学时补录申请列表页
     """
-    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
+    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value, RoleEnum.ORG.value)
     paginate_by = 50
     context_object_name = "students"
     template_name = "students/student_credit_apply_list.html"
@@ -535,7 +540,7 @@ class StudentCreditApplyListView(RoleRequiredMixin, PaginatorListView):
 class StudentCreditApplyConfirmListView(RoleRequiredMixin, PaginatorListView):
     """学时补录审核成功列表页
     """
-    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
+    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value, RoleEnum.ORG.value)
     paginate_by = 50
     context_object_name = "students"
     template_name = "students/student_credit_confirm_list.html"
@@ -572,7 +577,7 @@ class StudentCreditApplyCreateView(RoleRequiredMixin, CreateView):
 
 class StudentCreditExcelImportView(RoleRequiredMixin, View):
     """导入学时补录数据接口"""
-    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
+    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value, RoleEnum.ORG.value)
     def post(self, request):
         form = StudentExcelForm(request.POST, request.FILES) # 获取提交后的表单
         if form.is_valid(): # 表单校验通过
@@ -807,7 +812,7 @@ class StudentCreditVerifyListView(RoleRequiredMixin, PaginatorListView):
     """学生组织审核学时列表页
     权限：院级和学生组织
     """
-    role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
+    role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value, RoleEnum.ORG.value)
     paginate_by = 50
     context_object_name = "students"
     template_name = "students/student_credit_verify_list.html"

@@ -35,7 +35,7 @@
     <div class="container-fluid">
     <div class="row">
     <!-- Inline Form-->
-    {% if role == 1 or role == 2 or role == 3 %}
+    {% if role == 1 or role == 2 or role == 3 or role == 5 %}
       <div class="col-lg-12">
         <div class="card">
           <div class="card-body">
@@ -114,7 +114,7 @@
                     </a>
                   {% endif %}
 
-                  {% if role == 3 %}
+                  {% if role == 3 or role == 5 %}
                     <a href="{% url 'students:student_create' %}" class="btn btn-outline-success">手动添加学生</a>
                   {% endif %}
                 </div>
@@ -133,6 +133,9 @@
       {% if role == 3 %}
         <h1>{{ request.user.academy }} {{ request.user.grade }}(共{{ count }}人)</h1>
       {% endif %}
+      {% if role == 5 %}
+        <h1>{{ request.user.academy }}(共{{ count }}人)</h1>
+      {% endif %}
       {% if role == 1 or role == 2 %}
         {#                &nbsp;&nbsp;&nbsp;<input type="checkbox" id="checkAll" name='CheckAll'>#}
         <div class="btn-group">
@@ -149,7 +152,7 @@
           </div>
         </div>
         {#                &nbsp;<a href="#" class="btn btn-danger" id="bulk-delete-btn">删除所选学生</a>#}
-        {% if role == 1 or role == 3 %}
+        {% if role == 1 or role == 3 or role == 5 %}
           <a href="{% url 'students:student_create' %}" class="btn btn-outline-success">添加学生</a>
         {% endif %}
         {% if role == 1 %}
@@ -176,7 +179,7 @@
       <th>身心</th>
       <th>创新创业</th>
       <th>思想品德</th>
-      {% if role == 1 or role == 3 %}
+      {% if role == 1 or role == 3 or role == 5 %}
         <th>操作</th>
       {% endif %}
     </tr>
@@ -206,7 +209,7 @@
         <td style="color: blue"><a
                 href="{% url 'students:student_detail' student.pk %}?credit_type=sxdd">{{ student.sxdd_credit }}</a>
         </td>
-        {% if role == 1 or role == 3 %}
+        {% if role == 1 or role == 3 or role == 5 %}
           <td>
             {#                              <a href="{% url 'students:student_detail' student.pk %}" class="btn btn-success btn-sm">查看</a>#}
             <a href="{% url 'students:student_update' student.pk %}" class="btn btn-warning btn-sm">修改</a>

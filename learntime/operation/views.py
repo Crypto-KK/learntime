@@ -66,6 +66,10 @@ class StudentActivityListView(LoginRequiredMixin, PaginatorListView):
                 my_activity_pks.append(my_activity.pk)
             return StudentActivity.objects.filter(
                 activity_id__in=my_activity_pks).select_related("student", "activity")
+        elif self.request.user.role == RoleEnum.ORG.value:
+            return StudentActivity.objects.filter(
+                academy=self.request.user.academy
+            ).select_related("student", "activity")
 
 
 class AlterStatusAPIView(View):

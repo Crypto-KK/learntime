@@ -32,7 +32,7 @@ class MyActivityList(RoleRequiredMixin, PaginatorListView):
     """我发布的活动列表 干部级可以在这里发布活动，查看自己的活动
     只能由干部操作
     """
-    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
+    role_required = (RoleEnum.STUDENT.value, RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value, RoleEnum.ORG.value)
     template_name = "activity/activity_list.html"
     paginate_by = 10
     context_object_name = "activities"
@@ -177,6 +177,27 @@ class ActivityCreateBySchool(RoleRequiredMixin, CreateView):
     role_required = (RoleEnum.SCHOOL.value, )
     model = Activity
     template_name = "activity/activity_create_by_school.html"
+    form_class = ActivityForm
+
+    def form_valid(self, form):
+        # 指定审核者
+        form.instance.is_verify = True
+        form.instance.is_verifying = False
+        form.instance.user = self.request.user
+        form.instance.is_craft = False #
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, "发布活动成功")
+        return reverse("activities:activities")
+
+
+
+class ActivityCreateByOrg(RoleRequiredMixin, CreateView):
+    """校级人员发布活动"""
+    role_required = (RoleEnum.ORG.value, )
+    model = Activity
+    template_name = "activity/activity_create_by_org.html"
     form_class = ActivityForm
 
     def form_valid(self, form):

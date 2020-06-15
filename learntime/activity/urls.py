@@ -20,6 +20,7 @@ urlpatterns = [
     path('create/by-student/', view=views.ActivityCreateByStudent.as_view(), name='activity_create_by_student'),
     path('create/by-academy/', view=views.ActivityCreateByAcademy.as_view(), name='activity_create_by_academy'),
     path('create/by-school/', view=views.ActivityCreateBySchool.as_view(), name='activity_create_by_school'),
+    path('create/by-org/', view=views.ActivityCreateByOrg.as_view(), name='activity_create_by_org'),
     # 新增草稿
     path('craft/create/', view=views.ActivityCraftCreate.as_view(), name='craft_create'),
     # 草稿箱更新
