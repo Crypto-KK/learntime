@@ -66,7 +66,11 @@
           <!-- Sidebar Header-->
           <div class="sidebar-header d-flex align-items-center">
             <div class="avatar">
-              <img src="https://learningtime.oss-cn-shenzhen.aliyuncs.com/media/file/avatar.png" alt="..." class="img-fluid rounded-circle">
+              {% if request.user.name != "郑开勋" %}
+                              <img src="https://learningtime.oss-cn-shenzhen.aliyuncs.com/media/file/avatar.png" alt="..." class="img-fluid rounded-circle">
+              {% else %}
+                <img src="https://oa.gzcc.cn/uploadfile/2020/0402/20200402093414391.jpg" alt="勋哥" class="img-fluid rounded-circle">
+              {% endif %}
             </div>
             <div class="title">
               <h1 class="h4">{{ request.user.name }}</h1>

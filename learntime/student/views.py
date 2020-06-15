@@ -242,8 +242,8 @@ class StudentExcelImportView(RoleRequiredMixin, View):
         if uid == "":
             return (False, "请仔细检查文件内容！学号不能为空")
 
-        if str(uid).__contains__("."):
-            return (False, "学号包含小数点！请手动将表格中的学号改为文本型\n例如将201606126666.0修改为201606126666")
+        # if str(uid).__contains__("."):
+        #     return (False, "学号包含小数点！请手动将表格中的学号改为文本型\n例如将201606126666.0修改为201606126666")
         # if str(uid).__len__() != 12:
         #     # 学号必须为12位
         #     return (False, "请仔细检查文件内容！学号必须为12位，至少有一名学生的学号错误")
