@@ -14,7 +14,7 @@ import xlrd
 from datetime import datetime
 
 from config.settings.base import CREDIT_TYPE
-from learntime.operation.models import Log
+from learntime.operation.models import Log, StudentActivity
 from learntime.student.forms import StudentExcelForm, StudentCreateForm, StudentEditForm, StudentCreditCreateForm
 from learntime.student.models import Student, StudentCreditVerify
 from learntime.users.enums import RoleEnum
@@ -680,53 +680,56 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             contact = row[10]
             to_name = row[11]
         except Exception:
-            return (False, "请检查数据是否填写完整！")
+            return (False, "请检查数据是否填写完整！本次操作取消")
 
         uid = str(uid)
 
         if uid == "":
-            return (False, "学号不能为空")
+            return (False, "表格中的学号不能为空，本次操作取消")
 
         if uid.__contains__("."):
-            return (False, f"学号{uid}填写错误，请将学号改为文本型，不能为数字型")
+            return (False, f"学号{uid}填写错误，请将学号改为文本型，不能为数字型，本次操作取消")
 
         if name == "":
-            return (False, "姓名不能为空")
+            return (False, "姓名不能为空，本次操作取消")
         if sponsor == "":
-            return (False, "主办方不能为空")
+            return (False, "主办方不能为空，本次操作取消")
         if clazz == "":
-            return (False, "班级不能为空")
+            return (False, "班级不能为空，本次操作取消")
         if academy == "":
-            return (False, "学院不能为空")
+            return (False, "学院不能为空，本次操作取消")
         if activity_name == "":
-            return (False, "活动名不能为空")
+            return (False, "活动名不能为空，本次操作取消")
         if credit_type == "":
-            return (False, "学时类别不能为空")
+            return (False, "学时类别不能为空，本次操作取消")
         if credit == "":
-            return (False, "认定活动时不能为空")
+            return (False, "认定活动时不能为空，本次操作取消")
         if contact == "":
-            return (False, "联系人不能为空")
+            return (False, "联系人不能为空，本次操作取消")
 
         if Student.objects.filter(uid=uid).count() < 1:
             # 学生不存在，不能进行导入
-            return (False, f'学号：{uid}，姓名：{name}在系统中不存在，请仔细检查表格是否填写错误！')
+            return (False, f'学号：{uid}，姓名：{name}在系统中不存在，请仔细检查表格是否填写错误！本次操作取消')
 
         if Academy.objects.filter(name=academy).count() < 1:
-            return (False, f"学院输入错误，系统中不存在{academy}，请纠正！")
+            return (False, f"学院输入错误，系统中不存在{academy}，请纠正！本次操作取消")
 
+        if StudentActivity.objects.filter(activity_name=activity_name, student__uid=uid, credit_type=credit_type, credit=credit).count() >= 1:
+            # 补录活动重复了，不允许导入
+            return (False, f'学号：{uid}，姓名：{name}在系统已经有{activity_name}活动的参加记录了，请不要重复导入。建议前往学生的详情页仔细核对')
         try:
             credit = float(row[9])
         except Exception:
-            return (False, "认定活动时必须填写数字型！")
+            return (False, "认定活动时必须填写数字型！本次操作取消")
 
         if credit <= 0:
-            return (False, "认定活动时不能小于0！")
+            return (False, "认定活动时不能小于0！本次操作取消")
 
         if credit >= 10:
-            return (False, "认定活动时不能大于10！")
+            return (False, "认定活动时不能大于10！本次操作取消")
 
         if not join_type in ['参加者', '观众', '工作人员']:
-            return (False, "参加类型必须为 参加者/观众/工作人员其中之一")
+            return (False, "表格中的参加类型必须为 参加者/观众/工作人员其中之一，本次操作取消")
 
         return (True, "")
 
