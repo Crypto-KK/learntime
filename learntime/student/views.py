@@ -15,7 +15,8 @@ from datetime import datetime
 
 from config.settings.base import CREDIT_TYPE
 from learntime.operation.models import Log, StudentActivity
-from learntime.student.forms import StudentExcelForm, StudentCreateForm, StudentEditForm, StudentCreditCreateForm
+from learntime.student.forms import StudentExcelForm, StudentCreateForm, StudentEditForm, StudentCreditCreateForm, \
+    CreditApplyManuallyCreateView
 from learntime.student.models import Student, StudentCreditVerify
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
@@ -757,6 +758,30 @@ class StudentCreditDeleteView(RoleRequiredMixin, View):
             print(e)
             return JsonResponse({"status": "fail"})
         return JsonResponse({"status": "ok"})
+
+
+
+class StudentCreditApplyManuallyCreateView(RoleRequiredMixin, CreateView):
+    """老师手动补录学时"""
+    role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value, RoleEnum.ORG.value)
+    model = Student
+    template_name = "students/student_credit_apply_create_autopass.html"
+    form_class = CreditApplyManuallyCreateView
+
+    def form_valid(self, form):
+        # 添加日志
+        print(form.uid)
+        Log.objects.create(
+            user=self.request.user,
+            content=f"<{form.instance.uid} - {form.instance.name} 增加{form.instance.credit}学时>"
+        )
+        form.instance.user = self.request.user
+        form.instance.status = 3
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, "添加补录数据成功")
+        return reverse_lazy("students:student_credit_confirm")
 
 
 class StudentCreditWithdrawView(RoleRequiredMixin, View):

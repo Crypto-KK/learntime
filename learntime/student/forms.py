@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 
 from learntime.student.models import Student, StudentFile, StudentCreditVerify
 from learntime.users.models import Academy, Grade
+from learntime.operation.models import StudentActivity
 
 
 class StudentCreateForm(forms.ModelForm):
@@ -64,3 +65,34 @@ class StudentCreditCreateForm(forms.ModelForm):
         except IndexError:
             raise forms.ValidationError("学号和姓名不匹配")
         return super().clean()
+
+
+class CreditApplyManuallyCreateView(forms.ModelForm):
+    """手动填写学时补录的表单"""
+    uid = forms.CharField(label="学号")
+    academy = forms.ModelChoiceField(empty_label="请选择学院", queryset=Academy.objects.all(), label="学院")
+    join_type = forms.ChoiceField(
+        choices=(
+            (1, '参赛者'),
+            (2, '观众'),
+            (3, '工作人员')
+        ),
+        label="参与类型"
+    )
+
+    grade = forms.ModelChoiceField(empty_label="请选择年级", queryset=Grade.objects.all(), label="学院")
+
+    credit_type = forms.ChoiceField(
+        choices=(
+            ('身心素质', '身心素质'),
+            ('法律素养', '法律素养'),
+            ('文体素质', '文体素质'),
+            ('思想品德素质', '思想品德素质'),
+            ('创新创业素质', '创新创业素质')
+        ),
+        label="学时类型"
+    )
+
+    class Meta:
+        model = StudentActivity
+        exclude = ('activity', 'is_verify', 'status', 'student')

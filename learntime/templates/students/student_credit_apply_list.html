@@ -89,9 +89,14 @@
                 {% if request.user.role == 3 or request.user.role == 2 or request.user.role == 5 %}
                   <h1 style="display: inline-block;">请点击右侧按钮下载模板填写后导入，系统将自动补录成功</h1>
                 {% endif %}
+
                 <button class="btn btn-blue pull-right" data-toggle="modal" data-target="#modal-in-class">
                   <i class="fa fa-caret-square-o-right" > 导入Excel表格</i>
-                </button>
+                </button>&nbsp;&nbsp;
+
+                <a class="btn btn-primary" href="#" >
+                  手动录入
+                </a>&nbsp;&nbsp;
                 {% if request.user.role == 4 %}
                   <a href="{% url 'students:student_credit_apply_create' %}" class="btn btn-outline-success pull-right">手动录入</a>
                 {% endif %}
