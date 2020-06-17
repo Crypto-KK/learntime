@@ -786,13 +786,29 @@ class StudentCreditApplyManuallyCreateView(RoleRequiredMixin, CreateView):
 
     def form_valid(self, form):
         # 添加日志
-        print(form.uid)
-        Log.objects.create(
-            user=self.request.user,
-            content=f"<{form.instance.uid} - {form.instance.name} 增加{form.instance.credit}学时>"
-        )
+
         form.instance.user = self.request.user
         form.instance.status = 3
+        form.instance.student = Student.objects.get(pk=form.cleaned_data['uid'])
+
+        try:
+            StudentCreditVerify.objects.create(
+                activity_name=form.instance.activity_name, sponsor=form.cleaned_data['sponsor'], name=form.instance.student_name,
+                uid=form.cleaned_data['uid'], academy=form.instance.academy, clazz=form.instance.clazz,
+                join_type=form.instance.join_type, award=form.cleaned_data['award'], credit_type=form.instance.credit_type,
+                credit=form.instance.credit, contact=form.cleaned_data['contact'], to_name=form.cleaned_data['to_name'],
+                to=self.request.user, user=self.request.user, verify=True
+            )
+        except Exception as e:
+            return super().form_invalid(form)
+
+        Log.objects.create(
+            user=self.request.user,
+            content=f"补录了{form.instance.activity_name}活动，学生{form.instance.student_name}的{form.instance.credit_type}增加{form.instance.credit}学时"
+        )
+        if not add_credit(CREDIT_TYPE, form.cleaned_data['uid'], form.instance.credit_type, form.instance.credit):
+            return super().form_invalid(form)
+
         return super().form_valid(form)
 
     def get_success_url(self):

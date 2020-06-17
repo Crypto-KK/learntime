@@ -94,7 +94,7 @@
                   <i class="fa fa-caret-square-o-right" > 导入Excel表格</i>
                 </button>&nbsp;&nbsp;
 
-                <a class="btn btn-primary" href="#" >
+                <a class="btn btn-primary" href="{% url 'students:student_credit_apply_manually' %}" >
                   手动录入
                 </a>&nbsp;&nbsp;
                 {% if request.user.role == 4 %}

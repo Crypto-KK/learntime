@@ -69,8 +69,15 @@ class StudentCreditCreateForm(forms.ModelForm):
 
 class CreditApplyManuallyCreateView(forms.ModelForm):
     """手动填写学时补录的表单"""
-    uid = forms.CharField(label="学号")
+    uid = forms.CharField(label="学号", required=True)
+    student_name = forms.CharField(label="姓名", required=True)
     academy = forms.ModelChoiceField(empty_label="请选择学院", queryset=Academy.objects.all(), label="学院")
+    grade = forms.ModelChoiceField(empty_label="请选择年级", queryset=Grade.objects.all(), label="学院")
+    clazz = forms.CharField(label="班级", required=True)
+    sponsor = forms.CharField(label="主办方", required=True)
+    activity_name = forms.CharField(label="活动名称", required=True)
+    award = forms.CharField(label="获奖情况", required=True, help_text="若没有请填写无")
+
     join_type = forms.ChoiceField(
         choices=(
             (1, '参赛者'),
@@ -79,8 +86,6 @@ class CreditApplyManuallyCreateView(forms.ModelForm):
         ),
         label="参与类型"
     )
-
-    grade = forms.ModelChoiceField(empty_label="请选择年级", queryset=Grade.objects.all(), label="学院")
 
     credit_type = forms.ChoiceField(
         choices=(
@@ -93,6 +98,20 @@ class CreditApplyManuallyCreateView(forms.ModelForm):
         label="学时类型"
     )
 
+    credit = forms.FloatField(max_value=10, min_value=0.5, label="认定学时")
+
+    contact = forms.CharField(label="填表人及联系方式", required=True)
+    to_name = forms.CharField(label="审核人", required=True)
+
+    def clean_uid(self):
+        uid = self.cleaned_data['uid']
+        try:
+            Student.objects.get(pk=uid)
+        except Student.DoesNotExist:
+            raise forms.ValidationError("该学号不存在")
+        return uid
+
     class Meta:
         model = StudentActivity
-        exclude = ('activity', 'is_verify', 'status', 'student')
+        fields = ('uid', 'student_name', 'academy', 'grade', 'clazz',
+                  'activity_name', 'join_type', 'credit_type', 'credit')
