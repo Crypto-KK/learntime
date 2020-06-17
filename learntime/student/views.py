@@ -2,6 +2,7 @@ import json
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
@@ -620,14 +621,15 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             for credit_verify_instance in credit_verify_instance_list:
                 if credit_verify_instance.to == credit_verify_instance.user: # 审核者和申请者相同,增加学时
                     credit_verify_instance.verify = True
-                    if not add_credit(CREDIT_TYPE, credit_verify_instance.uid, credit_verify_instance.credit_type, credit_verify_instance.credit):
-                        return JsonResponse({"status": "fail", "reason": "学时类别填写错误！可选项为：思想道德素质、创新创业素质、身心素质、文体素质、法律素养"})
-                    if not add_student_activity(credit_verify_instance.uid, credit_verify_instance.join_type,
-                                                activity_name=credit_verify_instance.activity_name,
-                                                credit=credit_verify_instance.credit,
-                                                credit_type=credit_verify_instance.credit_type):
-                        return JsonResponse({"status": "fail", "reason": "学生活动关联失败"})
-                    credit_verify_instance.save()
+                    with transaction.atomic():
+                        if not add_credit(CREDIT_TYPE, credit_verify_instance.uid, credit_verify_instance.credit_type, credit_verify_instance.credit):
+                            return JsonResponse({"status": "fail", "reason": "学时类别填写错误！可选项为：思想道德素质、创新创业素质、身心素质、文体素质、法律素养"})
+                        if not add_student_activity(credit_verify_instance.uid, credit_verify_instance.join_type,
+                                                    activity_name=credit_verify_instance.activity_name,
+                                                    credit=credit_verify_instance.credit,
+                                                    credit_type=credit_verify_instance.credit_type):
+                            return JsonResponse({"status": "fail", "reason": "学生活动关联失败"})
+                        credit_verify_instance.save()
             # 写入日志中
             Log.objects.create(
                 user=self.request.user,
@@ -688,8 +690,8 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
         if uid == "":
             return (False, "表格中的学号不能为空，本次操作取消")
 
-        if uid.__contains__("."):
-            return (False, f"学号{uid}填写错误，请将学号改为文本型，不能为数字型，本次操作取消")
+        # if uid.__contains__("."):
+        #     return (False, f"学号{uid}填写错误，请将学号改为文本型，不能为数字型，本次操作取消")
 
         if name == "":
             return (False, "姓名不能为空，本次操作取消")
@@ -707,10 +709,6 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             return (False, "认定活动时不能为空，本次操作取消")
         if contact == "":
             return (False, "联系人不能为空，本次操作取消")
-
-        if Student.objects.filter(uid=uid).count() < 1:
-            # 学生不存在，不能进行导入
-            return (False, f'学号：{uid}，姓名：{name}在系统中不存在，请仔细检查表格是否填写错误！本次操作取消')
 
         if Academy.objects.filter(name=academy).count() < 1:
             return (False, f"学院输入错误，系统中不存在{academy}，请纠正！本次操作取消")
@@ -737,11 +735,29 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
 
     def build_student(self, row, to, user):
         """创建学生的实例"""
+        uid = str(row[3]).strip()
+        if uid.__contains__('.'):
+            uid = uid.split('.')[0]
+
+        if Student.objects.filter(uid=uid).count() < 1:
+            # 学生不存在，不能进行导入
+            return (False, f'学号：{uid}，姓名：{row[2]}在系统中不存在，请仔细检查表格是否填写错误！本次操作取消')
+
+        activity_name = str(row[0]).strip()
+        sponsor = str(row[1]).strip()
+        name = str(row[2]).strip()
+        academy = str(row[4]).strip()
+        clazz = str(row[5]).strip()
+        join_type = str(row[6]).strip()
+        award = str(row[7]).strip()
+        credit_type = str(row[8]).strip()
+        contact = str(row[10]).strip()
+
         return StudentCreditVerify(
-            activity_name=row[0], sponsor=row[1], name=row[2],
-            uid=row[3], academy=row[4], clazz=row[5],
-            join_type=row[6], award=row[7], credit_type=row[8],
-            credit=row[9], contact=row[10], to_name=row[11],
+            activity_name=activity_name, sponsor=sponsor, name=name,
+            uid=uid, academy=academy, clazz=clazz,
+            join_type=join_type, award=award, credit_type=credit_type,
+            credit=row[9], contact=contact, to_name=row[11],
             to=to, user=user
         )
 
@@ -791,6 +807,7 @@ class StudentCreditWithdrawView(RoleRequiredMixin, View):
         content_list = []  # 日志内容
         try:
             pks = json.loads(request.POST.get("pks"))
+
             for pk in pks:
                 obj = StudentCreditVerify.objects.get(pk=pk)
                 if not minus_credit(CREDIT_TYPE, obj.uid, obj.credit_type, obj.credit): # 减少学时

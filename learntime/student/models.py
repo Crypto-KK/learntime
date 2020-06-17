@@ -95,8 +95,8 @@ class StudentCreditVerify(models.Model):
         001   测试      2
         002   儿子      2
     """
-    activity_name = models.CharField(max_length=50, verbose_name="活动名称")
-    sponsor = models.CharField(max_length=20, verbose_name="主办方")
+    activity_name = models.CharField(max_length=100, verbose_name="活动名称")
+    sponsor = models.CharField(max_length=255, verbose_name="主办方")
     uid = models.CharField(max_length=20, verbose_name="学号")
     name = models.CharField(max_length=20, verbose_name="姓名")
     academy = models.CharField(max_length=20, verbose_name="学院")
@@ -105,9 +105,9 @@ class StudentCreditVerify(models.Model):
     award = models.CharField(max_length=20, verbose_name="获奖情况")
     credit_type = models.CharField(max_length=20, verbose_name='认定项目')
     credit = models.FloatField(default=0, verbose_name="认定活动时")
-    contact = models.CharField(max_length=50, verbose_name='填报人及联系方式')
+    contact = models.CharField(max_length=255, verbose_name='填报人及联系方式')
     to_name = models.CharField(max_length=20, verbose_name='审核人')
-    remark = models.CharField(max_length=50, verbose_name='备注', null=True, blank=True)
+    remark = models.CharField(max_length=255, verbose_name='备注', null=True, blank=True)
     user = models.ForeignKey(User, verbose_name="填写学时补录的管理员", on_delete=models.CASCADE,
                            related_name="applying_to_verify_credits")
     to = models.ForeignKey(User, verbose_name="审核者", on_delete=models.CASCADE,

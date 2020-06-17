@@ -38,7 +38,7 @@
             <div class="card">
               <div class="card-header">
                 <h1 style="display: inline-block;">共{{ count }}条补录成功的记录</h1><br>
-                <button class="btn btn-danger" disabled id="deleteSelected" style="display: none">撤回所选项</button>
+                <button class="btn btn-danger" id="deleteSelected" style="display: none">撤回所选项</button>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
@@ -81,7 +81,9 @@
                           <td style='vertical-align: middle;'>{{ student.contact }}</td>
                           <td style='vertical-align: middle;'><i class="fa fa-check" style="color: green"></i></td>
                           <td>
-                             <button class="btn btn-danger btn-sm" disabled onclick="withdraw(this)" data-pk="{{ student.pk }}">撤回
+                            <a href="#" class="btn btn-warning btn-sm">修改
+                            </a>
+                             <button class="btn btn-danger btn-sm" onclick="withdraw(this)" data-pk="{{ student.pk }}">撤回
                             </button>
                           </td>
                           </tr>

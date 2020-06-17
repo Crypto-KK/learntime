@@ -125,11 +125,13 @@ def add_credit(mappings, student_pk, credit_type, mount):
     """
     try:
         student = Student.objects.get(pk=student_pk)
+        credit_type = str(credit_type).strip()
         credit_type_attr = mappings[credit_type]
         old_credit = getattr(student, credit_type_attr)
-        setattr(student, credit_type_attr, old_credit + mount)
+        setattr(student, credit_type_attr, old_credit + float(mount))
         student.save()
     except Exception as e:
+        print(e)
         return 0
     else:
         return 1
@@ -165,6 +167,8 @@ def add_student_activity(student_pk, join_type, activity_pk=None, activity_name=
     :param activity_name: 活动名 若没有可不填
     :return 1 success
     """
+    join_type = str(join_type).strip()
+    credit_type = str(credit_type).strip()
     join_type_id = 1
     CREDIT_TYPE_REVERSE = {
         "xl_credit": "身心素质",

@@ -22,18 +22,39 @@
       <div class="col-md-12">
           <div class="card">
             <div class="card-body">
-              <h3 class="card-title">详细信息</h3>
-              <p class="card-text" id="uid-text" data-student-id="{{ student.uid }}">学号：{{ student.uid }}</p>
-              <p class="card-text">姓名：{{ student.name }}</p>
-              <p class="card-text">学院：{{ student.academy }}</p>
-              <p class="card-text">年级：{{ student.grade }}</p>
-              <p class="card-text">班级：{{ student.clazz }}</p>
-              <p class="card-text">总学时：{{ student.credit }}</p>
-              <p class="card-text">创新创业素质：{{ student.cxcy_credit }}</p>
-              <p class="card-text">思想品德素质：{{ student.sxdd_credit }}</p>
-              <p class="card-text">法律素养：{{ student.fl_credit }}</p>
-              <p class="card-text">文体素质：{{ student.wt_credit }}</p>
-              <p class="card-text">身心素质：{{ student.xl_credit }}</p>
+              <h2 class="card-title">详细信息</h2>
+              <table class="table table-responsive table-responsive-lg">
+                <thead>
+                  <tr>
+                    <th>学号</th>
+                    <th>姓名</th>
+                    <th>学院</th>
+                    <th>班级</th>
+                    <th>总学时</th>
+                    <th>创新创业</th>
+                    <th>思想品德</th>
+                    <th>法律</th>
+                    <th>文体</th>
+                    <th>身心</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{{ student.uid }}</td>
+                    <td>{{ student.name }}</td>
+                    <td>{{ student.academy }}</td>
+                    <td>{{ student.clazz }}</td>
+                    <td>{{ student.credit }}</td>
+                    <td>{{ student.cxcy_credit }}</td>
+                    <td>{{ student.sxdd_credit }}</td>
+                    <td>{{ student.fl_credit }}</td>
+                    <td>{{ student.wt_credit }}</td>
+                    <td>{{ student.xl_credit }}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <p class="card-text" hidden id="uid-text" data-student-id="{{ student.uid }}">学号：{{ student.uid }}</p>
               <br>
               <h3>查看活动参加记录</h3>
               <ul class="nav nav-tabs" id="myTab" role="tablist">
