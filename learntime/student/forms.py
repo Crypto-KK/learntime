@@ -115,3 +115,23 @@ class CreditApplyManuallyCreateView(forms.ModelForm):
         model = StudentActivity
         fields = ('uid', 'student_name', 'academy', 'grade', 'clazz',
                   'activity_name', 'join_type', 'credit_type', 'credit')
+
+
+class CreditVerifyUpdateForm(forms.ModelForm):
+    """学时补录成功后进行修改"""
+
+    class Meta:
+        model = StudentCreditVerify
+        exclude = ('verify', 'to', 'user', 'uid', 'name', 'academy', 'clazz')
+
+    def clean_credit_type(self):
+        s = self.cleaned_data['credit_type']
+        if s not in ['思想品德素质', '创新创业素质', '法律素养', '身心素质', '文体素质']:
+            raise forms.ValidationError("学时类别必须填写思想品德素质、创新创业素质、法律素养、身心素质、文体素质")
+        return s
+
+    def clean_credit(self):
+        s = self.cleaned_data['credit']
+        if s <= 0 or s > 10:
+            raise forms.ValidationError("认定活动时必须大于0且小于10")
+        return s

@@ -17,7 +17,7 @@ from datetime import datetime
 from config.settings.base import CREDIT_TYPE
 from learntime.operation.models import Log, StudentActivity
 from learntime.student.forms import StudentExcelForm, StudentCreateForm, StudentEditForm, StudentCreditCreateForm, \
-    CreditApplyManuallyCreateView
+    CreditApplyManuallyCreateView, CreditVerifyUpdateForm
 from learntime.student.models import Student, StudentCreditVerify
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
@@ -619,6 +619,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
                 credit_verify_instance_list.append(obj)
 
             for credit_verify_instance in credit_verify_instance_list:
+                print(credit_verify_instance)
                 if credit_verify_instance.to == credit_verify_instance.user: # 审核者和申请者相同,增加学时
                     credit_verify_instance.verify = True
                     with transaction.atomic():
@@ -690,8 +691,14 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
         if uid == "":
             return (False, "表格中的学号不能为空，本次操作取消")
 
-        # if uid.__contains__("."):
-        #     return (False, f"学号{uid}填写错误，请将学号改为文本型，不能为数字型，本次操作取消")
+        if uid.__contains__('.'):
+            uid = uid.split('.')[0]
+
+
+        if Student.objects.filter(uid=uid).count() < 1:
+            # 学生不存在，不能进行导入
+            return (False, f'学号：{uid}，姓名：{row[2]}在系统中不存在，请仔细检查表格是否填写错误！本次操作取消')
+
 
         if name == "":
             return (False, "姓名不能为空，本次操作取消")
@@ -713,13 +720,13 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
         if Academy.objects.filter(name=academy).count() < 1:
             return (False, f"学院输入错误，系统中不存在{academy}，请纠正！本次操作取消")
 
-        if StudentActivity.objects.filter(activity_name=activity_name, student__uid=uid, credit_type=credit_type, credit=credit).count() >= 1:
+        if StudentActivity.objects.filter(activity_name=activity_name, student__uid=uid, credit_type=credit_type).count() >= 1:
             # 补录活动重复了，不允许导入
             return (False, f'学号：{uid}，姓名：{name}在系统已经有{activity_name}活动的参加记录了，请不要重复导入。建议前往学生的详情页仔细核对')
         try:
             credit = float(row[9])
         except Exception:
-            return (False, "认定活动时必须填写数字型！本次操作取消")
+            return (False, "认定活动时填写错误！填写的内容需要为数字！请仔细检查表格")
 
         if credit <= 0:
             return (False, "认定活动时不能小于0！本次操作取消")
@@ -739,9 +746,6 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
         if uid.__contains__('.'):
             uid = uid.split('.')[0]
 
-        if Student.objects.filter(uid=uid).count() < 1:
-            # 学生不存在，不能进行导入
-            return (False, f'学号：{uid}，姓名：{row[2]}在系统中不存在，请仔细检查表格是否填写错误！本次操作取消')
 
         activity_name = str(row[0]).strip()
         sponsor = str(row[1]).strip()
@@ -760,6 +764,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             credit=row[9], contact=contact, to_name=row[11],
             to=to, user=user
         )
+
 
 class StudentCreditDeleteView(RoleRequiredMixin, View):
     """学时补录申请删除"""
@@ -846,6 +851,7 @@ class StudentCreditWithdrawView(RoleRequiredMixin, View):
 
         return JsonResponse({"status": "ok"})
 
+
 class StudentCreditConfirmView(RoleRequiredMixin, View):
     """学时补录申请审核通过，需要院级权限"""
     role_required = (RoleEnum.ACADEMY.value,)
@@ -874,12 +880,34 @@ class StudentCreditVerifyListView(RoleRequiredMixin, PaginatorListView):
     权限：院级和学生组织
     """
     role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value, RoleEnum.ORG.value)
-    paginate_by = 50
+    paginate_by = 100
     context_object_name = "students"
     template_name = "students/student_credit_verify_list.html"
 
     def get_queryset(self):
         return self.request.user.waiting_to_verify_credits.filter(verify=False)
+
+
+class StudentCreditVerifyEditView(RoleRequiredMixin, UpdateView):
+    """修改审核通过的学时补录记录
+    """
+    role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value, RoleEnum.ORG.value)
+    model = StudentCreditVerify
+    context_object_name = "record"
+    template_name = "students/student_credit_verify_update.html"
+    form_class = CreditVerifyUpdateForm
+
+    def form_valid(self, form):
+        # 添加日志
+        Log.objects.create(
+            user=self.request.user,
+            content=f"修改了补录记录<活动：{form.instance.name}>"
+        )
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, "修改成功")
+        return reverse_lazy("students:student_credit_confirm")
 
 
 @csrf_exempt

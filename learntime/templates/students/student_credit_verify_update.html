@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+    修改
+{% endblock %}
+{% block header_name %}
+    修改记录
+{% endblock %}
+{% block body %}
+      <!-- Breadcrumb-->
+    <div class="breadcrumb-holder container-fluid">
+    <ul class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'index' %}">首页</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'students:student_credit_confirm' %}">补录成功的记录</a></li>
+      <li class="breadcrumb-item active">修改</li>
+    </ul>
+    </div>
+
+  <br>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <form id="student_form" action="{% url 'students:student_credit_confirm_update' record.pk %}" method="post">
+          <p>学号：{{ record.uid }}</p>
+          <p>姓名：{{ record.name }}</p>
+          <p>学院：{{ record.academy }}</p>
+          <p>班级：{{ record.clazz }}</p>
+          {% csrf_token %}
+          {{ form.media }}
+          {{ form|crispy }}
+        </form>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary button-submit">确认更改</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+{% endblock %}
+{% block js %}
+  <script>
+    $(function () {
+        $('.button-submit').click(function () {
+            $('#student_form').submit()
+        })
+    })
+  </script>
+{% endblock %}
