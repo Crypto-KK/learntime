@@ -165,6 +165,13 @@ class IndexView(LoginRequiredMixin, View):
                                                        academy=request.user.academy).count(),
                 "verifying_activities_nums": request.user.waiting_for_verify_activities.count()
             })
+
+        elif role == RoleEnum.ORG.value:
+            # 学生组织账号能够看到全学院所有学生
+            context.update({
+                "student_nums": Student.objects.filter(academy=request.user.academy).count(),
+                "verifying_activities_nums": request.user.waiting_for_verify_activities.count()
+            })
         return render(request, "stat/index.html", context=context)
 
 
