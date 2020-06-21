@@ -588,7 +588,8 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             try:
                 to = User.objects.get(pk=to_id)
             except User.DoesNotExist:# 如果查询不到审核者，直接报错
-                if request.user.role == RoleEnum.ACADEMY.value or request.user.role == RoleEnum.SCHOOL.value:
+                if request.user.role == RoleEnum.ACADEMY.value or request.user.role == RoleEnum.SCHOOL.value or \
+                    request.user.role == RoleEnum.ORG.value:
                     to = request.user
                 else:
                     return JsonResponse({"status": "fail", "reason": "请选择审核者"})
@@ -634,7 +635,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             # 写入日志中
             Log.objects.create(
                 user=self.request.user,
-                content=f"导入了{nrows - 1}条补录学时数据，详情内容如下：\n{'，    '.join([o.name + '的' + o.credit_type + '增加了' + str(o.credit) + '个学时' for o in credit_verify_instance_list])}"
+                content=f"导入了{nrows - 2}条补录学时数据，详情内容如下：\n{'，    '.join([o.name + '的' + o.credit_type + '增加了' + str(o.credit) + '个学时' for o in credit_verify_instance_list])}"
             )
             return JsonResponse({"status": "ok"})
 
@@ -717,8 +718,8 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
         if contact == "":
             return (False, "联系人不能为空，本次操作取消")
 
-        if Academy.objects.filter(name=academy).count() < 1:
-            return (False, f"学院输入错误，系统中不存在{academy}，请纠正！本次操作取消")
+        # if Academy.objects.filter(name=academy).count() < 1:
+        #     return (False, f"学院输入错误，系统中不存在{academy}，请纠正！本次操作取消")
 
         if StudentActivity.objects.filter(activity_name=activity_name, student__uid=uid, credit_type=credit_type).count() >= 1:
             # 补录活动重复了，不允许导入
@@ -734,7 +735,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
         if credit >= 10:
             return (False, "认定活动时不能大于10！本次操作取消")
 
-        if not join_type in ['参加者', '观众', '工作人员']:
+        if not join_type.strip() in ['参加者', '观众', '工作人员']:
             return (False, "表格中的参加类型必须为 参加者/观众/工作人员其中之一，本次操作取消")
 
         return (True, "")
@@ -823,7 +824,7 @@ class StudentCreditApplyManuallyCreateView(RoleRequiredMixin, CreateView):
 
 class StudentCreditWithdrawView(RoleRequiredMixin, View):
     """撤回审核通过的补录记录"""
-    role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
+    role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value, RoleEnum.ORG.value)
     def post(self, request):
         content_list = []  # 日志内容
         try:
