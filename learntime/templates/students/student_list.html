@@ -260,7 +260,7 @@
           }
         }
         if (!validateSuffix) {
-          Toast.warning("文件上传失败，仅支持：" + suffixs.join(","))
+          Toast.warning("文件上传失败，仅支持：" + suffixs.join(",") + "\n若文件后缀正确，请尝试重命名文件，将小数点去掉")
           return
         }
 
