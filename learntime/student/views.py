@@ -620,7 +620,6 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
                 credit_verify_instance_list.append(obj)
 
             for credit_verify_instance in credit_verify_instance_list:
-                print(credit_verify_instance)
                 if credit_verify_instance.to == credit_verify_instance.user: # 审核者和申请者相同,增加学时
                     credit_verify_instance.verify = True
                     with transaction.atomic():
@@ -635,7 +634,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             # 写入日志中
             Log.objects.create(
                 user=self.request.user,
-                content=f"导入了{nrows - 2}条补录学时数据，详情内容如下：\n{'，    '.join([o.name + '的' + o.credit_type + '增加了' + str(o.credit) + '个学时' for o in credit_verify_instance_list])}"
+                content=f"导入了{request.FILES.get('excel_file')}表格，共有{nrows - 2}条补录数据，详情内容如下：\n{'，    '.join([o.name + '的' + o.credit_type + '增加了' + str(o.credit) + '个学时' for o in credit_verify_instance_list])}"
             )
             return JsonResponse({"status": "ok"})
 
