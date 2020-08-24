@@ -36,7 +36,7 @@ class StudentExcelForm(forms.ModelForm):
 
     def clean_excel_file(self):
         excel_file = self.cleaned_data['excel_file']
-        if excel_file.name.split('.')[1] not in ("xls", "xlsx", ):
+        if excel_file.name.split('.')[-1] not in ("xls", "xlsx", ):
             raise forms.ValidationError("后缀必须为xls或xlsx!")
         return excel_file
 
