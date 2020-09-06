@@ -13,3 +13,14 @@ def send_user_verify_email(email):
     recipient_list.append(email)
     send_mail(title, message=message, from_email=settings.DEFAULT_FROM_EMAIL,
               recipient_list=recipient_list)
+
+
+@celery_app.task()
+def send_code_email(email, code):
+    """发送邮箱验证码"""
+    title = '[广州商学院学时通] 改绑邮箱'
+    message = '您的验证码为：' + code
+    recipient_list = []
+    recipient_list.append(email)
+    send_mail(title, message=message, from_email=settings.DEFAULT_FROM_EMAIL,
+              recipient_list=recipient_list)

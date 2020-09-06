@@ -9,6 +9,9 @@ urlpatterns = [
     path('logout/', view=views.logout_view, name='logout'),
     path('register/', view=views.RegisterView.as_view(), name='register'),
 
+    # 变更邮箱url
+    path('email/change/', view=views.EmailChangeView.as_view(), name='email_change'),
+
     # 忘记密码一系列url
     path('password/reset/', view=views.MyPasswordResetView.as_view(), name='password_reset'), # password_reset
     path('password/reset/done/', views.MyPasswordResetDoneView.as_view(), name='password_reset_done'),  # password_reset_done

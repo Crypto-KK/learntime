@@ -39,7 +39,7 @@
               {% if not request.user.is_superuser %}
                 <p class="card-text">
                   <a href="{% url 'users:password_change' %}" class="btn btn-warning">更改密码</a>
-                  <a href="#" class="btn btn-primary">申请变更邮箱</a>
+                  <button id="email-change-btn" class="btn btn-primary">改绑邮箱</button>
                   <button data-id="{{ request.user.pk }}" id="delete-account" class="btn btn-danger" >删除本账号</button>
                 </p>
               {% endif %}
@@ -48,6 +48,35 @@
             </div>
           </div>
       </div>
+
+    <div class="modal fade" id="changeEmailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">改绑邮箱</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="code-input" class="col-form-label">验证码:</label>
+                <input type="text" class="form-control" id="code-input">
+              </div>
+              <div class="form-group">
+                <label for="new-email-input" class="col-form-label">新邮箱号:</label>
+                <input type="text" class="form-control" id="new-email-input">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-primary" id="confirm-change-email-btn">确认修改</button>
+          </div>
+        </div>
+      </div>
+    </div>
     </div>
   </div>
 {% endblock %}
@@ -61,6 +90,39 @@
             url: "/users/admin-delete/" + $(this).attr("data-id"),
             success: res => {
               console.log(res)
+            }
+          })
+        }
+      })
+
+      $('#email-change-btn').click(function () {
+        // 邮箱改绑弹出模态框并发送验证码
+        $.get({
+          url: "/users/email/change/",
+          success: res => {
+            $('#changeEmailModal').modal()
+          }
+        })
+      })
+
+      $('#confirm-change-email-btn').click(function () {
+        // 确认修改邮箱按钮
+        let new_email = $('#new-email-input').val()
+        let code = $('#code-input').val()
+        if (new_email && code) {
+          $.post({
+            url: "/users/email/change/",
+            data: {
+              code,
+              email: new_email
+            },
+            success: res => {
+              if (res.status === 'ok') {
+                alert('改绑邮箱成功！下次登录请使用新邮箱登录！')
+                window.location.reload()
+              } else {
+                alert('邮箱验证码错误！')
+              }
             }
           })
         }

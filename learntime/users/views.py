@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model, authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView, \
     PasswordResetDoneView, PasswordChangeView, PasswordChangeDoneView, \
     PasswordResetCompleteView
@@ -10,6 +11,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import UpdateView, DeleteView, CreateView, DetailView
 from django.views.generic.base import View
+import random
+from django.core.cache import cache
 
 from learntime.globalconf.models import Configration
 from learntime.users.enums import RoleEnum
@@ -18,7 +21,7 @@ from learntime.users.models import Academy, Grade, Institute
 from learntime.utils.factories import CrudViewFactory
 from learntime.utils.helpers import PaginatorListView, RootRequiredMixin, FormInitialMixin, RoleRequiredMixin
 from learntime.operation.models import Log
-from learntime.users.tasks import send_user_verify_email
+from learntime.users.tasks import send_user_verify_email, send_code_email
 
 User = get_user_model() # 惰性获取User对象
 
@@ -97,6 +100,37 @@ class RegisterView(View):
         return render(request, 'users/registration/register.html', self.context)
 
 
+class EmailChangeView(View, LoginRequiredMixin):
+    """更改邮箱
+    需要发送验证码到当前绑定的邮箱，验证通过后才能修改邮箱
+    """
+    def get(self, request):
+        # 发送邮箱校验码
+        code = str(random.randrange(1000, 9999))
+        email = request.user.email
+        # 300秒过期时间
+        cache.set("change-" + email, code, 300)
+        send_code_email(email, code)
+        return JsonResponse({})
+
+    def post(self, request):
+        # 更改邮箱
+        old_email = request.user.email
+        real_code = cache.get('change-' + old_email)
+        code = request.POST.get('code')
+        new_email = request.POST.get('email')
+
+        if code == real_code:
+            # 验证通过
+            request.user.email = new_email
+            request.user.save()
+            return JsonResponse({
+                'status': 'ok'
+            })
+        else:
+            return JsonResponse({
+                'status': 'fail'
+            })
 
 class MyPasswordResetView(PasswordResetView):
     """重置密码视图"""
