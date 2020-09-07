@@ -29,6 +29,11 @@
                 {% endif %}
               </div>
               <div class="card-body">
+                {% if request.user.role == 3 or request.user.role == 5 %}
+                    <a style="float: right" class="btn btn-blue" href="{% url 'operations:join_list_export' %}">
+                      <i class="fa fa-download">导出记录</i>
+                    </a><br>
+                  {% endif %}
                 <div class="table-responsive">
                   {% with request.user.role as role %}
                   <table class="table table-striped table-hover table-bordered ">

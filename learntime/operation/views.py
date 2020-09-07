@@ -72,6 +72,67 @@ class StudentActivityListView(LoginRequiredMixin, PaginatorListView):
             ).select_related("student", "activity")
 
 
+class StudentActivityExportView(RoleRequiredMixin, View):
+    """学生参加记录导出"""
+    role_required = (RoleEnum.ACADEMY.value, RoleEnum.ORG.value)
+    def get(self, request):
+        import xlwt
+
+        workbook = xlwt.Workbook(encoding="utf-8") # 创建workbook实例
+        sheet = workbook.add_sheet("sheet1") # 创建工作薄1
+
+        # 写标题栏
+        sheet.write(0, 0, '学号')
+        sheet.write(0, 1, '姓名')
+        sheet.write(0, 2, '学院')
+        sheet.write(0, 3, '年级')
+        sheet.write(0, 4, '班级')
+        sheet.write(0, 5, '活动名称')
+        sheet.write(0, 6, '参加类别')
+        sheet.write(0, 7, '获得学时')
+        sheet.write(0, 8, '记录时间')
+
+
+        student_activities = StudentActivity.objects.all()
+
+        if self.request.user.role == RoleEnum.ACADEMY.value:
+            student_activities = student_activities.filter(
+                academy=self.request.user.academy,
+                grade=self.request.user.grade)
+        if self.request.user.role == RoleEnum.ORG.value:
+            student_activities = student_activities.filter(
+                academy=self.request.user.academy
+            )
+
+        # 写数据
+        row = 1
+        for obj in student_activities: # 单条写入学生数据
+            sheet.write(row, 0, obj.student_id)
+            sheet.write(row, 1, obj.student_name)
+            sheet.write(row, 2, obj.academy)
+            sheet.write(row, 3, obj.grade)
+            sheet.write(row, 4, obj.clazz)
+            sheet.write(row, 5, obj.activity_name)
+            sheet.write(row, 6, obj.credit_type)
+            sheet.write(row, 7, obj.credit)
+            sheet.write(row, 8, obj.create_time.strftime("%Y-%m-%d"))
+            row += 1
+
+        sio = BytesIO() # StringIO报错，使用BytesIO
+        workbook.save(sio)
+        sio.seek(0) # 定位到开始
+        response = HttpResponse(sio.getvalue(), content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment;filename=activity.xls'
+        response.write(sio.getvalue())
+
+        # 写入日志
+        Log.objects.create(
+            user=self.request.user,
+            content=f"下载了{row - 1}条学生活动记录"
+        )
+
+        return response
+
 class AlterStatusAPIView(View):
     """变更学生参加记录"""
     # role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value, RoleEnum.STUDENT.value)
@@ -171,6 +232,7 @@ class SearchRecordByPkAndTypeAPIView(LoginRequiredMixin, View):
         for record in records:
             results.append({
                 "activity_name": record.activity_name,
+                "join_type": record.join_type,
                 "credit": record.credit,
                 "credit_type": record.credit_type,
                 "student_name": record.student_name,

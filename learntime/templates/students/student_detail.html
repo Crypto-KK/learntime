@@ -115,6 +115,7 @@
                         <tr>
                           <th>姓名</th>
                           <th>参与活动名</th>
+                          <th>参与身份</th>
                           <th>获得学时</th>
                           <th>类别</th>
                           <th>状态</th>
@@ -144,10 +145,19 @@
           success: res => {
             $tem = $(tem)
             res.data.forEach(record => {
+              let join_type = record.join_type
+              if (join_type === 1) {
+                join_type = "参赛者"
+              } else if (join_type === 2) {
+                join_type = '观众'
+              } else if (join_type === 3) {
+                join_type = '工作人员'
+              }
               $tem.find("tbody").append(`
                 <tr>
                     <td>${record.student_name}</td>
                     <td>${record.activity_name}</td>
+                    <td>${join_type}</td>
                     <td>${record.credit}</td>
                     <td>${record.credit_type}</td>
                     <td>${record.status}</td>
