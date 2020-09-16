@@ -21,7 +21,7 @@ User = get_user_model()
 def rank_chart_view(request, maximum):
     """学时排名统计"""
     title = "学时排名"
-    students = Student.objects.all()
+    students = Student.objects.all().order_by('-credit')
     if request.user.role == RoleEnum.ACADEMY.value:
         students = students.filter(grade=request.user.grade, academy=request.user.academy)
         title = f'{request.user.academy}{request.user.grade}学时排名'
