@@ -10,7 +10,7 @@ services:
     restart: always
 
   web:
-    build: .
+    build: ..
     expose:
       - 8000
     volumes:
@@ -24,7 +24,7 @@ services:
     restart: always
 
   nginx:
-    build: deployment/nginx
+    build: nginx
     ports:
     - 80:80
     expose:

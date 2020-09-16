@@ -1,10 +1,11 @@
-FROM nginx
+FROM python:3.7
+MAINTAINER liyuankun 705555262@qq.com
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-# 删除原有配置文件，创建静态资源文件夹和ssl证书保存文件夹
-RUN rm /etc/nginx/conf.d/default.conf \
-&& mkdir -p /usr/share/nginx/html/static \
-&& mkdir -p /usr/share/nginx/html/media \
-&& mkdir -p /usr/share/nginx/ssl
+RUN mkdir /learntime
+WORKDIR /learntime
 
-# 添加配置文件
-ADD nginx/nginx.conf /etc/nginx/conf.d/
+ADD .. /learntime/
+RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
+RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple uwsgi
