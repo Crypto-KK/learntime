@@ -67,8 +67,10 @@ THIRD_PARTY_APPS = [
     "ckeditor_uploader",
     "djcelery_email",
     "django_celery_beat",
-    "django_crontab"
+    "django_crontab",
     #"channels"
+
+    'corsheaders'
 ]
 
 LOCAL_APPS = [
@@ -77,7 +79,9 @@ LOCAL_APPS = [
     "learntime.activity.apps.ActivityConfig",
     "learntime.operation.apps.OperationConfig",
     "learntime.statistic.apps.StatisticConfig",
-    "learntime.globalconf.apps.GlobalconfConfig"
+    "learntime.globalconf.apps.GlobalconfConfig",
+
+    "learntime.webapi.apps.WebapiConfig"
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -134,7 +138,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "learntime.globalconf.middleware.SystemMiddleware"
+    "learntime.globalconf.middleware.SystemMiddleware",
+
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 # STATIC
@@ -300,6 +306,35 @@ STATICFILES_FINDERS += ["compressor.finders.CompressorFinder"]
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+# jwt
+import datetime
+# drf框架的配置信息
+REST_FRAMEWORK = {
+    # 用户登陆认证方式
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '2/min',
+        'user': '10/min'
+    }
+}
+
+# jwt载荷中的有效期设置
+JWT_AUTH = {
+    #token 有效期
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=1),
+    'JWT_ALLOW_REFRESH': True,
+     #续期有效期（该设置可在24小时内带未失效的token 进行续期）
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(hours=12),
+    # 自定义返回格式，需要手工创建
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'learntime.webapi.utils.jwt_response_payload_handler',
+}
+REST_FRAMEWORK_EXTENSIONS = {
+      # 过期时间  单位是秒
+    # 缓存4小时
+    'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 10
+}
 
 EMAIL_HOST = env('DJANGO_EMAIL_HOST', default="smtp.qq.com")
 EMAIL_USE_SSL = env('DJANGO_EMAIL_USE_SSL', default=True)
@@ -362,3 +397,7 @@ CRONJOBS = (
     ('0 1 1 * *', 'django.core.management.call_command', ['runstat', '--record']),
 
 )
+
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True

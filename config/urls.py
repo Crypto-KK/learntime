@@ -2,12 +2,18 @@ from django.conf import settings
 from django.urls import include, path
 from django.conf.urls.static import static
 from django.views import defaults as default_views
+from rest_framework.routers import DefaultRouter
 
 from learntime.student.views import find_student_by_uid_and_name
 from learntime.users.views import AcademyList, AcademyCreate, AcademyUpdate, AcademyDelete, GradeList, \
     GradeCreate, GradeDelete, GradeUpdate, InstituteList, InstituteCreate, InstituteUpdate, InstituteDelete
 from learntime.statistic.views import IndexView
+from learntime.webapi.views import QueryViewSet, ResetPasswordView
 
+router = DefaultRouter()
+
+router.register('records', QueryViewSet, basename='records')
+router.register('reset_pwd', ResetPasswordView, basename='reset_pwd')
 urlpatterns = [
     path("",  IndexView.as_view(), name='index'),
 
@@ -40,7 +46,12 @@ urlpatterns = [
 
 
     # 临时接口
-    path("api/find_student/", find_student_by_uid_and_name)
+    path("api/find_student/", find_student_by_uid_and_name),
+
+    path("webapi/", include("learntime.webapi.urls", namespace="webapi")),
+
+    path('webapi/student/', include(router.urls)),
+
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

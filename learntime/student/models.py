@@ -87,6 +87,9 @@ class SimpleStudent(models.Model):
     def __str__(self):
         return self.uid
 
+    def get_username(self):
+        return self.uid
+
 
 class StudentCreditVerify(models.Model):
     """使用excel表格导入需要批量加学时的学时名单
