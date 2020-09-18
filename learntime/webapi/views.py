@@ -38,18 +38,21 @@ def login_view(request):
             'uid': POST.get('uid'),
             'password': POST.get('password')
         }
+        if credentials['uid'].__len__() != 12:
+            return JsonResponse({
+                "msg": "学号格式错误"
+            })
         if all(credentials.values()):
             try:
                 user = SimpleStudent.objects.get(uid=credentials['uid'])
             except Exception as e:
                 return JsonResponse({"msg": "学号或密码错误"})
-            if user:
-                if user.password == gen_md5(credentials['password']):
-                    # 密码校验成功
-                    payload = jwt_payload_handler(user)
-                    token = jwt_encode_handler(payload)
-                    response_data = jwt_response_payload_handler(token, user, request)
-                    return JsonResponse(response_data)
+            if user and user.password == gen_md5(credentials['password']):
+                # 密码校验成功
+                payload = jwt_payload_handler(user)
+                token = jwt_encode_handler(payload)
+                response_data = jwt_response_payload_handler(token, user, request)
+                return JsonResponse(response_data)
             else:
                 # 查不到该用户
                 return JsonResponse({'msg': '学号输入错误'})
@@ -65,9 +68,6 @@ def gen_md5(src: str):
     m1 = hashlib.md5()
     m1.update(src.encode('utf-8'))
     return m1.hexdigest()
-
-
-
 
 
 class QueryViewSet(ListCacheResponseMixin, mixins.ListModelMixin,
