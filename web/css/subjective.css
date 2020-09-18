@@ -1,0 +1,219 @@
+/* 设计模块样式 */
+.component {
+	position: relative;
+	padding: 4em;
+	height: 600px;
+	border: 1px solid #4a4a4a;
+	max-width: 100%;
+	overflow: hidden;
+	margin: 0 auto;
+}
+
+.resize-container{
+    position: absolute;
+    cursor: move;
+    margin: 0 auto;
+}
+
+.resize-container img {
+    display: block
+}
+
+.resize-container:hover .resize-image,
+.resize-container:active .resize-image {
+    outline: 2px dashed rgba(222,60,80,.9);
+}
+
+
+.resize-handle-ne,
+.resize-handle-se,
+.resize-handle-nw,
+.resize-handle-sw {
+    position: absolute;
+    display: block;
+    width: 10px;
+    height: 10px;
+    background: rgba(222,60,80,.9);
+    z-index: 999;
+}
+
+.resize-handle-nw {
+    top: -5px;
+    left: -5px;
+	cursor: nw-resize;
+}
+
+.resize-handle-sw {
+    bottom: -5px;
+    left: -5px;
+	cursor: sw-resize;
+}
+
+.resize-handle-ne {
+    top: -5px;
+    right: -5px;
+	cursor: ne-resize;
+}
+
+.resize-handle-se {
+    bottom: -5px;
+    right: -5px;
+    cursor: se-resize;
+}
+
+.resize-handle-nc,
+.resize-handle-sc,
+.resize-handle-wc,
+.resize-handle-ec {
+	position: absolute;
+    display: block;
+    width: 8px;
+    height: 8px;
+    background: rgba(222,60,80,.9);
+    z-index: 999;
+}
+
+.resize-handle-nc {
+    top: -5px;
+    left: 50%;
+	cursor: n-resize;
+}
+
+.resize-handle-sc {
+    bottom: -5px;
+    left: 50%;
+	cursor: s-resize;
+}
+
+.resize-handle-ec {
+    top: 50%;
+    right: -5px;
+	cursor: w-resize;
+}
+
+.resize-handle-wc {
+    top: 50%;
+    left: -5px;
+    cursor: e-resize;
+}
+
+.resize-handle-rotating {
+	width: 28px;
+    height: 28px;
+    background: url(../img/subjective/assetRotate.svg) 50% no-repeat;
+    margin-left: -16px;
+    cursor: url(../img/subjective/hand.png) 8 8,auto;
+	position: absolute;
+	top:-38px;
+	left: calc(50% + 5px);
+}
+
+/* 图片素材样式 */
+.material-container {
+    width: 95%;
+    height: 600px;
+    background: #2d2d2d;
+    color: #fff;
+}
+
+.material-img {
+    width: 110px;
+    height: 110px;
+    margin: 0px 20px 20px 0px;
+}
+
+.material-line {
+    margin: 1%;
+    border: 1px solid #fff;
+    width: 100%;
+}
+.material-imgs {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    margin: 15px 20px 20px 0px;
+}
+
+.material-imgs:hover .img-frame,
+.material-imgs:active .img-frame {
+    outline: 2px dashed rgba(255, 255, 255, 0.9);
+}
+.material-mimg {
+    width: 1px;
+    height: 1px;
+    position: absolute;
+    top:0px;
+    /* left: 0px; */
+    /* bottom: -13px; */
+    right: -2px;
+    transition: width 0.2s,height 0.2s;
+    -webkit-transition: width 0.2s,height 0.2s;
+}
+
+.material-imgs:hover .material-mimg,
+.material-imgs:active .material-mimg {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    /* bottom: 3px;
+    right: -1px; */
+}
+
+.material-mimg:hover {
+    cursor: pointer;
+}
+
+.vegetable-base {
+    position: relative;
+    width: 111.34px;
+    height: 108.92;
+}
+
+.vegetable-base:hover .img-frame,
+.vegetable-base:active .img-frame {
+    outline: 2px dashed rgba(255, 255, 255, 0.9);
+}
+
+.vegetable-base .material-mimg {
+    width: 1px;
+    height: 1px;
+    position: absolute;
+    top:11px;
+    /* left: 0px; */
+    /* bottom: -13px; */
+    right: 10px;
+    transition: width 0.2s,height 0.2s;
+    -webkit-transition: width 0.2s,height 0.2s;
+}
+
+.vegetable-base:hover .material-mimg,
+.vegetable-base:active .material-mimg {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    /* bottom: 3px;
+    right: -1px; */
+}
+
+.resize-container .material-mimg {
+    width: 1px;
+    height: 1px;
+    position: absolute;
+    top:-2px;
+    /* left: 0px; */
+    /* bottom: -13px; */
+    right: -6px;
+    transition: width 0.2s,height 0.2s;
+    -webkit-transition: width 0.2s,height 0.2s;
+}
+
+.resize-container:hover .material-mimg,
+.resize-container:active .material-mimg {
+    width: 25px;
+    height: 25px;
+    /* min-width: 25px;
+    min-height: 25px; */
+    position: absolute;
+    /* bottom: 3px;
+    right: -1px; */
+}
