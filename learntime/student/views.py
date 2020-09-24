@@ -763,13 +763,14 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
         award = str(row[7]).strip()
         credit_type = str(row[8]).strip()
         contact = str(row[10]).strip()
+        year = str(row[13]).strip()
 
         return StudentCreditVerify(
             activity_name=activity_name, sponsor=sponsor, name=name,
             uid=uid, academy=academy, clazz=clazz,
             join_type=join_type, award=award, credit_type=credit_type,
             credit=row[9], contact=contact, to_name=row[11],
-            to=to, user=user
+            to=to, user=user, year=year
         )
 
 
