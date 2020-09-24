@@ -809,7 +809,7 @@ class StudentCreditApplyManuallyCreateView(RoleRequiredMixin, CreateView):
                 uid=form.cleaned_data['uid'], academy=form.instance.academy, clazz=form.instance.clazz,
                 join_type=form.instance.join_type, award=form.cleaned_data['award'], credit_type=form.instance.credit_type,
                 credit=form.instance.credit, contact=form.cleaned_data['contact'], to_name=form.cleaned_data['to_name'],
-                to=self.request.user, user=self.request.user, verify=True
+                to=self.request.user, user=self.request.user, verify=True, year=form.cleaned_data['year']
             )
         except Exception as e:
             return super().form_invalid(form)

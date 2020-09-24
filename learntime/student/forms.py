@@ -77,6 +77,7 @@ class CreditApplyManuallyCreateView(forms.ModelForm):
     sponsor = forms.CharField(label="主办方", required=True)
     activity_name = forms.CharField(label="活动名称", required=True)
     award = forms.CharField(label="获奖情况", required=True, help_text="若没有请填写无")
+    year = forms.CharField(label="所属年度", required=True, help_text="例如：2020-2021学年")
 
     join_type = forms.ChoiceField(
         choices=(
