@@ -12,8 +12,7 @@ from rest_framework import mixins, viewsets
 
 from rest_framework_jwt.settings import api_settings
 
-from learntime.student.models import SimpleStudent
-from learntime.operation.models import StudentActivity
+from learntime.student.models import SimpleStudent, StudentCreditVerify
 from learntime.webapi.serializers import StudentActivitySerializer, PasswordUpdateSerializer
 from learntime.webapi.authentication import MyJSONWebTokenAuthentication, MyIsAuthenticated
 from learntime.webapi.throttle import  MyUserRateThrottle
@@ -79,9 +78,9 @@ class QueryViewSet(ListCacheResponseMixin, mixins.ListModelMixin,
     throttle_classes = [MyUserRateThrottle]
     def get_queryset(self):
         activity_type = self.request.GET.get('type')
-        obj = StudentActivity.objects\
-            .select_related('student', 'activity')\
-            .filter(student_id=self.request.user.uid)
+        obj = StudentCreditVerify.objects\
+            .select_related('user', 'to')\
+            .filter(uid=self.request.user.uid)
         if activity_type and activity_type in ['思想品德素质', '创新创业素质', '法律素养', '身心素质', '文体素质']:
             obj = obj.filter(credit_type=activity_type)
         return obj

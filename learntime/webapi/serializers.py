@@ -4,40 +4,41 @@ from rest_framework import serializers
 from rest_framework.serializers import Serializer
 from rest_framework_jwt.compat import PasswordField
 from rest_framework_jwt.settings import api_settings
-from learntime.operation.models import StudentActivity
-from learntime.student.models import SimpleStudent
+from learntime.student.models import SimpleStudent, StudentCreditVerify
+
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
 
 class StudentActivitySerializer(serializers.ModelSerializer):
     class Meta:
-        model = StudentActivity
-        fields = ('activity_name', 'credit', 'credit_type', 'create_time', 'join_type', "status")
+        model = StudentCreditVerify
+        fields = ('activity_name', 'credit', 'credit_type', 'year', 'join_type',
+                  "verify", "to_name", "sponsor", "contact", "remark", "created_at")
 
-    join_type = serializers.SerializerMethodField()
-    status = serializers.SerializerMethodField()
+    # join_type = serializers.SerializerMethodField()
+    # verify = serializers.SerializerMethodField()
 
 
-    def get_join_type(self, obj):
-        join_type = int(obj.join_type)
-        if join_type == 1:
-            return "参加者"
-        if join_type == 2:
-            return "观众"
-        if join_type == 3:
-            return "工作人员"
-        return "未知"
+    # def get_join_type(self, obj):
+    #     join_type = int(obj.join_type)
+    #     if join_type == 1:
+    #         return "参加者"
+    #     if join_type == 2:
+    #         return "观众"
+    #     if join_type == 3:
+    #         return "工作人员"
+    #     return "未知"
 
-    def get_status(self, obj):
-        status = int(obj.status)
-        if status == 1:
-            return "已报名"
-        if status == 2:
-            return "签到成功"
-        if status == 3:
-            return "签退成功"
-        return "未知"
+    # def get_status(self, obj):
+    #     status = int(obj.status)
+    #     if status == 1:
+    #         return "已报名"
+    #     if status == 2:
+    #         return "签到成功"
+    #     if status == 3:
+    #         return "签退成功"
+    #     return "未知"
 
 
 class MyJSONWebTokenSerializer(Serializer):
