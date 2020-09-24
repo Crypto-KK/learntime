@@ -115,6 +115,7 @@ class StudentCreditVerify(models.Model):
                            related_name="applying_to_verify_credits")
     to = models.ForeignKey(User, verbose_name="审核者", on_delete=models.CASCADE,
                            related_name="waiting_to_verify_credits")
+    year = models.CharField(max_length=50, verbose_name="所属年度", default="")
     verify = models.BooleanField(default=False, verbose_name="是否审核")
     created_at = models.DateTimeField(db_index=True, auto_now_add=True, verbose_name='创建时间')
 

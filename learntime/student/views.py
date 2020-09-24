@@ -657,7 +657,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             and first_row[3] == "学号" and first_row[4] == "学院" and first_row[5] == "班级" \
             and first_row[6] == "参加类型" and first_row[7] == "获奖情况" and first_row[8] == "认定项目" \
             and first_row[9] == "认定活动时" and first_row[10] == "填报人及联系方式" and first_row[11] == "审核人"\
-            and first_row[12] == "备注":
+            and first_row[12] == "备注" and first_row[13] == '归属年度(如“2020-2021学年”)':
             return (True, "ok")
         else:
             return (False, "文件格式错误，请下载模板填写！")
@@ -683,6 +683,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             credit = row[9]
             contact = row[10]
             to_name = row[11]
+            year = row[13]
         except Exception:
             return (False, "请检查数据是否填写完整！本次操作取消")
 
@@ -716,6 +717,8 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             return (False, "认定活动时不能为空，本次操作取消")
         if contact == "":
             return (False, "联系人不能为空，本次操作取消")
+        if year == "":
+            return (False, "所属年度不能为空，本次操作取消")
 
         # if Academy.objects.filter(name=academy).count() < 1:
         #     return (False, f"学院输入错误，系统中不存在{academy}，请纠正！本次操作取消")
@@ -736,6 +739,10 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
 
         if not join_type.strip() in ['参加者', '观众', '工作人员']:
             return (False, "表格中的参加类型必须为 参加者/观众/工作人员其中之一，本次操作取消")
+
+        # 验证所属年度
+        if not "-" in year:
+            return (False, "所属年度格式为XXXX-XXXX学年，请仔细核对表格的错误格式，本次操作取消")
 
         return (True, "")
 
