@@ -288,6 +288,8 @@ class StudentExcelImportView(RoleRequiredMixin, View):
 
     def build_student(self, row):
         """创建学生的实例"""
+        if row[0].__contains__("."):
+            row[0] = row[0].split(".")[0]
         return Student(
             uid=row[0], name=row[1], academy=row[2],
             grade=row[3], clazz=row[4], credit=float(row[5]),
