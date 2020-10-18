@@ -23,7 +23,7 @@ class LogList(LoginRequiredMixin, PaginatorListView):
     paginate_by = 50
 
     def get_queryset(self):
-        if self.request.user.role == 1:
+        if self.request.user.role == 1 or self.request.user.role == 2:
             return Log.objects.all().select_related("user")
         else:
             return Log.objects.filter(user=self.request.user).select_related("user")

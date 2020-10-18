@@ -30,7 +30,7 @@
                       <tr>
                         <th>序号</th>
                         <th>时间</th>
-                        {% if role == 1 %}
+                        {% if role == 1 or role == 2 %}
                           <th>操作者</th>
                         {% endif %}
                         <th>内容</th>
@@ -41,7 +41,7 @@
                           <tr>
                           <td>{{ forloop.counter }}</td>
                           <td>{{ log.created_at }}</td>
-                            {% if role == 1 %}
+                            {% if role == 1 or role == 2 %}
                               <td>{{ log.user }}({{ log.user.get_role_display }})</td>
                             {% endif %}
                           <td><a href="{% url 'operations:log_detail' log.pk %}">{{ log.content | truncatechars:50 }}</a></td>
