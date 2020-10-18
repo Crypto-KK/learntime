@@ -213,7 +213,9 @@
           <td>
             {#                              <a href="{% url 'students:student_detail' student.pk %}" class="btn btn-success btn-sm">查看</a>#}
             <a href="{% url 'students:student_update' student.pk %}" class="btn btn-warning btn-sm">修改</a>
-{#            <a href="{% url 'students:student_delete' student.pk %}" class="btn btn-danger btn-sm ">删除</a>#}
+            {% if role == 1 %}
+              <a href="{% url 'students:student_delete' student.pk %}" class="btn btn-danger btn-sm ">删除</a>
+            {% endif %}
           </td>
         {% endif %}
       </tr>

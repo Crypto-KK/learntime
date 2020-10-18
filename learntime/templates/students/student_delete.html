@@ -9,6 +9,7 @@
       <div class="col-md-8">
 
         <h1>确定要删除学生 {{ student.name }} 吗？</h1>
+        <p>注意！删除学生后将导致该学生的所有活动记录删除，请谨慎操作！！</p>
         <form method="post" action="{% url 'students:student_delete' student.pk %}">
             {% csrf_token %}
             <button class="btn-lg btn-danger" type="submit" id="deleteBtn">删除</button>

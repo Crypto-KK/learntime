@@ -14,7 +14,6 @@ def gen_md5(src):
 
 students = Student.objects.all() # 获取系统中所有学生名单
 
-
 for student in students:
     try:
         simple_student = SimpleStudent.objects.create(
