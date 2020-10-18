@@ -93,15 +93,15 @@
               <li class="left-link academy-page"><a href="{% url 'academy' %}"> <i class="fa fa-database fa-fw"></i>学院管理 </a></li>
               <li class="left-link grade-page"><a href="{% url 'grade' %}"> <i class="fa fa-cube fa-fw"></i>年级管理 </a></li>
             {% endif %}
-            {% if role == 1 or role == 2  %}
-              <li class="left-link institute-page"><a href="{% url 'institute' %}"> <i class="fa fa-gift fa-fw"></i>协会管理 </a></li>
-            {% endif %}
+{#            {% if role == 1 or role == 2  %}#}
+{#              <li class="left-link institute-page"><a href="{% url 'institute' %}"> <i class="fa fa-gift fa-fw"></i>协会管理 </a></li>#}
+{#            {% endif %}#}
             {% if role != 4 %}
             <li class="left-link student-page" ><a href="{% url 'students:students' %}"> <i class="fa fa-users fa-fw"></i>学生管理 </a></li>
             {% endif %}
-            {% if role == 1%}
-              <li class="left-link credit-page"><a href="{% url 'students:student_credit' %}"> <i class="fa fa-wrench fa-fw"></i>学时变更 </a></li>
-            {% endif %}
+{#            {% if role == 1%}#}
+{#              <li class="left-link credit-page"><a href="{% url 'students:student_credit' %}"> <i class="fa fa-wrench fa-fw"></i>学时变更 </a></li>#}
+{#            {% endif %}#}
               <li class="left-link log-page"><a href="{% url 'operations:log_list' %}"><i class="fa fa-reply-all fa-fw"></i>操作记录</a></li>
           </ul>
             {% if role == 1 %}
@@ -166,11 +166,11 @@
             <li class="left-link change-password-page" ><a href="{% url 'users:password_change' %}"> <i class="fa fa-pencil fa-fw"></i>修改密码 </a></li>
             <li class="left-link my-detail-page" ><a href="{% url 'users:my_detail' %}"> <i class="fa fa-cog fa-fw"></i>个人设置 </a></li>
             <li class="left-link help-page" ><a href="{% url 'conf:help_list' %}"> <i class="fa fa-question-circle fa-fw"></i>查看帮助 </a></li>
-            {% if role != 1 %}
-              <li class="left-link feedback-page" ><a href="{% url 'operations:feedback_list' %}"> <i class="fa fa-quote-left fa-fw"></i>问题反馈 </a></li>
-            {% else %}
-              <li class="left-link problem-page" ><a href="{% url 'operations:feedback_list' %}"> <i class="fa fa-quote-left fa-fw"></i>反馈处理 </a></li>
-            {% endif %}
+{#            {% if role != 1 %}#}
+{#              <li class="left-link feedback-page" ><a href="{% url 'operations:feedback_list' %}"> <i class="fa fa-quote-left fa-fw"></i>问题反馈 </a></li>#}
+{#            {% else %}#}
+{#              <li class="left-link problem-page" ><a href="{% url 'operations:feedback_list' %}"> <i class="fa fa-quote-left fa-fw"></i>反馈处理 </a></li>#}
+{#            {% endif %}#}
           </ul>
         {% endwith %}
         </nav>
