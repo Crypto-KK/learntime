@@ -119,7 +119,7 @@ class StudentCreate(RoleRequiredMixin, CreateView):
 
 class StudentUpdate(RoleRequiredMixin, FormInitialMixin, UpdateView):
     """修改学生"""
-    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value, RoleEnum.ORG.value)
+    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value, RoleEnum.ORG.value, RoleEnum.SCHOOL.value)
     model = Student
     form_class = StudentEditForm
     template_name = "students/student_update.html"
@@ -152,7 +152,7 @@ class StudentDelete(RoleRequiredMixin, DeleteView):
 
 class StudentExcelImportView(RoleRequiredMixin, View):
     """学生excel导入视图"""
-    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)
+    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
     def post(self, request):
         form = StudentExcelForm(request.POST, request.FILES) # 获取提交后的表单
         fail_list = [] # 失败的学生名单

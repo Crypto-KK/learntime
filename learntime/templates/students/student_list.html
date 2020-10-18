@@ -75,7 +75,7 @@
 
               <div class="col-lg-4">
                 <div class="pull-right">
-                  {% if role == 1 or role == 3 %}
+                  {% if role == 1 or role == 3 or role == 2 %}
                     <button class="btn btn-blue" data-toggle="modal" data-target="#modal-in-class">
 
                       <i class="fa fa-caret-square-o-right">导入</i>
@@ -179,7 +179,7 @@
       <th>身心</th>
       <th>创新创业</th>
       <th>思想品德</th>
-      {% if role == 1 or role == 3 or role == 5 %}
+      {% if role == 1 or role == 3 or role == 5 or role == 2 %}
         <th>操作</th>
       {% endif %}
     </tr>
@@ -209,7 +209,7 @@
         <td style="color: blue"><a
                 href="{% url 'students:student_detail' student.pk %}?credit_type=sxdd">{{ student.sxdd_credit }}</a>
         </td>
-        {% if role == 1 or role == 3 or role == 5 %}
+        {% if role == 1 or role == 3 or role == 5 or role == 2 %}
           <td>
             {#                              <a href="{% url 'students:student_detail' student.pk %}" class="btn btn-success btn-sm">查看</a>#}
             <a href="{% url 'students:student_update' student.pk %}" class="btn btn-warning btn-sm">修改</a>
