@@ -29,9 +29,9 @@
                 {% endif %}
               </div>
               <div class="card-body">
-                {% if request.user.role == 3 or request.user.role == 5 %}
+                {% if request.user.role == 1 or request.user.role == 2 or request.user.role == 3 or request.user.role == 5 %}
                     <a style="float: right" class="btn btn-blue" href="{% url 'operations:join_list_export' %}">
-                      <i class="fa fa-download">导出记录</i>
+                      <i class="fa fa-download">下载记录</i>
                     </a><br>
                   {% endif %}
                 <div class="table-responsive">
@@ -47,29 +47,21 @@
                         <th>认定项目</th>
                         <th>参加身份</th>
                         <th>获得学时</th>
-                        <th>参与情况</th>
-                        <th>变更状态</th>
+                        <th>审核人</th>
                       </tr>
                     </thead>
                     <tbody>
                       {% for object in objects %}
                           <tr>
-                          <td style="font-weight: bold">{{ object.student_id }}</td>
-                          <td>{{ object.student_name }}</td>
+                          <td style="font-weight: bold">{{ object.uid }}</td>
+                          <td>{{ object.name }}</td>
                           <td>{{ object.academy }}</td>
                           <td>{{ object.clazz }}</td>
                           <td>{{ object.activity_name }}</td>
                           <td>{{ object.credit_type }}</td>
-                          <td>{{ object.get_join_type_display }}</td>
+                          <td>{{ object.join_type }}</td>
                           <td>{{ object.credit }}</td>
-                          <td style="color: blue;">
-                            {{ object.get_status_display }}
-                          </td>
-                          <td>
-                            {% if object.status == 1 or object.status == 2 %}
-                              <button class="btn btn-sm btn-primary alter-status" data-record-pk="{{ object.pk }}">变更</button>
-                            {% endif %}
-                          </td>
+                          <td>{{ object.to_name }}</td>
                           </tr>
                       {% endfor %}
                     </tbody>

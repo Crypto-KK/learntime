@@ -1,19 +1,17 @@
-import time
 
-import qrcode
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
 from django.utils.six import BytesIO
-from django.views.generic import ListView, CreateView, DeleteView, DetailView
+from django.views.generic import CreateView, DeleteView, DetailView
 from django.views.generic.base import View
 
-from learntime.activity.models import Activity
-from learntime.operation.models import Log, StudentActivity, Comment, FeedBack
+from learntime.operation.models import Log, FeedBack
 from learntime.utils.helpers import PaginatorListView, RoleRequiredMixin, RootRequiredMixin
 from learntime.users.enums import RoleEnum
 from learntime.operation.tasks import send_email_to_user
+from learntime.student.models import StudentCreditVerify
 
 
 class LogList(LoginRequiredMixin, PaginatorListView):
@@ -45,48 +43,47 @@ class StudentActivityListView(LoginRequiredMixin, PaginatorListView):
 
     def get_queryset(self):
         if self.request.user.role == RoleEnum.ROOT.value or self.request.user.role == RoleEnum.SCHOOL.value: # ROOT级别能看到所有记录
-            return StudentActivity.objects.all().select_related("student", "activity")
-        elif self.request.user.role == RoleEnum.ACADEMY.value: # 院级能看到所在学院所在年级记录
-            return StudentActivity.objects.filter(
+            return StudentCreditVerify.objects.all()
+        elif self.request.user.role == RoleEnum.ACADEMY.value or self.request.role == RoleEnum.STUDENT.value: # 院级能看到所在学院所在年级记录
+            return StudentCreditVerify.objects.filter(
                 academy=self.request.user.academy,
                 grade=self.request.user.grade
-            ).select_related("student", "activity")
-        elif self.request.user.role == RoleEnum.STUDENT.value:
-            # 干部级能够查看参加自己发布活动的学生名单
-            my_activity_pks = []
-            my_activities = self.request.user.my_activities
-            for my_activity in my_activities.all():
-                my_activity_pks.append(my_activity.pk)
-            return StudentActivity.objects.filter(
-                activity_id__in=my_activity_pks).select_related("student", "activity")
+            )
         elif self.request.user.role == RoleEnum.ORG.value:
-            return StudentActivity.objects.filter(
+            return StudentCreditVerify.objects.filter(
                 academy=self.request.user.academy
-            ).select_related("student", "activity")
+            )
 
 
 class StudentActivityExportView(RoleRequiredMixin, View):
     """学生参加记录导出"""
-    role_required = (RoleEnum.ACADEMY.value, RoleEnum.ORG.value)
+    role_required = (RoleEnum.SCHOOL.value, RoleEnum.ROOT.value, RoleEnum.ACADEMY.value, RoleEnum.ORG.value)
     def get(self, request):
+        # TODO XLS解除65536限制
         import xlwt
 
         workbook = xlwt.Workbook(encoding="utf-8") # 创建workbook实例
         sheet = workbook.add_sheet("sheet1") # 创建工作薄1
 
         # 写标题栏
-        sheet.write(0, 0, '学号')
-        sheet.write(0, 1, '姓名')
-        sheet.write(0, 2, '学院')
-        sheet.write(0, 3, '年级')
-        sheet.write(0, 4, '班级')
-        sheet.write(0, 5, '活动名称')
-        sheet.write(0, 6, '参加类别')
-        sheet.write(0, 7, '获得学时')
-        sheet.write(0, 8, '记录时间')
+        # sheet.write(0, 0, "广州商学院“4+X”活动学时认定登记表汇总")
+        sheet.write(0, 0, '活动名称')
+        sheet.write(0, 1, '主办方')
+        sheet.write(0, 2, '姓名')
+        sheet.write(0, 3, '学号')
+        sheet.write(0, 4, '学院')
+        sheet.write(0, 5, '班级')
+        sheet.write(0, 6, '参加类型')
+        sheet.write(0, 7, '获奖情况')
+        sheet.write(0, 8, '认定项目')
+        sheet.write(0, 9, '认定活动时')
+        sheet.write(0, 10, '填报人及联系方式')
+        sheet.write(0, 11, '审核人')
+        sheet.write(0, 12, '备注')
+        sheet.write(0, 13, '归属年度(如“2020-2021学年”)')
 
 
-        student_activities = StudentActivity.objects.all()
+        student_activities = StudentCreditVerify.objects.all()
 
         if self.request.user.role == RoleEnum.ACADEMY.value:
             student_activities = student_activities.filter(
@@ -100,22 +97,27 @@ class StudentActivityExportView(RoleRequiredMixin, View):
         # 写数据
         row = 1
         for obj in student_activities: # 单条写入学生数据
-            sheet.write(row, 0, obj.student_id)
-            sheet.write(row, 1, obj.student_name)
-            sheet.write(row, 2, obj.academy)
-            sheet.write(row, 3, obj.grade)
-            sheet.write(row, 4, obj.clazz)
-            sheet.write(row, 5, obj.activity_name)
-            sheet.write(row, 6, obj.credit_type)
-            sheet.write(row, 7, obj.credit)
-            sheet.write(row, 8, obj.create_time.strftime("%Y-%m-%d"))
+            sheet.write(row, 0, obj.activity_name)
+            sheet.write(row, 1, obj.sponsor)
+            sheet.write(row, 2, obj.name)
+            sheet.write(row, 3, obj.uid)
+            sheet.write(row, 4, obj.academy)
+            sheet.write(row, 5, obj.clazz)
+            sheet.write(row, 6, obj.join_type)
+            sheet.write(row, 7, obj.award)
+            sheet.write(row, 8, obj.credit_type)
+            sheet.write(row, 9, obj.credit)
+            sheet.write(row, 10, obj.contact)
+            sheet.write(row, 11, obj.to_name)
+            sheet.write(row, 12, obj.remark)
+            sheet.write(row, 13, obj.year)
             row += 1
 
         sio = BytesIO() # StringIO报错，使用BytesIO
         workbook.save(sio)
         sio.seek(0) # 定位到开始
         response = HttpResponse(sio.getvalue(), content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment;filename=activity.xls'
+        response['Content-Disposition'] = 'attachment;filename=activity.xlsx'
         response.write(sio.getvalue())
 
         # 写入日志
@@ -126,19 +128,6 @@ class StudentActivityExportView(RoleRequiredMixin, View):
 
         return response
 
-class AlterStatusAPIView(View):
-    """变更学生参加记录"""
-    # role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value, RoleEnum.STUDENT.value)
-    def post(self, request):
-        record_pk = request.POST.get("record_pk")
-        alter_status = request.POST.get("alter_status")
-        try:
-            record = StudentActivity.objects.get(pk=record_pk)
-            record.status = alter_status
-            record.save()
-        except Exception:
-            return JsonResponse({"status": "fail", "reason": "找不到记录"})
-        return JsonResponse({"status": "ok"})
 
 
 class SearchRecordByPkAndTypeAPIView(LoginRequiredMixin, View):
@@ -156,11 +145,10 @@ class SearchRecordByPkAndTypeAPIView(LoginRequiredMixin, View):
             return JsonResponse({"status": "fail", "reason": "学号查找不到"})
 
         if not type_name:
-            records = StudentActivity.objects.filter(student__uid=student_id)
+            records = StudentCreditVerify.objects.filter(uid=student_id)
         else:
-            records = StudentActivity.objects.filter(student__uid=student_id,
+            records = StudentCreditVerify.objects.filter(uid=student_id,
                                        credit_type=type_name)
-            print(records)
         results = []
         for record in records:
             results.append({
@@ -168,9 +156,11 @@ class SearchRecordByPkAndTypeAPIView(LoginRequiredMixin, View):
                 "join_type": record.join_type,
                 "credit": record.credit,
                 "credit_type": record.credit_type,
-                "student_name": record.student_name,
-                "create_time": record.create_time.strftime("%Y-%m-%d %H:%M:%S"),
-                "status": record.get_status_display()
+                "student_name": record.name,
+                "year": record.year,
+                "to_name": record.to_name,
+                "create_time": record.created_at.strftime("%Y-%m-%d"),
+                "status": "签退成功"
             })
 
         return JsonResponse({"status": "ok", "data": results})

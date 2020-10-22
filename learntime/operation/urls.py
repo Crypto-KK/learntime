@@ -18,7 +18,6 @@ urlpatterns = [
     path('join-list/', view=views.StudentActivityListView.as_view(), name='join_list'),
     # 导出学生参加活动记录
     path('join-list-export/', view=views.StudentActivityExportView.as_view(), name='join_list_export'),
-    path('alter-status/', view=views.AlterStatusAPIView.as_view(), name='alter_status'),
 
     # 查看学生的参加活动记录
     path("join-record/", view=views.SearchRecordByPkAndTypeAPIView.as_view(), name='join_record'),

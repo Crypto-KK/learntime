@@ -92,11 +92,8 @@ class SimpleStudent(models.Model):
 
 
 class StudentCreditVerify(models.Model):
-    """使用excel表格导入需要批量加学时的学时名单
-    例如：
-        学号   姓名   加学时数
-        001   测试      2
-        002   儿子      2
+    """
+    学生活动关联表
     """
     activity_name = models.CharField(max_length=100, verbose_name="活动名称")
     sponsor = models.CharField(max_length=255, verbose_name="主办方")
