@@ -9,11 +9,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="robots" content="all,follow">
     <!-- Bootstrap CSS-->
-{#    <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">#}
-    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+{#    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">#}
     <!-- Font Awesome CSS-->
-{#    <link rel="stylesheet" href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}">#}
-    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}">
+{#    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">#}
 
     <!-- Google fonts - Poppins -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
@@ -130,11 +130,6 @@
             <li class="left-link change-password-page" ><a href="{% url 'users:password_change' %}"> <i class="fa fa-pencil fa-fw"></i>修改密码 </a></li>
             <li class="left-link my-detail-page" ><a href="{% url 'users:my_detail' %}"> <i class="fa fa-cog fa-fw"></i>个人设置 </a></li>
             <li class="left-link help-page" ><a href="{% url 'conf:help_list' %}"> <i class="fa fa-question-circle fa-fw"></i>查看帮助 </a></li>
-{#            {% if role != 1 %}#}
-{#              <li class="left-link feedback-page" ><a href="{% url 'operations:feedback_list' %}"> <i class="fa fa-quote-left fa-fw"></i>问题反馈 </a></li>#}
-{#            {% else %}#}
-{#              <li class="left-link problem-page" ><a href="{% url 'operations:feedback_list' %}"> <i class="fa fa-quote-left fa-fw"></i>反馈处理 </a></li>#}
-{#            {% endif %}#}
           </ul>
         {% endwith %}
         </nav>
@@ -174,17 +169,17 @@
       </div>
     </div>
     <!-- JavaScript files-->
-{#    <script src={% static 'vendor/jquery/jquery.min.js' %}></script>#}
+    <script src={% static 'vendor/jquery/jquery.min.js' %}></script>
 {#    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>#}
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-{#    <script src="{% static 'vendor/popper.js/umd/popper.min.js' %}"> </script>#}
-    <script src="https://cdn.bootcss.com/popper.js/1.15.0/umd/popper.min.js"></script>
-{#    <script src={% static 'vendor/bootstrap/js/bootstrap.min.js' %}></script>#}
-    <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-{#    <script src={% static 'vendor/jquery.cookie/jquery.cookie.js' %}> </script>#}
-    <script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-{#    <script src={% static 'vendor/jquery-validation/jquery.validate.min.js' %}></script>#}
-    <script src="https://cdn.bootcss.com/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+{#    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/2.2.4/jquery.min.js"></script>#}
+    <script src="{% static 'vendor/popper.js/umd/popper.min.js' %}"> </script>
+{#    <script src="https://cdn.bootcss.com/popper.js/1.15.0/umd/popper.min.js"></script>#}
+    <script src={% static 'vendor/bootstrap/js/bootstrap.min.js' %}></script>
+{#    <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>#}
+    <script src={% static 'vendor/jquery.cookie/jquery.cookie.js' %}> </script>
+{#    <script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>#}
+    <script src={% static 'vendor/jquery-validation/jquery.validate.min.js' %}></script>
+{#    <script src="https://cdn.bootcss.com/jquery-validate/1.17.0/jquery.validate.min.js"></script>#}
 {#    <script src="{% static 'vendor/layer/layer.js' %}"></script>#}
 {#    <script src={% static 'js/charts-home.js' %}></script>#}
     <!-- Main File-->
