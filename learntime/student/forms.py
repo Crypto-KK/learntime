@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 
 from learntime.student.models import Student, StudentFile, StudentCreditVerify
 from learntime.users.models import Academy, Grade
-from learntime.operation.models import StudentActivity
 
 
 class StudentCreateForm(forms.ModelForm):
