@@ -76,15 +76,3 @@ class Grade(Model):
 
     class Meta:
         db_table = "grade"
-
-
-class Institute(Model):
-    """协会数据库"""
-    name = CharField(max_length=50, verbose_name="协会名称")
-    note = CharField(max_length=255, verbose_name="备注", null=True, blank=True)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        db_table = "institute"

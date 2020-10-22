@@ -16,8 +16,8 @@ from django.core.cache import cache
 
 from learntime.globalconf.models import Configration
 from learntime.users.enums import RoleEnum
-from learntime.users.forms import LoginForm, RegisterForm, UserForm, ForgetForm, InstituteForm
-from learntime.users.models import Academy, Grade, Institute
+from learntime.users.forms import LoginForm, RegisterForm, UserForm, ForgetForm
+from learntime.users.models import Academy, Grade
 from learntime.utils.factories import CrudViewFactory
 from learntime.utils.helpers import PaginatorListView, RootRequiredMixin, FormInitialMixin, RoleRequiredMixin
 from learntime.operation.models import Log
@@ -68,8 +68,7 @@ class RegisterView(View):
     context = {
         'form': RegisterForm(),
          "academies": Academy.objects.all(),
-         "grades": Grade.objects.all(),
-         'organizations': Institute.objects.all()
+         "grades": Grade.objects.all()
     }
     def get(self, request):
         return render(request, 'users/registration/register.html', self.context)
@@ -343,21 +342,3 @@ GradeList = grade_crud.create_list_view()
 GradeCreate = grade_crud.create_create_view(True, 0, "新增年级成功", 'grade')
 GradeDelete = grade_crud.create_delete_view("删除年级成功", "grade")
 GradeUpdate = grade_crud.create_update_view(True, 0, '修改年级成功', 'grade')
-# =======协会的增删改查========
-institute_crud = CrudViewFactory('institute', 'institutes', Institute,
-                            {'role_required': (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)}, (RoleRequiredMixin,))
-InstituteList = institute_crud.create_list_view()
-class InstituteCreate(RoleRequiredMixin, CreateView):
-    template_name = "institute/create.html"
-    form_class = InstituteForm
-    role_required = (RoleEnum.ROOT.value, RoleEnum.SCHOOL.value)
-    context_object_name = "institute"
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        form.instance.save()
-        return super().form_valid(form)
-    def get_success_url(self):
-        messages.success(self.request, "新增协会成功")
-        return reverse("institute")
-InstituteDelete = institute_crud.create_delete_view("删除协会成功", "institute")
-InstituteUpdate = institute_crud.create_update_view(False, InstituteForm, '修改协会成功', 'institute')
