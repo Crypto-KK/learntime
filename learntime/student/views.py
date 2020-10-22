@@ -2,7 +2,6 @@ import json
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.db import transaction
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
@@ -22,7 +21,7 @@ from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
 from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, FormInitialMixin, \
     RootRequiredMixin, add_credit, minus_credit
-from utils.response_template import fail_response, success_response
+from learntime.utils.response_template import fail_response, success_response
 
 User = get_user_model()
 
@@ -426,7 +425,7 @@ class StudentCreditFailListView(RoleRequiredMixin, PaginatorListView):
     """
     查看导入错误的数据
     """
-    role_required = (RoleEnum.ACADEMY.value, )
+    role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
     paginate_by = 50
     context_object_name = "students"
     template_name = "students/student_credit_fail_list.html"
