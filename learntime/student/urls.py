@@ -2,8 +2,7 @@ from django.urls import path
 
 from learntime.student import views
 from learntime.student.views import (StudentExcelImportView, StudentExcelExportView, StudentBulkDeleteView, \
-                                     StudentAllDeleteView, StudentCreditView, StudentEditCreditView,
-                                     StudentBulkAddCreditView, StudentCreditApplyListView, StudentCreditExcelImportView,
+                                     StudentAllDeleteView, StudentCreditApplyListView, StudentCreditExcelImportView,
                                      StudentCreditVerifyListView, StudentCreditApplyCreateView, StudentCreditDeleteView,
                                      StudentCreditApplyConfirmListView, StudentCreditConfirmView,
                                      StudentCreditWithdrawView, StudentCreditApplyManuallyCreateView,
@@ -11,7 +10,6 @@ from learntime.student.views import (StudentExcelImportView, StudentExcelExportV
 
 app_name = "students"
 urlpatterns = [
-
     path('', view=views.StudentList.as_view(), name='students'),
     path('student-detail/<int:pk>/', view=views.StudentDetail.as_view(), name='student_detail'),
     path('student-create/', view=views.StudentCreate.as_view(), name='student_create'),
@@ -27,13 +25,6 @@ urlpatterns = [
     path("student-bulk-delete/", view=StudentBulkDeleteView.as_view(), name='student_bulk_delete'),
     # 学生全部删除
     path("student-all-delete/", view=StudentAllDeleteView.as_view(), name='student_all_delete'),
-
-    # 学时管理页
-    path("credit/", view=StudentCreditView.as_view(), name='student_credit'),
-    # 学时修改接口
-    path("edit-credit/", view=StudentEditCreditView.as_view(), name='student_credit_edit'),
-    # 学时批量增加接口
-    path("bulk-add-credit/", view=StudentBulkAddCreditView.as_view(), name='student_credit_add'),
 
     # 补录学时申请列表页
     path('credit-apply/', view=StudentCreditApplyListView.as_view(), name='student_credit_apply'),
@@ -54,8 +45,6 @@ urlpatterns = [
 
     # 撤回补录成功的学时接口
     path("credit-withdraw/", view=StudentCreditWithdrawView.as_view(), name='student_credit_withdraw'),
-
-
 
     # 审核通过学时补录申请接口
     path("credit-confirmation/", view=StudentCreditConfirmView.as_view(), name='student_credit_confirmation'),
