@@ -395,6 +395,7 @@ CRONJOBS = (
     # ('*/1 * * * *', 'django.core.management.call_command', ['runstat', '--test']),
     # 每个月第一天执行一次 统计学时
     ('0 1 1 * *', 'django.core.management.call_command', ['runstat', '--record']),
+    # ('0 1 1 * *', 'django.core.management.call_command', ['runstat', '--generate']),
 
 )
 

@@ -3,6 +3,7 @@ import logging
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
+from generate_student import generate_student
 from learntime.statistic.models import CreditStat
 from learntime.student.models import Student
 
@@ -19,11 +20,14 @@ class Command(BaseCommand):
             self.test()
         if options.get("record"):
             self.record()
+        if options.get("generate"):
+            self.generate()
 
         #self.stdout.write(self.style.SUCCESS('adsf'))
     def add_arguments(self, parser):
         parser.add_argument('--test', help="测试定时任务是否启动", action='store_true')
         parser.add_argument('--record', help="启动按月学时统计任务", action='store_true')
+        parser.add_argument('--generate', help="启动批量生成学生账号任务", action='store_true')
 
     def test(self):
         self.logger.info("test crontab")
@@ -67,3 +71,10 @@ class Command(BaseCommand):
             )
         self.logger.info(f"统计学时于{datetime.now()}完成")
         self.stdout.write(self.style.SUCCESS('统计学时完成'))
+
+    def generate(self):
+        self.logger.info("开始批量生成学生账号")
+        self.stdout.write(self.style.SUCCESS('开始批量生成学生账号'))
+        result = generate_student()
+        self.stdout.write(self.style.SUCCESS(result))
+        self.logger.info(result)
