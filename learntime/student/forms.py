@@ -115,7 +115,8 @@ class CreditApplyManuallyCreateView(forms.ModelForm):
     class Meta:
         model = StudentCreditVerify
         fields = ('uid', 'name', 'academy', 'grade', 'clazz',
-                  'activity_name', 'join_type', 'credit_type', 'credit')
+                  'activity_name', 'join_type', 'credit_type', 'credit',
+                  "sponsor", "award", "year", "contact", "to_name")
 
 
 class CreditVerifyUpdateForm(forms.ModelForm):

@@ -674,6 +674,7 @@ class StudentCreditApplyManuallyCreateView(RoleRequiredMixin, CreateView):
         # 添加日志
         form.instance.user = self.request.user
         form.instance.to = self.request.user
+        form.instance.verify = True
         add_credit(CREDIT_TYPE, form.cleaned_data['uid'], form.instance.credit_type, form.instance.credit)
         Log.objects.create(
             user=self.request.user,
