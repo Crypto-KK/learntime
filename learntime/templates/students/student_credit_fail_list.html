@@ -37,10 +37,10 @@
             <a class="nav-link" href="{% url 'students:student_credit_apply' %}">导入数据</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="{% url 'students:student_credit_confirm' %}">补录成功记录</a>
+            <a class="nav-link" href="{% url 'students:student_credit_confirm' %}">补录成功记录</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'students:student_credit_fail' %}">查看错误数据</a>
+            <a class="nav-link active" href="{% url 'students:student_credit_fail' %}">查看错误数据</a>
           </li>
 
         </ul>
@@ -49,7 +49,7 @@
 
             <div class="card">
               <div class="card-header">
-                <h1 style="display: inline-block;">共{{ count }}条补录成功的记录</h1><br>
+                <h1 style="display: inline-block;">共{{ count }}条补录错误数据</h1><br>
                 <button class="btn btn-danger" id="deleteSelected" style="display: none">撤回所选项</button>
               </div>
               <div class="card-body">
@@ -58,6 +58,7 @@
                     <thead>
                       <tr>
                         <th><input type="checkbox" id="all"></th>
+                        <th>错误原因</th>
                         <th>活动名称</th>
                         <th>学号</th>
                         <th>姓名</th>
@@ -80,6 +81,7 @@
                             <input type="checkbox" name="sub" data-pk="{{ student.pk }}">
                           </td>
 
+                          <td style="font-weight: bold; vertical-align: middle; color: red;">{{ student.fail_reason }}</td>
                           <td style="font-weight: bold; vertical-align: middle;">{{ student.activity_name }}</td>
                           <td style='vertical-align: middle;'><a href="{% url 'students:student_detail' student.uid %}?credit_type=qb">{{ student.uid }}</a></td>
                           <td style='vertical-align: middle;'><a href="{% url 'students:student_detail' student.uid %}?credit_type=qb">{{ student.name }}</a></td>

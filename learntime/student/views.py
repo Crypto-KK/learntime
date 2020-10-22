@@ -422,6 +422,17 @@ class StudentCreditApplyConfirmListView(RoleRequiredMixin, PaginatorListView):
         return StudentCreditVerify.objects.filter(verify=True).filter(Q(user=self.request.user) | Q(to=self.request.user))
 
 
+class StudentCreditFailListView(RoleRequiredMixin, PaginatorListView):
+    """
+    查看导入错误的数据
+    """
+    role_required = (RoleEnum.ACADEMY.value, )
+    paginate_by = 50
+    context_object_name = "students"
+    template_name = "students/student_credit_fail_list.html"
+    def get_queryset(self):
+        return StudentCreditVerify.objects.filter(verify=False, is_fail=True).filter(user=self.request.user)
+
 
 
 class StudentCreditApplyCreateView(RoleRequiredMixin, CreateView):
@@ -454,7 +465,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
         form = StudentExcelForm(request.POST, request.FILES) # 获取提交后的表单
         if form.is_valid(): # 表单校验通过
             to_id = request.POST.get("to_id")
-            credit_verify_instance_list = [] # 学时补录记录列表
+            instance_list = [] # 学时补录记录列表
             try:
                 to = User.objects.get(pk=to_id)
             except User.DoesNotExist:# 如果查询不到审核者，直接报错
@@ -485,28 +496,34 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
                     # 行校验不通过，则添加到失败名单
                     return JsonResponse({"status": "fail", "reason": single_row_message})
 
-
                 obj = self.build_student(row, to, request.user) # 获取补录学时实例
-                credit_verify_instance_list.append(obj)
+                instance_list.append(obj)
+                success_count, fail_count = 0, 0
 
-            for credit_verify_instance in credit_verify_instance_list:
-                if credit_verify_instance.to == credit_verify_instance.user: # 审核者和申请者相同,增加学时
-                    credit_verify_instance.verify = True
-                    with transaction.atomic():
-                        if not add_credit(CREDIT_TYPE, credit_verify_instance.uid, credit_verify_instance.credit_type, credit_verify_instance.credit):
-                            return JsonResponse({"status": "fail", "reason": "学时类别填写错误！可选项为：思想道德素质、创新创业素质、身心素质、文体素质、法律素养"})
-                        if not add_student_activity(credit_verify_instance.uid, credit_verify_instance.join_type,
-                                                    activity_name=credit_verify_instance.activity_name,
-                                                    credit=credit_verify_instance.credit,
-                                                    credit_type=credit_verify_instance.credit_type):
-                            return JsonResponse({"status": "fail", "reason": "学生活动关联失败"})
-                        credit_verify_instance.save()
+            for instance in instance_list:
+                if instance.to == instance.user: # 审核者和申请者相同,增加学时
+                    if Student.objects.filter(uid=instance.uid, name=instance.name).count() < 1:
+                        # 学生不存在，进入失败的列表
+                        instance.is_fail = True
+                        instance.verify = False
+                        instance.fail_reason = f"学号：{instance.uid}，姓名：{instance.name}在系统中不存在"
+                        instance.save()
+                        fail_count += 1
+                    else:
+                        instance.verify = True
+                        add_credit(None, instance.uid, instance.credit_type, instance.credit)
+                        instance.save()
+                        success_count += 1
             # 写入日志中
             Log.objects.create(
                 user=self.request.user,
-                content=f"导入了{request.FILES.get('excel_file')}表格，共有{nrows - 2}条补录数据，详情内容如下：\n{'，    '.join([o.name + '的' + o.credit_type + '增加了' + str(o.credit) + '个学时' for o in credit_verify_instance_list])}"
+                content=f"导入了{request.FILES.get('excel_file')}表格，一共有{nrows - 2}条补录数据，其中成功导入{success_count}条数据，导入失败{fail_count}条数据详情。内容如下：\n{'，    '.join([o.name + '的' + o.credit_type + '增加了' + str(o.credit) + '个学时' for o in instance_list])}"
             )
-            return success_response
+            return JsonResponse({
+                "status": "ok",
+                "success": success_count,
+                "fail": fail_count
+            })
 
         else: # 文件格式错误
             return JsonResponse({"status": "fail", "reason": "必须为xls或xlsx格式！"})
@@ -522,6 +539,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             # 行小于等于2，直接报错
             return (False, "excel表格没有填写内容！请重新填写")
 
+        # 校验是否为正确的文件
         first_row = table.row_values(1)
         if first_row[0] == "活动名称" and first_row[1] == "主办方" and first_row[2] == "姓名" \
             and first_row[3] == "学号" and first_row[4] == "学院" and first_row[5] == "班级" \
@@ -535,9 +553,6 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
     def check_single_row(self, row):
         """
         检查导入表格的每一行是否符合规范
-        :param row: 行
-        :param to: 审核者
-        :param user: 当前用户
         :return: boolean
         """
         try:
@@ -558,18 +573,10 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             return (False, "请检查数据是否填写完整！本次操作取消")
 
         uid = str(uid)
-
         if uid == "":
             return (False, "表格中的学号不能为空，本次操作取消")
-
         if uid.__contains__('.'):
             uid = uid.split('.')[0]
-
-
-        if Student.objects.filter(uid=uid).count() < 1:
-            # 学生不存在，不能进行导入
-            return (False, f'学号：{uid}，姓名：{row[2]}在系统中不存在，请仔细检查表格是否填写错误！本次操作取消')
-
 
         if name == "":
             return (False, "姓名不能为空，本次操作取消")
@@ -593,22 +600,28 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
         # if Academy.objects.filter(name=academy).count() < 1:
         #     return (False, f"学院输入错误，系统中不存在{academy}，请纠正！本次操作取消")
 
-        if StudentCreditVerify.objects.filter(activity_name=activity_name, uid=uid, credit_type=credit_type).count() >= 1:
+        if StudentCreditVerify.objects.filter(activity_name=activity_name,
+                                              uid=uid,
+                                              credit_type=credit_type,
+                                              sponsor=sponsor).count() >= 1:
             # 补录活动重复了，不允许导入
             return (False, f'学号：{uid}，姓名：{name}在系统已经有{activity_name}活动的参加记录了，请不要重复导入。建议前往学生的详情页仔细核对')
         try:
             credit = float(row[9])
         except Exception:
-            return (False, "认定活动时填写错误！填写的内容需要为数字！请仔细检查表格")
+            return (False, "认定活动时必须填写数字！请仔细检查表格！本次操作取消")
 
         if credit <= 0:
             return (False, "认定活动时不能小于0！本次操作取消")
 
-        if credit >= 10:
-            return (False, "认定活动时不能大于10！本次操作取消")
+        if credit >= 100:
+            return (False, "认定活动时不能大于100！本次操作取消")
 
         if not join_type.strip() in ['参加者', '观众', '工作人员']:
             return (False, "表格中的参加类型必须为 参加者/观众/工作人员其中之一，本次操作取消")
+
+        if not credit_type.strip() in ['思想品德素质', '创新创业素质', '身心素质', '文体素质', '法律素养']:
+            return (False, f"表格中学时类别填写错误！错误的内容为：{credit_type}，必须填写思想品德素质、创新创业素质、身心素质、文体素质、法律素养")
 
         # 验证所属年度
         # if not "-" in year:

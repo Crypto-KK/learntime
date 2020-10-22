@@ -14,6 +14,7 @@ from learntime.users.enums import RoleEnum
 from learntime.users.models import Grade, Academy
 from learntime.student.models import Student
 from learntime.operation.models import StudentActivity
+from django.conf import settings
 
 disable_csrf = method_decorator(csrf_exempt, "dispatch")
 
@@ -123,6 +124,9 @@ def add_credit(mappings, student_pk, credit_type, mount):
     :param mount: 增加的学时
     :return 1 success
     """
+
+    if not mappings:
+        mappings = settings.CREDIT_TYPE
     try:
         student = Student.objects.get(pk=student_pk)
         credit_type = str(credit_type).strip()

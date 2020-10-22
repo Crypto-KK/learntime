@@ -20,13 +20,16 @@
       <div class="container-fluid">
         <ul class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link active" href="{% url 'students:student_credit_verify' %}">审核申请</a>
+            <a class="nav-link active" href="{% url 'students:student_credit_verify' %}">审核下级名单</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'students:student_credit_apply' %}">提交申请</a>
+            <a class="nav-link" href="{% url 'students:student_credit_apply' %}">导入数据</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'students:student_credit_confirm' %}">补录成功或审核通过的记录</a>
+            <a class="nav-link" href="{% url 'students:student_credit_confirm' %}">补录成功记录</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'students:student_credit_fail' %}">查看错误数据</a>
           </li>
 
         </ul>

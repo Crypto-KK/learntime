@@ -5,6 +5,15 @@
 {% block header_name %}
     活动参加记录
 {% endblock %}
+{% block css %}
+  <style>
+    table {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  </style>
+{% endblock %}
 {% block body %}
       <!-- Breadcrumb-->
     <div class="breadcrumb-holder container-fluid">
@@ -54,7 +63,7 @@
                       {% for object in objects %}
                           <tr>
                           <td style="font-weight: bold">{{ object.uid }}</td>
-                          <td>{{ object.name }}</td>
+                          <td><a href="{% url 'students:student_detail' object.uid %}?credit_type=qb">{{ object.name }}</a></td>
                           <td>{{ object.academy }}</td>
                           <td>{{ object.clazz }}</td>
                           <td>{{ object.activity_name }}</td>

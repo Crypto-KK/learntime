@@ -6,7 +6,7 @@ from learntime.student.views import (StudentExcelImportView, StudentExcelExportV
                                      StudentCreditVerifyListView, StudentCreditApplyCreateView, StudentCreditDeleteView,
                                      StudentCreditApplyConfirmListView, StudentCreditConfirmView,
                                      StudentCreditWithdrawView, StudentCreditApplyManuallyCreateView,
-                                     StudentCreditVerifyEditView)
+                                     StudentCreditVerifyEditView, StudentCreditFailListView)
 
 app_name = "students"
 urlpatterns = [
@@ -31,6 +31,10 @@ urlpatterns = [
     # 补录申请成功列表页
     path('credit-confirm/', view=StudentCreditApplyConfirmListView.as_view(), name='student_credit_confirm'),
     path('credit-confirm-update/<str:pk>/', view=StudentCreditVerifyEditView.as_view(), name='student_credit_confirm_update'),
+
+    # 查看错误数据
+    path('credit-fail/', view=StudentCreditFailListView.as_view(), name='student_credit_fail'),
+
     # 添加补录学时数据
     path('credit-apply-create/', view=StudentCreditApplyCreateView.as_view(), name='student_credit_apply_create'),
     # 审核补录学时

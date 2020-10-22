@@ -32,14 +32,17 @@
         <ul class="nav nav-tabs">
           {% if request.user.role == 3 or request.user.role == 2 or request.user.role == 5 %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'students:student_credit_verify' %}">审核申请</a>
+              <a class="nav-link" href="{% url 'students:student_credit_verify' %}">审核下级名单</a>
             </li>
           {% endif %}
           <li class="nav-item">
-            <a class="nav-link active" href="{% url 'students:student_credit_apply' %}">提交申请</a>
+            <a class="nav-link active" href="{% url 'students:student_credit_apply' %}">导入数据</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'students:student_credit_confirm' %}">补录成功或审核通过的记录</a>
+            <a class="nav-link" href="{% url 'students:student_credit_confirm' %}">补录成功记录</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'students:student_credit_fail' %}">查看错误数据</a>
           </li>
 
         </ul>
@@ -87,14 +90,14 @@
                   <h1 style="display: inline-block;">已提交{{ count }}条学时补录申请，等待审核中</h1>
                 {% endif %}
                 {% if request.user.role == 3 or request.user.role == 2 or request.user.role == 5 %}
-                  <h1 style="display: inline-block;">请点击右侧按钮下载模板填写后导入，系统将自动补录成功</h1>
+                  <h1 style="display: inline-block;"></h1>
                 {% endif %}
-
+                <a style="vertical-align: middle;" href="http://learningtime.oss-cn-shenzhen.aliyuncs.com/media/file/%E5%AD%A6%E6%97%B6%E8%AE%A4%E5%AE%9A%E8%A1%A8%E6%A8%A1%E6%9D%BF%282020.9.24%E6%9B%B4%E6%96%B0%29.xlsx" download="学时认定表模板.txt">点击此处下载模板文件</a>
                 <button class="btn btn-blue pull-right" data-toggle="modal" data-target="#modal-in-class">
-                  <i class="fa fa-caret-square-o-right" > 导入Excel表格</i>
+                  <i class="fa fa-caret-square-o-right" > 模板批量导入</i>
                 </button>&nbsp;&nbsp;
 
-                <a class="btn btn-primary" href="{% url 'students:student_credit_apply_manually' %}" >
+                <a style="float: right" class="btn btn-primary" href="{% url 'students:student_credit_apply_manually' %}" >
                   手动录入
                 </a>&nbsp;&nbsp;
                 {% if request.user.role == 4 %}
@@ -285,7 +288,7 @@
           success: res => {
             Loading.hide()
             if (res.status === 'ok') {
-              Toast.success(`补录数据导入成功，3秒后自动刷新`)
+              Toast.success(`${res.success}条导入成功，${res.fail}条导入失败，五秒后将自动刷新`)
               setTimeout(() => {
                 window.location = "/students/credit-confirm/"
               }, 3000)
