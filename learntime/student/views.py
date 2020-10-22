@@ -21,7 +21,7 @@ from learntime.student.models import Student, StudentCreditVerify
 from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
 from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, FormInitialMixin, \
-    RootRequiredMixin, add_credit, add_student_activity, minus_credit, remove_student_activity
+    RootRequiredMixin, add_credit, minus_credit
 from utils.response_template import fail_response, success_response
 
 User = get_user_model()
@@ -688,7 +688,7 @@ class StudentCreditApplyManuallyCreateView(RoleRequiredMixin, CreateView):
         form.instance.user = self.request.user
         form.instance.to = self.request.user
         form.instance.verify = True
-        add_credit(CREDIT_TYPE, form.cleaned_data['uid'], form.instance.credit_type, form.instance.credit)
+        add_credit(None, form.cleaned_data['uid'], form.instance.credit_type, form.instance.credit)
         Log.objects.create(
             user=self.request.user,
             content=f"补录了{form.instance.activity_name}活动，学生{form.instance.name}的{form.instance.credit_type}增加{form.instance.credit}学时"
@@ -736,13 +736,8 @@ class StudentCreditConfirmView(RoleRequiredMixin, View):
                 obj = StudentCreditVerify.objects.get(pk=pk)
                 obj.verify = True
                 obj.save()
-                if not add_credit(CREDIT_TYPE, obj.uid, obj.credit_type, obj.credit):
+                if not add_credit(None, obj.uid, obj.credit_type, obj.credit):
                     return JsonResponse({"status": "fail", "reason": "增加学时失败"})
-                if not add_student_activity(obj.uid, obj.join_type,
-                                            activity_name=obj.activity_name,
-                                            credit=obj.credit,
-                                            credit_type=obj.credit_type):
-                    return JsonResponse({"status": "fail", "reason": "学生与活动关联失败"})
         except Exception as e:
             print(e)
             return fail_response
@@ -790,7 +785,6 @@ class StudentCreditVerifyDeleteView(RoleRequiredMixin, View):
     def post(self, request):
         try:
             pks = json.loads(request.POST.get("pks"))
-
             for pk in pks:
                 obj = StudentCreditVerify.objects.get(pk=pk)
                 obj.delete() # 删除审核记录
@@ -799,6 +793,31 @@ class StudentCreditVerifyDeleteView(RoleRequiredMixin, View):
 
         return success_response
 
+class EditFailRecord(RoleRequiredMixin, View):
+    role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
+    def post(self, request):
+        try:
+            pk = request.POST.get("pk")
+            name = request.POST.get("name")
+            uid = request.POST.get("uid")
+            if Student.objects.filter(uid=uid, name=name).count() > 0:
+                obj = StudentCreditVerify.objects.get(pk=pk)
+                obj.uid = uid
+                obj.name = name
+                obj.verify = True
+                obj.is_fail = False
+                obj.fail_reason = ""
+                obj.save()
+                if not add_credit(None, obj.uid, obj.credit_type, obj.credit):
+                    return JsonResponse({"status": "fail", "reason": "增加该学生对应学时出错"})
+                obj.save()
+            else:
+                return JsonResponse({"status": "fail", "data": "系统中查找不到该学生！"})
+        except Exception as e:
+            print(e)
+            return fail_response
+
+        return success_response
 
 
 @csrf_exempt

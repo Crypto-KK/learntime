@@ -51,9 +51,6 @@
               <div class="card-header">
                 <h1 style="display: inline-block;">共{{ count }}条补录错误数据</h1>
                 <button class="btn btn-danger" id="deleteSelected" style="display: none">删除所选项</button>
-                <a disabled="" style="float: right" class="btn btn-blue" href="#">
-                      <i class="fa fa-download">下载到本地</i>
-                    </a><br>
               </div>
               <div class="card-body">
 
@@ -62,6 +59,7 @@
                     <thead>
                       <tr>
                         <th><input type="checkbox" id="all"></th>
+                        <th>操作</th>
                         <th>错误原因</th>
                         <th>活动名称</th>
                         <th>学号</th>
@@ -73,17 +71,22 @@
                         <th>审核者</th>
                         <th>联系方式</th>
                         <th>补录时间</th>
-                        <th>操作</th>
+
                       </tr>
                     </thead>
                     <tbody>
 
                       {% for student in students %}
                           <tr>
+
                           <td style='vertical-align: middle;'>
                             <input type="checkbox" name="sub" data-pk="{{ student.pk }}">
                           </td>
-
+                          <td>
+                            <button type="button" class="btn btn-warning btn-sm btn-edit-fail" data-pk="{{ student.pk }}" data-toggle="modal" data-target="#editStudentFailRecord">修改</button>
+                             <button class="btn btn-danger btn-sm" onclick="deleteRecord(this)" data-pk="{{ student.pk }}">删除
+                            </button>
+                          </td>
                           <td style="font-weight: bold; vertical-align: middle; color: red;">{{ student.fail_reason }}</td>
                           <td style="font-weight: bold; vertical-align: middle;">{{ student.activity_name }}</td>
                           <td style='vertical-align: middle;'>{{ student.uid }}</td>
@@ -95,15 +98,41 @@
                           <td style='vertical-align: middle;'>{{ student.to }}</td>
                           <td style='vertical-align: middle;'>{{ student.contact }}</td>
                           <td style="font-weight: bold; vertical-align: middle;">{{ student.created_at }}</td>
-                          <td>
-{#                            <a href="#" class="btn btn-warning btn-sm">修改</a>#}
-                             <button class="btn btn-danger btn-sm" onclick="deleteRecord(this)" data-pk="{{ student.pk }}">删除
-                            </button>
-                          </td>
+
                           </tr>
                       {% endfor %}
                     </tbody>
                   </table>
+
+                <div class="modal fade" id="editStudentFailRecord" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">修改学号和姓名</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form>
+                          <div class="form-group">
+                            <label for="uid" class="col-form-label">学号:</label>
+                            <input type="text" class="form-control" id="uid">
+                          </div>
+                          <div class="form-group">
+                            <label for="student-name" class="col-form-label">姓名:</label>
+                            <input type="text" class="form-control" id="student-name">
+                          </div>
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary" id="confirm-edit">确认修改</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                   <button class="btn btn-danger" id="deleteSelected" style="display: none">删除所选项</button>
                 </div>
               </div>
@@ -203,6 +232,38 @@
           });
 
         }
+      })
+
+
+      let pk = 0
+      $('.btn-edit-fail').click(function () {
+        pk = $(this).attr("data-pk")
+      })
+
+      $('#confirm-edit').click(function () {
+        let uid = $('#uid').val()
+        let name = $('#student-name').val()
+        $.ajax({
+            method: "POST",
+            url: '/students/edit-fail-record/',
+            traditional: true,
+            data: {
+              pk,
+              uid,
+              name
+            },
+            success: res => {
+              if (res.status === "fail") {
+                Toast.error(res.data)
+              } else {
+                Toast.success('数据补录成功！请前往补录成功记录中查看')
+                setTimeout(() => {
+                  window.location.reload()
+                }, 1000)
+
+              }
+            }
+          });
       })
     })
   </script>
