@@ -36,13 +36,6 @@ class LogDetail(LoginRequiredMixin, DetailView):
     model = Log
 
 
-class CommentList(LoginRequiredMixin, PaginatorListView):
-    template_name = "operation/comment_list.html"
-    context_object_name = "comments"
-    paginate_by = 50
-    model = Comment
-
-
 
 class StudentActivityListView(LoginRequiredMixin, PaginatorListView):
     """学生参加活动列表页"""
@@ -146,66 +139,6 @@ class AlterStatusAPIView(View):
         except Exception:
             return JsonResponse({"status": "fail", "reason": "找不到记录"})
         return JsonResponse({"status": "ok"})
-
-
-class SignInListView(RoleRequiredMixin, PaginatorListView):
-    """签到签退列表页"""
-    role_required = (RoleEnum.STUDENT.value,)
-    template_name = "operation/sign_in_list.html"
-    context_object_name = "activities"
-    paginate_by = 20
-
-    def get_queryset(self):
-        return Activity.objects.filter(user=self.request.user, is_verify=True)\
-            .select_related("user", "to", "to_school")
-
-
-class QRCodeAPIView(RoleRequiredMixin, View):
-    """生成二维码链接"""
-    role_required = (RoleEnum.STUDENT.value,)
-
-    def get(self, request, pk, frequency, signInOrSignOut, nonce):
-        """
-        :param pk: 活动id
-        :param frequency: 频率秒
-        :param signInOrSignOut: 1为签到，2为签退
-        :param nonce: 随机串
-        """
-        timestamp = int(time.time()) # 秒级时间戳
-        return self.generate_qrcode(f"{pk}.{timestamp}.{frequency}.{signInOrSignOut}")
-
-    def generate_qrcode(self, data):
-        img = qrcode.make(data)
-        buf = BytesIO()
-        img.save(buf)
-        image_stream = buf.getvalue()
-        response = HttpResponse(image_stream, content_type="image/png")
-        return response
-
-
-class PersonListAPIView(RoleRequiredMixin, View):
-    """查看报名活动的人员情况"""
-    role_required = (RoleEnum.STUDENT.value,)
-    def get(self, request, pk):
-        """
-        :param pk: 活动uuid
-        """
-        return_data = []
-        try:
-            activity = Activity.objects.get(pk=pk)
-        except Activity.DoesNotExist:
-            return JsonResponse({"status": "fail", "reason": "活动不存在"})
-
-        student_activities = activity.join_students.all()
-        for obj in student_activities:
-            return_data.append({
-                "uid": obj.student_id,
-                "name": obj.student_name,
-                "clazz": obj.clazz,
-                "status": obj.get_status_display()
-            })
-
-        return JsonResponse({"status": "ok", "count": len(return_data), "data": return_data})
 
 
 class SearchRecordByPkAndTypeAPIView(LoginRequiredMixin, View):
