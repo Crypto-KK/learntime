@@ -38,15 +38,12 @@ urlpatterns = [
     path('stat/', include('learntime.statistic.urls', namespace='stat')),
     path('ckeditor/', include('learntime.utils.ckeditor_urls')),
 
-
     # 临时接口
     path("api/find_student/", find_student_by_uid_and_name),
 
     path("webapi/", include("learntime.webapi.urls", namespace="webapi")),
 
     path('webapi/student/', include(router.urls)),
-
-
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

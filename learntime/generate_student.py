@@ -14,6 +14,9 @@ def gen_md5(src):
 
 students = Student.objects.all() # 获取系统中所有学生名单
 
+success_count = 0
+fail_count = 0
+
 for student in students:
     try:
         simple_student = SimpleStudent.objects.create(
@@ -30,7 +33,8 @@ for student in students:
             xl_credit=student.xl_credit,
             password=gen_md5(student.uid[6:].encode("utf-8"))
         )
+        success_count += 1
     except Exception as e:
-        print(e)
-        print(student.uid + '  生成失败')
+        fail_count += 1
 
+print(f"成功：{success_count}个，失败：{fail_count}个")
