@@ -29,6 +29,9 @@
           <div class="col-lg-12">
             <div class="card">
               <div class="page-header">
+                {% if request.user.role == 1 or request.user.role == 2 %}
+                  <h1>共有{{ count }}条活动记录，超过65535条则不能下载</h1>
+                {% endif %}
                 {% if request.user.role == 3 %}
                   <h1>共有{{ count }}条记录({{ request.user.academy }}{{ request.user.grade }})</h1>
                 {% endif %}

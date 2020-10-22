@@ -137,7 +137,7 @@ class StudentUpdate(RoleRequiredMixin, FormInitialMixin, UpdateView):
 
 class StudentDelete(RoleRequiredMixin, DeleteView):
     """删除学生"""
-    role_required = (RoleEnum.ROOT.value, )
+    role_required = (RoleEnum.ROOT.value, RoleEnum.ACADEMY.value)
     model = Student
     template_name = "students/student_delete.html"
     context_object_name = "student"

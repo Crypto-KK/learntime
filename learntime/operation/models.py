@@ -1,56 +1,11 @@
 from django.conf import settings
 from django.db import models
-from django.db.models import DateTimeField
 
 from ckeditor_uploader.fields import RichTextUploadingField
 
 from learntime.utils.models import CreatedUpdatedMixin
 from learntime.activity.models import Activity
 from learntime.student.models import Student
-
-
-class StudentActivity(models.Model):
-    """
-    学生活动关联表
-    """
-    JOIN_TYPE = (
-        (1, '参赛者'),
-        (2, '观众'),
-        (3, '工作人员'),
-    )
-    STATUS = (
-        (1, '报名'),
-        (2, '签到成功'),
-        (3, '签退成功'),
-    )
-    VERIFY = (
-        (0, "未验证"),
-        (1, "已验证")
-    )
-    student = models.ForeignKey(Student, on_delete=models.CASCADE,
-                                verbose_name="学生", related_name="join_activities")
-    student_name = models.CharField(max_length=20, verbose_name="姓名", null=True, blank=True)
-    academy = models.CharField(max_length=20, verbose_name="学院", null=True, blank=True)
-    grade = models.CharField(max_length=20, verbose_name="年级", null=True, blank=True)
-    clazz = models.CharField(max_length=20, verbose_name="班级", null=True, blank=True)
-
-    activity_name = models.CharField(max_length=50, verbose_name="活动名称", null=True, blank=True)
-    activity = models.ForeignKey(Activity, on_delete=models.CASCADE,
-                                 verbose_name="活动", null=True, blank=True,
-                                 related_name="join_students")
-    credit = models.FloatField(default=0, verbose_name="获得学时")
-    credit_type = models.CharField(max_length=20, verbose_name="学时类别", default="")
-    create_time = DateTimeField(db_index=True, auto_now_add=True,
-                                verbose_name='创建时间')
-    join_type = models.SmallIntegerField(verbose_name="参与类型", choices=JOIN_TYPE)
-    status = models.SmallIntegerField(verbose_name="参与状态", default=1, choices=STATUS)
-    is_verify = models.SmallIntegerField(verbose_name="是否验证", default=1, choices=VERIFY)
-
-    class Meta:
-        verbose_name = "学生活动表"
-        verbose_name_plural = verbose_name
-        db_table = "student_activities"
-        ordering = ("-create_time", )
 
 
 class Log(models.Model):
