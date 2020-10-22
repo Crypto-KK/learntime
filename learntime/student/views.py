@@ -23,9 +23,8 @@ from learntime.users.enums import RoleEnum
 from learntime.users.models import Academy
 from learntime.utils.helpers import RoleRequiredMixin, PaginatorListView, FormInitialMixin, \
     RootRequiredMixin, add_credit, add_student_activity, minus_credit, remove_student_activity
+from utils.response_template import fail_response, success_response
 
-success = JsonResponse({"status": "ok"})
-fail = JsonResponse({"status": "fail"})
 User = get_user_model()
 
 class StudentList(RoleRequiredMixin, PaginatorListView):
@@ -371,9 +370,9 @@ class StudentBulkDeleteView(RootRequiredMixin, View):
                 user=self.request.user,
                 content=f"批量删除了{len(student_list)}条学生记录"
             )
-            return JsonResponse({"status": "ok"})
+            return success_response
         except Exception:
-            return JsonResponse({"status": "fail"})
+            return fail_response
 
 
 class StudentAllDeleteView(RootRequiredMixin, View):
@@ -388,8 +387,8 @@ class StudentAllDeleteView(RootRequiredMixin, View):
             )
         except Exception as e:
             print(e)
-            return fail
-        return success
+            return fail_response
+        return success_response
 
 
 class StudentCreditView(RootRequiredMixin, PaginatorListView):
@@ -445,7 +444,7 @@ class StudentEditCreditView(RootRequiredMixin, View):
                 "cxcy_credit": student.cxcy_credit,
                 "sxdd_credit": student.sxdd_credit,
             })
-        return fail
+        return fail_response
 
     def post(self, request):
         """修改当前学生的学时"""
@@ -484,7 +483,7 @@ class StudentEditCreditView(RootRequiredMixin, View):
                 "status": "ok",
                 "name": student.name,
             })
-        return fail
+        return fail_response
 
 
 class StudentBulkAddCreditView(RoleRequiredMixin, View):
@@ -518,8 +517,8 @@ class StudentBulkAddCreditView(RoleRequiredMixin, View):
                 content = f'批量增加了{real_clazz}所有学生的{credit_map[_type]} {amount}分'
             )
         except Exception:
-            return fail
-        return success
+            return fail_response
+        return success_response
 
 
 class StudentCreditApplyListView(RoleRequiredMixin, PaginatorListView):
@@ -638,7 +637,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
                 user=self.request.user,
                 content=f"导入了{request.FILES.get('excel_file')}表格，共有{nrows - 2}条补录数据，详情内容如下：\n{'，    '.join([o.name + '的' + o.credit_type + '增加了' + str(o.credit) + '个学时' for o in credit_verify_instance_list])}"
             )
-            return JsonResponse({"status": "ok"})
+            return success_response
 
         else: # 文件格式错误
             return JsonResponse({"status": "fail", "reason": "必须为xls或xlsx格式！"})
@@ -790,8 +789,8 @@ class StudentCreditDeleteView(RoleRequiredMixin, View):
                 obj.delete()
         except Exception as e:
             print(e)
-            return JsonResponse({"status": "fail"})
-        return JsonResponse({"status": "ok"})
+            return fail_response
+        return success_response
 
 
 
@@ -855,14 +854,14 @@ class StudentCreditWithdrawView(RoleRequiredMixin, View):
                 obj.delete() # 删除审核记录
                 content_list.append(f'{obj.name}撤回{obj.credit_type}的{obj.credit}个学时')
         except Exception as e:
-            return JsonResponse({"status": "fail"})
+            return fail_response
 
         Log.objects.create(
             user=self.request.user,
             content=f"撤回了{len(pks)}条补录学时数据，详情内容如下：{'，    '.join(content_list)}"
         )
 
-        return JsonResponse({"status": "ok"})
+        return success_response
 
 
 class StudentCreditConfirmView(RoleRequiredMixin, View):
@@ -884,8 +883,8 @@ class StudentCreditConfirmView(RoleRequiredMixin, View):
                     return JsonResponse({"status": "fail", "reason": "学生与活动关联失败"})
         except Exception as e:
             print(e)
-            return JsonResponse({"status": "fail"})
-        return JsonResponse({"status": "ok"})
+            return fail_response
+        return success_response
 
 
 class StudentCreditVerifyListView(RoleRequiredMixin, PaginatorListView):
@@ -936,5 +935,5 @@ def find_student_by_uid_and_name(request):
         try:
             Student.objects.filter(uid=uid, name=name)[0]
         except Exception:
-            return fail
-        return success
+            return fail_response
+        return success_response
