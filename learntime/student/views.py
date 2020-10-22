@@ -600,12 +600,12 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
         # if Academy.objects.filter(name=academy).count() < 1:
         #     return (False, f"学院输入错误，系统中不存在{academy}，请纠正！本次操作取消")
 
-        if StudentCreditVerify.objects.filter(activity_name=activity_name,
-                                              uid=uid,
-                                              credit_type=credit_type,
-                                              sponsor=sponsor).count() >= 1:
-            # 补录活动重复了，不允许导入
-            return (False, f'学号：{uid}，姓名：{name}在系统已经有{activity_name}活动的参加记录了，请不要重复导入。建议前往学生的详情页仔细核对')
+        # if StudentCreditVerify.objects.filter(activity_name=activity_name,
+        #                                       uid=uid,
+        #                                       credit_type=credit_type,
+        #                                       sponsor=sponsor).count() >= 1:
+        #     # 补录活动重复了，不允许导入
+        #     return (False, f'学号：{uid}，姓名：{name}在系统已经有{activity_name}活动的参加记录了，请不要重复导入。建议前往学生的详情页仔细核对')
         try:
             credit = float(row[9])
         except Exception:

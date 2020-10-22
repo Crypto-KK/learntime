@@ -131,8 +131,10 @@
               alert("撤回失败！")
             } else {
               obj.parentNode.parentNode.remove();
-              alert("撤回成功！")
-              window.location.reload()
+                Toast.success('撤回成功')
+                setTimeout(() => {
+                  window.location.reload()
+                }, 1000)
             }
           }
         });
@@ -187,8 +189,10 @@
               if (res.status === "fail") {
                 alert("删除失败！")
               } else {
-                alert("撤回成功！")
-                window.location.reload()
+                Toast.success('批量撤回成功')
+                setTimeout(() => {
+                  window.location.reload()
+                }, 1000)
               }
             }
           });
