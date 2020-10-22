@@ -490,7 +490,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             for _ in range(2, nrows): # 从第3行开始导入数据
                 row = table.row_values(_) # 获取一条记录
 
-                single_row_check, single_row_message = self.check_single_row(row)
+                single_row_check, single_row_message = self.check_single_row(row, _ - 1)
                 if not single_row_check:
                     # 行校验不通过，则添加到失败名单
                     return JsonResponse({"status": "fail", "reason": single_row_message})
@@ -549,7 +549,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
         else:
             return (False, "文件格式错误，请下载模板填写！")
 
-    def check_single_row(self, row):
+    def check_single_row(self, row, line):
         """
         检查导入表格的每一行是否符合规范
         :return: boolean
@@ -569,30 +569,30 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             to_name = row[11]
             # year = row[13]
         except Exception:
-            return (False, "请检查数据是否填写完整！本次操作取消")
+            return (False, f"表格第{line}行错误，请检查数据是否填写完整！本次操作取消")
 
         uid = str(uid)
         if uid == "":
-            return (False, "表格中的学号不能为空，本次操作取消")
+            return (False, f"表格第{line}行错误，表格中的学号不能为空，本次操作取消")
         if uid.__contains__('.'):
             uid = uid.split('.')[0]
 
         if name == "":
-            return (False, "姓名不能为空，本次操作取消")
+            return (False, f"表格第{line}行错误，姓名不能为空，本次操作取消")
         if sponsor == "":
-            return (False, "主办方不能为空，本次操作取消")
+            return (False, f"表格第{line}行错误，主办方不能为空，本次操作取消")
         if clazz == "":
-            return (False, "班级不能为空，本次操作取消")
+            return (False, f"表格第{line}行错误，班级不能为空，本次操作取消")
         if academy == "":
-            return (False, "学院不能为空，本次操作取消")
+            return (False, f"表格第{line}行错误，学院不能为空，本次操作取消")
         if activity_name == "":
-            return (False, "活动名不能为空，本次操作取消")
+            return (False, f"表格第{line}行错误，活动名不能为空，本次操作取消")
         if credit_type == "":
-            return (False, "学时类别不能为空，本次操作取消")
+            return (False, f"表格第{line}行错误，学时类别不能为空，本次操作取消")
         if credit == "":
-            return (False, "认定活动时不能为空，本次操作取消")
+            return (False, f"表格第{line}行错误，认定活动时不能为空，本次操作取消")
         if contact == "":
-            return (False, "联系人不能为空，本次操作取消")
+            return (False, f"表格第{line}行错误，填表人不能为空，本次操作取消")
         # if year == "":
         #     return (False, "所属年度不能为空，本次操作取消")
 
@@ -608,19 +608,19 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
         try:
             credit = float(row[9])
         except Exception:
-            return (False, "认定活动时必须填写数字！请仔细检查表格！本次操作取消")
+            return (False, f"表格第{line}行错误，认定活动时必须填写数字！请仔细检查表格！本次操作取消")
 
         if credit <= 0:
-            return (False, "认定活动时不能小于0！本次操作取消")
+            return (False, f"表格第{line}行错误，认定活动时不能小于0！本次操作取消")
 
         if credit >= 100:
-            return (False, "认定活动时不能大于100！本次操作取消")
+            return (False, f"表格第{line}行错误，认定活动时不能大于100！本次操作取消")
 
         if not join_type.strip() in ['参加者', '观众', '工作人员']:
-            return (False, "表格中的参加类型必须为 参加者/观众/工作人员其中之一，本次操作取消")
+            return (False, f"表格第{line}行错误，表格中的参加类型必须为 参加者/观众/工作人员其中之一，本次操作取消")
 
         if not credit_type.strip() in ['思想品德素质', '创新创业素质', '身心素质', '文体素质', '法律素养']:
-            return (False, f"表格中学时类别填写错误！错误的内容为：{credit_type}，必须填写思想品德素质、创新创业素质、身心素质、文体素质、法律素养")
+            return (False, f"表格第{line}行错误，学时类别填写错误，必须填写思想品德素质、创新创业素质、身心素质、文体素质、法律素养")
 
         # 验证所属年度
         # if not "-" in year:
