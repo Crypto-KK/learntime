@@ -713,12 +713,6 @@ class StudentCreditWithdrawView(RoleRequiredMixin, View):
                 obj = StudentCreditVerify.objects.get(pk=pk)
                 if not minus_credit(CREDIT_TYPE, obj.uid, obj.credit_type, obj.credit): # 减少学时
                     return JsonResponse({"status": "fail", "reason": f'{obj.uid + ":" + obj.name}撤回失败'})
-                if not remove_student_activity(obj.uid, obj.join_type,
-                                        activity_name=obj.activity_name,
-                                        credit=obj.credit,
-                                        credit_type=obj.credit_type):  # 删除学生与活动的关联
-                    return JsonResponse({"status": "fail", "reason": f'{obj.uid + ":" + obj.name}撤回失败'})
-
                 obj.delete() # 删除审核记录
                 content_list.append(f'{obj.name}撤回{obj.credit_type}的{obj.credit}个学时')
         except Exception as e:
@@ -788,6 +782,23 @@ class StudentCreditVerifyEditView(RoleRequiredMixin, UpdateView):
     def get_success_url(self):
         messages.success(self.request, "修改成功")
         return reverse_lazy("students:student_credit_confirm")
+
+
+class StudentCreditVerifyDeleteView(RoleRequiredMixin, View):
+    """删除失败的记录"""
+    role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
+    def post(self, request):
+        try:
+            pks = json.loads(request.POST.get("pks"))
+
+            for pk in pks:
+                obj = StudentCreditVerify.objects.get(pk=pk)
+                obj.delete() # 删除审核记录
+        except Exception:
+            return fail_response
+
+        return success_response
+
 
 
 @csrf_exempt

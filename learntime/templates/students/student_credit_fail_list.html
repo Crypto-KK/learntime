@@ -50,7 +50,7 @@
             <div class="card">
               <div class="card-header">
                 <h1 style="display: inline-block;">共{{ count }}条补录错误数据</h1><br>
-                <button class="btn btn-danger" id="deleteSelected" style="display: none">撤回所选项</button>
+                <button class="btn btn-danger" id="deleteSelected" style="display: none">删除所选项</button>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
@@ -69,7 +69,6 @@
                         <th>审核者</th>
                         <th>联系方式</th>
                         <th>补录时间</th>
-                        <th>状态</th>
                         <th>操作</th>
                       </tr>
                     </thead>
@@ -83,8 +82,8 @@
 
                           <td style="font-weight: bold; vertical-align: middle; color: red;">{{ student.fail_reason }}</td>
                           <td style="font-weight: bold; vertical-align: middle;">{{ student.activity_name }}</td>
-                          <td style='vertical-align: middle;'><a href="{% url 'students:student_detail' student.uid %}?credit_type=qb">{{ student.uid }}</a></td>
-                          <td style='vertical-align: middle;'><a href="{% url 'students:student_detail' student.uid %}?credit_type=qb">{{ student.name }}</a></td>
+                          <td style='vertical-align: middle;'>{{ student.uid }}</td>
+                          <td style='vertical-align: middle;'>{{ student.name }}</td>
                           <td style='vertical-align: middle;'>{{ student.clazz }}</td>
                           <td style='vertical-align: middle;'>{{ student.credit_type }}</td>
                           <td style='vertical-align: middle;'>{{ student.join_type }}</td>
@@ -92,18 +91,16 @@
                           <td style='vertical-align: middle;'>{{ student.to }}</td>
                           <td style='vertical-align: middle;'>{{ student.contact }}</td>
                           <td style="font-weight: bold; vertical-align: middle;">{{ student.created_at }}</td>
-                          <td style='vertical-align: middle;'><i class="fa fa-check" style="color: green"></i></td>
                           <td>
-                            <a href="#" class="btn btn-warning btn-sm">修改
-                            </a>
-                             <button class="btn btn-danger btn-sm" onclick="withdraw(this)" data-pk="{{ student.pk }}">撤回
+                            <a href="#" class="btn btn-warning btn-sm">修改</a>
+                             <button class="btn btn-danger btn-sm" onclick="deleteRecord(this)" data-pk="{{ student.pk }}">删除
                             </button>
                           </td>
                           </tr>
                       {% endfor %}
                     </tbody>
                   </table>
-                  <button class="btn btn-danger" id="deleteSelected" style="display: none">撤回所选项</button>
+                  <button class="btn btn-danger" id="deleteSelected" style="display: none">删除所选项</button>
                 </div>
               </div>
             </div>
@@ -119,21 +116,21 @@
   <script src="{% static 'js/jquery-form.js' %}"></script>
   <script src="{% static 'js/student.js' %}"></script>
   <script>
-          function withdraw(obj) { // 撤回单条记录
-      if (window.confirm("您确定撤回该记录吗？")) {
+          function deleteRecord(obj) { // 删除单条记录
+      if (window.confirm("您确定删除该记录吗？")) {
         $.ajax({
           method: "POST",
-          url: '/students/credit-withdraw/',
+          url: '/students/credit-fail-delete/',
           traditional: true,
           data: {
             pks: JSON.stringify([$(obj).attr("data-pk")])
           },
           success: res => {
             if (res.status === "fail") {
-              alert("撤回失败！")
+              alert("删除失败！")
             } else {
               obj.parentNode.parentNode.remove();
-              alert("撤回成功！")
+              alert("删除成功！")
               window.location.reload()
             }
           }
@@ -180,7 +177,7 @@
 
           $.ajax({
             method: "POST",
-            url: '/students/credit-withdraw/',
+            url: '/students/credit-fail-delete/',
             traditional: true,
             data: {
               pks: JSON.stringify(pks)
@@ -189,7 +186,7 @@
               if (res.status === "fail") {
                 alert("删除失败！")
               } else {
-                alert("撤回成功！")
+                alert("删除成功！")
                 window.location.reload()
               }
             }
