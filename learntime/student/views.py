@@ -490,7 +490,7 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
             for _ in range(2, nrows): # 从第3行开始导入数据
                 row = table.row_values(_) # 获取一条记录
 
-                single_row_check, single_row_message = self.check_single_row(row, _ - 1)
+                single_row_check, single_row_message = self.check_single_row(row, _ + 1)
                 if not single_row_check:
                     # 行校验不通过，则添加到失败名单
                     return JsonResponse({"status": "fail", "reason": single_row_message})
@@ -575,7 +575,11 @@ class StudentCreditExcelImportView(RoleRequiredMixin, View):
         if uid == "":
             return (False, f"表格第{line}行错误，表格中的学号不能为空，本次操作取消")
         if uid.__contains__('.'):
-            uid = uid.split('.')[0]
+            if len(uid.split('.')[0]) != 12:
+                return (False, f"表格第{line}行错误，表格中的学号长度错误，本次操作取消")
+        else:
+            if len(uid) != 12:
+                return (False, f"表格第{line}行错误，表格中的学号长度错误，本次操作取消")
 
         if name == "":
             return (False, f"表格第{line}行错误，姓名不能为空，本次操作取消")
