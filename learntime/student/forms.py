@@ -70,20 +70,20 @@ class StudentCreditCreateForm(forms.ModelForm):
 class CreditApplyManuallyCreateView(forms.ModelForm):
     """手动填写学时补录的表单"""
     uid = forms.CharField(label="学号", required=True)
-    student_name = forms.CharField(label="姓名", required=True)
+    name = forms.CharField(label="姓名", required=True)
     academy = forms.ModelChoiceField(empty_label="请选择学院", queryset=Academy.objects.all(), label="学院")
     grade = forms.ModelChoiceField(empty_label="请选择年级", queryset=Grade.objects.all(), label="学院")
     clazz = forms.CharField(label="班级", required=True)
     sponsor = forms.CharField(label="主办方", required=True)
     activity_name = forms.CharField(label="活动名称", required=True)
     award = forms.CharField(label="获奖情况", required=True, help_text="若没有请填写无")
-    year = forms.CharField(label="所属年度", required=True, help_text="例如：2020-2021学年")
+    year = forms.CharField(label="所属年度", required=False, help_text="例如：2020-2021学年")
 
     join_type = forms.ChoiceField(
         choices=(
-            (1, '参赛者'),
-            (2, '观众'),
-            (3, '工作人员')
+            ('参加者', '参加者'),
+            ('观众', '观众'),
+            ('工作人员', '工作人员')
         ),
         label="参与类型"
     )
@@ -99,7 +99,7 @@ class CreditApplyManuallyCreateView(forms.ModelForm):
         label="学时类型"
     )
 
-    credit = forms.FloatField(max_value=10, min_value=0.5, label="认定学时")
+    credit = forms.FloatField(max_value=100, min_value=0.25, label="认定学时")
 
     contact = forms.CharField(label="填表人及联系方式", required=True)
     to_name = forms.CharField(label="审核人", required=True)
@@ -113,8 +113,8 @@ class CreditApplyManuallyCreateView(forms.ModelForm):
         return uid
 
     class Meta:
-        model = StudentActivity
-        fields = ('uid', 'student_name', 'academy', 'grade', 'clazz',
+        model = StudentCreditVerify
+        fields = ('uid', 'name', 'academy', 'grade', 'clazz',
                   'activity_name', 'join_type', 'credit_type', 'credit')
 
 

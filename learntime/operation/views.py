@@ -43,12 +43,7 @@ class StudentActivityListView(LoginRequiredMixin, PaginatorListView):
     def get_queryset(self):
         if self.request.user.role == RoleEnum.ROOT.value or self.request.user.role == RoleEnum.SCHOOL.value: # ROOT级别能看到所有记录
             return StudentCreditVerify.objects.all()
-        elif self.request.user.role == RoleEnum.ACADEMY.value or self.request.role == RoleEnum.STUDENT.value: # 院级能看到所在学院所在年级记录
-            return StudentCreditVerify.objects.filter(
-                academy=self.request.user.academy,
-                grade=self.request.user.grade
-            )
-        elif self.request.user.role == RoleEnum.ORG.value:
+        else:
             return StudentCreditVerify.objects.filter(
                 academy=self.request.user.academy
             )

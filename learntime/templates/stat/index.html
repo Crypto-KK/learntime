@@ -58,14 +58,6 @@
         </div>
 
         {% elif role == 2 or role == 3 %}
-
-        <div class="col-xl-3 col-sm-6">
-          <div class="item d-flex align-items-center">
-            <div class="icon bg-orange"><i class="icon-check"></i></div>
-            <div class="title"><span>等待审核</span></div>
-            <a href="{% url 'activities:activity_unverify' %}" class="number"><strong>{{ verifying_activities_nums }}</strong></a>
-          </div>
-        </div>
         {% endif %}
       </div>
     </div>
