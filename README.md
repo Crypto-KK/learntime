@@ -65,7 +65,11 @@
 
 再使用uwsgi启动django
 ```
-(root)$ uwsgi -i deployment/uwsgi.ini
+(root)$ uwsgi -d -i deployment/uwsgi.ini
+```
+关闭uwsgi
+```
+(root)$ pkill -f uwsgi -9
 ```
 
 ### 7. 使用nginx反向代理
