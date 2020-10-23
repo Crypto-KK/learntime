@@ -13,7 +13,7 @@
                             }
                         ],
                         "password": "Hewenhai123456",
-                        "username": "root",
+                        "username": "root"
 
                     }
                 },
@@ -22,7 +22,7 @@
                     "parameter": {
                            "column": ["*"],
 			"preSql": [
-				"delete from student_credit_verify",
+				"delete from student_credit_verify"
 			],
                         "connection": [
                             {
@@ -32,7 +32,7 @@
 			}
                         ],
                         "username": "root",
-                        "password": "Hewenhai123456",
+                        "password": "Hewenhai123456"
                     }
                 }
             }
