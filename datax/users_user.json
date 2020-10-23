@@ -22,6 +22,7 @@
                     "parameter": {
                            "column": ["*"],
 			"preSql": [
+        "set FOREIGN_KEY_CHECKS=0",
 				"delete from users_user",
 			],
                         "connection": [
