@@ -12,7 +12,19 @@
     python3 manage.py runserver 0.0.0.0:8000
 ```
 
-## 部署
+# 部署
+## 1、一键部署
+### 一键启动所有服务
+```
+(root)$ bash learntime/deployment/deploy.sh
+```
+### 一键脚本关闭整个项目
+```
+(root)$ bash learntime/deployment/stop.sh
+```
+
+## 2、手动部署
+
 请使用CentOS7.0以上版本部署
 
 ### 1.安装系统依赖
