@@ -1,0 +1,22 @@
+.nav-tabs .nav-link {
+    color: #2012e2;
+}
+
+.app-footer {
+    color:#333;
+    width: 100%;
+    position: fixed;
+    bottom: 0px;
+    /* display: flex;
+    -ms-flex-wrap: wrap; */
+    /* flex-wrap: wrap; */
+    padding:1%;
+    text-align: center;
+}
+
+
+@media screen and (max-width: 575px) {
+    .adaptive {
+        width: 600px;
+    }
+}

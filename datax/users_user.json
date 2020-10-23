@@ -1,0 +1,47 @@
+{
+    "job": {
+        "content": [
+            {
+                  "reader": {
+                    "name": "mysqlreader",
+                    "parameter": {
+                        "column": ["*"],
+                        "connection": [
+                            {
+                                "jdbcUrl": ["jdbc:mysql://127.0.0.1:3306/learntime"],
+				"table": ["users_user"]
+                            }
+                        ],
+                        "password": "Hewenhai123456",
+                        "username": "root",
+
+                    }
+                },
+                "writer": {
+                    "name": "mysqlwriter",
+                    "parameter": {
+                           "column": ["*"],
+			"preSql": [
+				"delete from users_user",
+			],
+                        "connection": [
+                            {
+
+                                "jdbcUrl": "jdbc:mysql://rm-wz943705788851p2k2o.mysql.rds.aliyuncs.com:3306/learntime_backup",
+			"table": ["users_user"]
+			}
+                        ],
+                        "username": "root",
+                        "password": "Hewenhai123456",
+                    }
+                }
+            }
+        ],
+        "setting": {
+            "speed": {
+                "channel": 1
+            }
+        }
+    }
+}
+
