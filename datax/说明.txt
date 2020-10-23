@@ -1,0 +1,6 @@
+第一步：crontab -e
+*/10 * * * * /usr/bin/bash /root/learntime/datax/start.sh
+
+第二步：systemctl restart crond.service
+第三步：crontab -l -u root
+
