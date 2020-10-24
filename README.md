@@ -13,14 +13,54 @@
 ```
 
 # 部署
-## 1、一键部署
-### 一键启动所有服务
+## 1、使用脚本一键部署
+### 启动整个项目
 ```
 (root)$ bash learntime/deployment/deploy.sh
 ```
-### 一键脚本关闭整个项目
+或者使用快捷指令操作，如下所示：
+```
+(root)$ start-project
+celery multi v4.3.0 (rhubarb)
+> Starting nodes...
+        > w1@localhost.localdomain: OK
+        > worker@localhost.localdomain: OK
+```
+### 关闭整个项目
 ```
 (root)$ bash learntime/deployment/stop.sh
+```
+或者使用快捷指令操作，如下所示：
+```
+(root)$ stop-project
+清除celery文件成功
+关闭uwsgi和celery服务成功
+```
+
+### 重启整个项目
+```
+(root)$ bash learntime/deployment/restart.sh
+```
+或者使用快捷指令操作，如下所示：
+```
+(root)$ restart-project
+清除celery文件成功
+关闭uwsgi和celery服务成功
+正在重启项目，请稍后
+[uWSGI] getting INI configuration from deployment/uwsgi.ini
+[uwsgi-static] added mapping for /static => /root/learntime/staticfiles
+celery multi v4.3.0 (rhubarb)
+> Starting nodes...
+        > w1@localhost.localdomain: OK
+        > worker@localhost.localdomain: OK
+启动项目成功
+```
+
+### 查看项目日志
+```
+(root)$ (root)$ bash learntime/deployment/logs.sh
+// 或者使用快捷指令
+(root)$ logs-project
 ```
 
 ## 2、手动部署
@@ -52,13 +92,13 @@
 
 ### 3. 安装git/redis/nginx
 ```
-(root)$ yum -y install git redis nginx supervisor
+(root)$ yum -y install git redis nginx
 ```
 
 ### 4. 设置开机启动
 保证重启后依然能运行
 ```
-(root)$ systemctl enable redis nginx supervisord
+(root)$ systemctl enable redis nginx
 ```
 
 
@@ -91,3 +131,9 @@
 
 ## 注意事项
 请保证nginx和redis服务在重启后能够自动运行，需要使用`systemctl enable nginx和redis`
+
+
+# 数据备份
+本项目的数据库在学校的服务器上，为了更好的防止丢失数据，在每天的凌晨1点30分会自动将数据同步到
+阿里云的数据库中，这里使用了阿里开源的datax工具，可以将数据库同步，项目目录下的datax文件夹中
+存放了数据同步的脚本，使用start.sh自动同步数据，结合crontab定时任务，实现定点定时自动同步数据
