@@ -95,7 +95,7 @@ class StudentCreditVerify(models.Model):
     """
     学生活动关联表
     """
-    activity_name = models.CharField(max_length=100, verbose_name="活动名称")
+    activity_name = models.CharField(max_length=255, verbose_name="活动名称")
     sponsor = models.CharField(max_length=255, verbose_name="主办方")
     uid = models.CharField(max_length=20, verbose_name="学号")
     name = models.CharField(max_length=20, verbose_name="姓名")
