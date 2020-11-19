@@ -174,7 +174,7 @@ class StudentExcelImportView(RoleRequiredMixin, View):
 
             for _ in range(1, nrows): # 从第二行开始导入数据
                 row = table.row_values(_) # 获取一条记录
-                single_row_check, single_row_message = self.check_single_row(row)
+                single_row_check, single_row_message = self.check_single_row(row, _ + 1)
                 if not single_row_check:
                     # 行校验不通过，则添加到失败名单
                     return JsonResponse({"status": "fail", "reason": single_row_message})
@@ -231,7 +231,7 @@ class StudentExcelImportView(RoleRequiredMixin, View):
         else:
             return (False, "文件格式错误，请下载模板填写！")
 
-    def check_single_row(self, row):
+    def check_single_row(self, row, line):
         """
         检查导入表格的每一行是否符合规范
         :param row: 行
@@ -241,19 +241,20 @@ class StudentExcelImportView(RoleRequiredMixin, View):
             uid = row[0]
             name = row[1]
         except Exception:
-            return (False, "请检查数据是否填写完整！")
+            return (False, f"表格第{line}行数据不完整！")
 
+        uid = str(uid)
         if uid == "":
-            return (False, "请仔细检查文件内容！学号不能为空")
-
-        # if str(uid).__contains__("."):
-        #     return (False, "学号包含小数点！请手动将表格中的学号改为文本型\n例如将201606126666.0修改为201606126666")
-        # if str(uid).__len__() != 12:
-        #     # 学号必须为12位
-        #     return (False, "请仔细检查文件内容！学号必须为12位，至少有一名学生的学号错误")
+            return (False, f"表格第{line}行错误，表格中的学号不能为空，本次操作取消")
+        if uid.__contains__('.'):
+            if len(uid.split('.')[0]) != 12:
+                return (False, f"表格第{line}行错误，表格中的学号长度错误，本次操作取消")
+        else:
+            if len(uid) != 12:
+                return (False, f"表格第{line}行错误，表格中的学号长度错误，本次操作取消")
 
         if name == "":
-            return (False, "请仔细检查文件内容！学生姓名不能为空")
+            return (False, f"表格第{line}行学生姓名不能为空，本次操作取消")
 
         try:
             academy = row[2]
@@ -266,10 +267,10 @@ class StudentExcelImportView(RoleRequiredMixin, View):
             cxcy_credit = float(row[9])
             sxdd_credit = float(row[10])
         except Exception:
-            return (False, "请仔细检查文件的错误！")
+            return (False, f"表格第{line}行数据不完整，本次操作取消")
 
         if academy == "" or grade == "" or clazz == "":
-            return (False, "请仔细检查文件的错误！学院或年级或班级不能为空")
+            return (False, f"表格第{line}行不完整，学院或年级或班级不能为空")
 
         # if academy != self.request.user.academy:
         #     return (False, "只允许导入" + self.request.user.academy + "的学生信息，其他学院无权限导入")
@@ -281,7 +282,7 @@ class StudentExcelImportView(RoleRequiredMixin, View):
             and xl_credit >=0 and cxcy_credit >=0 and sxdd_credit >= 0:
             return (True, "")
         else:
-            return (False, "学时数不能小于0！")
+            return (False, f"表格第{line}行错误，学时数不能小于0！")
 
     def build_student(self, row):
         """创建学生的实例"""
