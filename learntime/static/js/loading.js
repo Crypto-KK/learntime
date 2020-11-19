@@ -1,7 +1,7 @@
 Loading = {
   show: function () {
     $.blockUI({
-      message: '<img src="https://learningtime.oss-cn-shenzhen.aliyuncs.com/media/file/loading.gif" /><br><span>正在导入中，请稍等......若超过10秒没有反应，说明表格填写有误</span>',
+      message: '<img src="https://learningtime.oss-cn-shenzhen.aliyuncs.com/media/file/loading.gif" /><br><span>正在导入中，请稍等......如果长时间没有反应，说明表格填写确有错误，导致系统异常，建议重新填写表格</span>',
       css: {
         zIndex: "10011",
         padding: "10px",

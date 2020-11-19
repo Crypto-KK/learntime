@@ -425,7 +425,7 @@ class StudentCreditFailListView(RoleRequiredMixin, PaginatorListView):
     """
     查看导入错误的数据
     """
-    role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
+    role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value, RoleEnum.STUDENT.value, RoleEnum.ORG.value)
     paginate_by = 50
     context_object_name = "students"
     template_name = "students/student_credit_fail_list.html"
@@ -784,7 +784,7 @@ class StudentCreditVerifyEditView(RoleRequiredMixin, UpdateView):
 
 class StudentCreditVerifyDeleteView(RoleRequiredMixin, View):
     """删除失败的记录"""
-    role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
+    role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value, RoleEnum.STUDENT.value, RoleEnum.ORG.value)
     def post(self, request):
         try:
             pks = json.loads(request.POST.get("pks"))
@@ -797,7 +797,7 @@ class StudentCreditVerifyDeleteView(RoleRequiredMixin, View):
         return success_response
 
 class EditFailRecord(RoleRequiredMixin, View):
-    role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value)
+    role_required = (RoleEnum.ACADEMY.value, RoleEnum.SCHOOL.value, RoleEnum.STUDENT.value, RoleEnum.ORG.value)
     def post(self, request):
         try:
             pk = request.POST.get("pk")
