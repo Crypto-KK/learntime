@@ -1,4 +1,6 @@
+
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}
     活动参加记录
 {% endblock %}
@@ -30,7 +32,7 @@
             <div class="card">
               <div class="page-header">
                 {% if request.user.role == 1 or request.user.role == 2 %}
-                  <h1>共有{{ count }}条活动记录，超过65535条则不能下载</h1>
+                  <h1>共有{{ count }}条活动记录，请勿重复点击导出按钮！</h1>
                 {% endif %}
                 {% if request.user.role == 3 %}
                   <h1>共有{{ count }}条记录({{ request.user.academy }}{{ request.user.grade }})</h1>
@@ -42,9 +44,9 @@
               </div>
               <div class="card-body">
                 {% if request.user.role == 1 or request.user.role == 2 or request.user.role == 3 or request.user.role == 5 %}
-                    <a style="float: right" class="btn btn-blue" href="{% url 'operations:join_list_export' %}">
-                      <i class="fa fa-download">下载记录</i>
-                    </a><br>
+                    <button id="export-to-excel" style="float: right" class="btn btn-blue">
+                      导出到excel
+                    </button><br>
                   {% endif %}
                 <div class="table-responsive">
                   {% with request.user.role as role %}
@@ -90,6 +92,8 @@
     {% include 'pagination.html' %}
 {% endblock %}
 {% block js %}
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery.blockUI/2.70.0-2014.11.23/jquery.blockUI.min.js"></script>
+  <script src="{% static 'js/loading.js' %}"></script>
   <script>
     $(function () {
       $('.alter-status').click(function () {
@@ -112,6 +116,21 @@
           });
 
         }
+      })
+      $('#export-to-excel').click(function () {
+        Loading.show_export()
+        $.get({
+            url: '/operations/join-list-export/',
+            success: res => {
+              if (res.status === "ok") {
+                Toast.success("导出成功");
+                Loading.hide()
+              } else {
+                Toast.error("导出失败");
+                Loading.hide()
+              }
+            }
+          });
       })
     })
   </script>

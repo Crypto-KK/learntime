@@ -53,28 +53,25 @@ class StudentActivityExportView(RoleRequiredMixin, View):
     """学生参加记录导出"""
     role_required = (RoleEnum.SCHOOL.value, RoleEnum.ROOT.value, RoleEnum.ACADEMY.value, RoleEnum.ORG.value)
     def get(self, request):
-        # TODO XLS解除65536限制
-        import xlwt
-
-        workbook = xlwt.Workbook(encoding="utf-8") # 创建workbook实例
-        sheet = workbook.add_sheet("sheet1") # 创建工作薄1
+        import openpyxl
+        workbook = openpyxl.Workbook()
+        sheet = workbook.create_sheet(title="data", index=0)
 
         # 写标题栏
-        # sheet.write(0, 0, "广州商学院“4+X”活动学时认定登记表汇总")
-        sheet.write(0, 0, '活动名称')
-        sheet.write(0, 1, '主办方')
-        sheet.write(0, 2, '姓名')
-        sheet.write(0, 3, '学号')
-        sheet.write(0, 4, '学院')
-        sheet.write(0, 5, '班级')
-        sheet.write(0, 6, '参加类型')
-        sheet.write(0, 7, '获奖情况')
-        sheet.write(0, 8, '认定项目')
-        sheet.write(0, 9, '认定活动时')
-        sheet.write(0, 10, '填报人及联系方式')
-        sheet.write(0, 11, '审核人')
-        sheet.write(0, 12, '备注')
-        sheet.write(0, 13, '归属年度(如“2020-2021学年”)')
+        sheet.cell(1, 1, '活动名称')
+        sheet.cell(1, 2, '主办方')
+        sheet.cell(1, 3, '姓名')
+        sheet.cell(1, 4, '学号')
+        sheet.cell(1, 5, '学院')
+        sheet.cell(1, 6, '班级')
+        sheet.cell(1, 7, '参加类型')
+        sheet.cell(1, 8, '获奖情况')
+        sheet.cell(1, 9, '认定项目')
+        sheet.cell(1, 10, '认定活动时')
+        sheet.cell(1, 11, '填报人及联系方式')
+        sheet.cell(1, 12, '审核人')
+        sheet.cell(1, 13, '备注')
+        sheet.cell(1, 14, '归属年度(如“2020-2021学年”)')
 
 
         student_activities = StudentCreditVerify.objects.all()
@@ -89,22 +86,22 @@ class StudentActivityExportView(RoleRequiredMixin, View):
             )
 
         # 写数据
-        row = 1
+        row = 2
         for obj in student_activities: # 单条写入学生数据
-            sheet.write(row, 0, obj.activity_name)
-            sheet.write(row, 1, obj.sponsor)
-            sheet.write(row, 2, obj.name)
-            sheet.write(row, 3, obj.uid)
-            sheet.write(row, 4, obj.academy)
-            sheet.write(row, 5, obj.clazz)
-            sheet.write(row, 6, obj.join_type)
-            sheet.write(row, 7, obj.award)
-            sheet.write(row, 8, obj.credit_type)
-            sheet.write(row, 9, obj.credit)
-            sheet.write(row, 10, obj.contact)
-            sheet.write(row, 11, obj.to_name)
-            sheet.write(row, 12, obj.remark)
-            sheet.write(row, 13, obj.year)
+            sheet.cell(row, 1, obj.activity_name)
+            sheet.cell(row, 2, obj.sponsor)
+            sheet.cell(row, 3, obj.name)
+            sheet.cell(row, 4, obj.uid)
+            sheet.cell(row, 5, obj.academy)
+            sheet.cell(row, 6, obj.clazz)
+            sheet.cell(row, 7, obj.join_type)
+            sheet.cell(row, 8, obj.award)
+            sheet.cell(row, 9, obj.credit_type)
+            sheet.cell(row, 10, obj.credit)
+            sheet.cell(row, 11, obj.contact)
+            sheet.cell(row, 12, obj.to_name)
+            sheet.cell(row, 13, obj.remark)
+            sheet.cell(row, 14, obj.year)
             row += 1
 
         sio = BytesIO() # StringIO报错，使用BytesIO

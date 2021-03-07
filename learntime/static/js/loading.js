@@ -11,6 +11,18 @@ Loading = {
       }
     });
   },
+  show_export: function () {
+    $.blockUI({
+      message: '<img src="https://learningtime.oss-cn-shenzhen.aliyuncs.com/media/file/loading.gif" /><br><span>正在导出中...可能需要几分钟，若长时间无反应，请刷新页面并重新导出</span>',
+      css: {
+        zIndex: "10011",
+        padding: "10px",
+        left: "50%",
+        width: "220px",
+        marginLeft: "-40px",
+      }
+    });
+  },
   hide: function () {
     // 本地查询速度太快，loading显示一瞬间，故意做个延迟
     $.unblockUI();
