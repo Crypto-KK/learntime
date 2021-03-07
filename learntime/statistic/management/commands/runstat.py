@@ -22,7 +22,7 @@ class Command(BaseCommand):
             self.record()
         if options.get("generate"):
             self.generate()
-        if options.get("check"):
+        if options.get("checkscore"):
             self.auto_check()
 
         #self.stdout.write(self.style.SUCCESS('adsf'))
