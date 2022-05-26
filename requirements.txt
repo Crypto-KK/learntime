@@ -73,7 +73,7 @@ simplejson==3.17.0
 six==1.12.0
 sorl-thumbnail==12.5.0
 sqlparse==0.3.0
-Twisted==19.10.0
+Twisted==22.4.0
 txaio==18.8.1
 urllib3==1.25.6
 vine==1.3.0
